@@ -1,0 +1,80 @@
+[
+  {
+    "id": 1,
+    "section": "English Language",
+    "passage": "I grew up in a small town not far from Kalimpong. In pre-liberalization India, everything arrived late: not just material things but also ideas...[cite: 3]",
+    "question": "What use was the kabadiwala (wastepicker) to the author?[cite: 3]",
+    "options": [
+      "(A) The kabadiwala bought up all her magazines.[cite: 3]",
+      "(B) The kabadiwala's stock of books and magazines were of interest to the author.[cite: 3]",
+      "(C) The kabadiwala was about to steal the author's magazines.[cite: 3]",
+      "(D) The author ordered books online which the kabadiwala delivered.[cite: 3]"
+    ],
+    "correct": 1
+  },
+  {
+    "id": 2,
+    "section": "English Language",
+    "passage": "I grew up in a small town not far from Kalimpong...[cite: 3]",
+    "question": "What according to the author is essential about the experience of being a 'provincial reader'?[cite: 4]",
+    "options": [
+      "(A) Belatedness in the sense of coming late for everything.[cite: 4]",
+      "(B) Over-eagerness.[cite: 4]",
+      "(C) Accepting a temporal gap between what was current in the wider world and the time at which these arrived in the provincial location.[cite: 4]",
+      "(D) None of the above[cite: 4]"
+    ],
+    "correct": 2
+  },
+  {
+    "id": 31,
+    "section": "Current Affairs Including General Knowledge",
+    "passage": "Former Governor of a State and National Democratic Alliance (NDA) candidate Droupadi Murmu was elected the 15th President of India...[cite: 12]",
+    "question": "Before Droupadi Murmu, India had only one other female president, Pratibha Patil. When did Patil serve as the President of India?[cite: 12]",
+    "options": [
+      "(A) 2007-2012[cite: 12]",
+      "(B) 2005-2010[cite: 12]",
+      "(C) 2012-2017[cite: 12]",
+      "(D) 2006-2011[cite: 12]"
+    ],
+    "correct": 0
+  },
+  {
+    "id": 66,
+    "section": "Legal Reasoning",
+    "passage": "Quashing a case of cruelty that was filed against a man by his wife, the Bombay High Court said that if a married lady is asked to do household work for the family, it cannot be said that she is treated 'like a maid servant'...[cite: 18]",
+    "question": "Ashwin and Ashima were married in February 2020. In March 2020, Ashwin asked Ashima to take care of all their household work... Is she likely to succeed?[cite: 18]",
+    "options": [
+      "(A) Yes, since Ashwin had only asked Ashima to do their household work, and not for others.[cite: 18]",
+      "(B) No, since Ashwin had only asked Ashima to do their household work, and not for others.[cite: 18]",
+      "(C) Yes, since Ashwin had asked Ashima to do household work for themselves as well as others.[cite: 18]",
+      "(D) No, since treating a married woman like a maid servant would not amount to an offence under that Section.[cite: 18]"
+    ],
+    "correct": 1
+  },
+  {
+    "id": 106,
+    "section": "Logical Reasoning",
+    "passage": "The depreciation of an economy's currency is not a matter of concern in itself...[cite: 38]",
+    "question": "Which of the following is the author most likely to agree with?[cite: 38]",
+    "options": [
+      "(A) It is a major cause for concern if an economy's currency is depreciating.[cite: 38]",
+      "(B) Currency depreciation is not a reason for worry in itself, but if macroeconomic factors are not good, there may be a cause for concern.[cite: 38]",
+      "(C) The fact that the Indian rupee is witnessing a decline in value against major currencies is very worrisome.[cite: 38]",
+      "(D) A central bank must always do everything in its power to stem the slightest depreciation of an economy's currency.[cite: 38]"
+    ],
+    "correct": 1
+  },
+  {
+    "id": 141,
+    "section": "Quantitative Techniques",
+    "passage": "World fruit production went up 54 percent between 2000 and 2019, to 883 million tonnes...[cite: 49]",
+    "question": "What was the world fruit production in 2000?[cite: 49]",
+    "options": [
+      "(A) 474 million tonnes[cite: 49]",
+      "(B) 517 million tonnes[cite: 49]",
+      "(C) 573 million tonnes[cite: 49]",
+      "(D) 406 million tonnes[cite: 49]"
+    ],
+    "correct": 2
+  }
+]
