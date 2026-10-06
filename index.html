@@ -4,10 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CLAT UG 2023 Official CBT Mock Test</title>
-    <!-- Tailwind CSS -->
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         .custom-scrollbar::-webkit-scrollbar { width: 6px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: #f1f1f1; }
@@ -19,16 +17,15 @@
 
     <!-- TOP BAR -->
     <header class="bg-gray-900 text-white px-6 py-3 flex justify-between items-center shadow-md">
-        <div class="flex items-center gap-3">
-            <i data-lucide="shield-check" class="w-6 h-6 text-blue-400"></i>
+        <div class="flex items-center gap-2">
             <span class="font-bold text-lg text-blue-400">CLAT Proctored CBT Engine</span>
         </div>
         <div class="flex items-center gap-3">
-            <button id="nav-student-btn" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs rounded transition flex items-center gap-1">
-                <i data-lucide="user" class="w-4 h-4"></i> Student Exam
+            <button id="nav-student-btn" class="px-3.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs rounded transition">
+                Student Exam
             </button>
-            <button id="nav-teacher-btn" class="px-3 py-1.5 bg-purple-600 hover:bg-purple-700 text-white font-medium text-xs rounded transition flex items-center gap-1">
-                <i data-lucide="layout-dashboard" class="w-4 h-4"></i> Teacher Dashboard
+            <button id="nav-teacher-btn" class="px-3.5 py-1.5 bg-purple-600 hover:bg-purple-700 text-white font-medium text-xs rounded transition">
+                Teacher Dashboard
             </button>
         </div>
     </header>
@@ -37,9 +34,6 @@
     <div id="start-screen" class="min-h-[calc(100vh-56px)] flex items-center justify-center p-4">
         <div class="max-w-xl w-full bg-white rounded-xl shadow-lg border border-gray-200 p-8">
             <div class="text-center mb-6">
-                <div class="inline-flex p-3 bg-blue-100 text-blue-600 rounded-full mb-3">
-                    <i data-lucide="graduation-cap" class="w-8 h-8"></i>
-                </div>
                 <h1 class="text-2xl font-bold text-gray-900">CLAT UG 2023 Official Mock CBT</h1>
                 <p class="text-gray-600 text-sm mt-1">Proctored Computer-Based Test Engine</p>
             </div>
@@ -60,8 +54,8 @@
                     <label class="block text-sm font-medium text-gray-700 mb-1">Roll / Admit Card Number</label>
                     <input type="text" id="student-roll" required class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="e.g. CLAT2023-1092">
                 </div>
-                <button type="submit" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow transition flex items-center justify-center gap-2">
-                    <i data-lucide="play-circle" class="w-5 h-5"></i> Start Test
+                <button type="submit" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow transition">
+                    Start Test
                 </button>
             </form>
         </div>
@@ -163,7 +157,6 @@
 
     <!-- JAVASCRIPT & EMBEDDED QUESTION BANK -->
     <script>
-        // FULL QUESTION BANK EMBEDDED DIRECTLY
         const examData = [
             {
                 section: "English Language",
@@ -394,8 +387,6 @@ Ms. Murmu hails from the Santhal tribe and was born in the district of Mayurbhan
         let student = {};
 
         document.addEventListener('DOMContentLoaded', () => {
-            lucide.createIcons();
-
             // Unpack questions into linear array
             examData.forEach(sec => {
                 sec.questions.forEach(q => {
@@ -454,6 +445,7 @@ Ms. Murmu hails from the Santhal tribe and was born in the district of Mayurbhan
             document.getElementById('clear-btn').onclick = clearAns;
             document.getElementById('finish-btn').onclick = submitExam;
             document.getElementById('sidebar-submit-btn').onclick = submitExam;
+            document.getElementById('mark-review-btn').onclick = toggleMarkReview;
         }
 
         function renderSectionTabs() {
@@ -506,6 +498,11 @@ Ms. Murmu hails from the Santhal tribe and was born in the district of Mayurbhan
             loadQuestion(currentQIndex);
         }
 
+        function toggleMarkReview() {
+            userAnswers[currentQIndex].status = userAnswers[currentQIndex].status === 'marked' ? 'visited' : 'marked';
+            renderPalette();
+        }
+
         function navigate(step) {
             let next = currentQIndex + step;
             if (next >= 0 && next < allQuestions.length) loadQuestion(next);
@@ -516,8 +513,9 @@ Ms. Murmu hails from the Santhal tribe and was born in the district of Mayurbhan
             grid.innerHTML = '';
             allQuestions.forEach((_, idx) => {
                 const st = userAnswers[idx].status;
-                let bg = 'bg-gray-200';
+                let bg = 'bg-gray-200 text-gray-800';
                 if (st === 'answered') bg = 'bg-emerald-500 text-white';
+                if (st === 'marked') bg = 'bg-purple-600 text-white';
                 if (st === 'visited') bg = 'bg-red-500 text-white';
 
                 const btn = document.createElement('button');
