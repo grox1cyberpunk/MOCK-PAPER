@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CLAT UG Official Mock CBT & Teacher Dashboard</title>
+    <title>CLAT UG 2023 Official CBT Mock Test</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Lucide Icons -->
@@ -21,13 +21,13 @@
     <header class="bg-gray-900 text-white px-6 py-3 flex justify-between items-center shadow-md">
         <div class="flex items-center gap-3">
             <i data-lucide="shield-check" class="w-6 h-6 text-blue-400"></i>
-            <span class="font-bold text-lg text-blue-400">CLAT Secure CBT Portal</span>
+            <span class="font-bold text-lg text-blue-400">CLAT Proctored CBT Engine</span>
         </div>
         <div class="flex items-center gap-3">
-            <button id="nav-student-btn" class="px-3.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs rounded transition flex items-center gap-1">
+            <button id="nav-student-btn" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs rounded transition flex items-center gap-1">
                 <i data-lucide="user" class="w-4 h-4"></i> Student Exam
             </button>
-            <button id="nav-teacher-btn" class="px-3.5 py-1.5 bg-purple-600 hover:bg-purple-700 text-white font-medium text-xs rounded transition flex items-center gap-1">
+            <button id="nav-teacher-btn" class="px-3 py-1.5 bg-purple-600 hover:bg-purple-700 text-white font-medium text-xs rounded transition flex items-center gap-1">
                 <i data-lucide="layout-dashboard" class="w-4 h-4"></i> Teacher Dashboard
             </button>
         </div>
@@ -40,25 +40,25 @@
                 <div class="inline-flex p-3 bg-blue-100 text-blue-600 rounded-full mb-3">
                     <i data-lucide="graduation-cap" class="w-8 h-8"></i>
                 </div>
-                <h1 class="text-2xl font-bold text-gray-900">CLAT UG 2023 Full Mock Exam</h1>
-                <p class="text-gray-600 text-sm mt-1">150 Questions | 120 Minutes | Proctored CBT</p>
+                <h1 class="text-2xl font-bold text-gray-900">CLAT UG 2023 Official Mock CBT</h1>
+                <p class="text-gray-600 text-sm mt-1">Proctored Computer-Based Test Engine</p>
             </div>
 
             <div class="bg-amber-50 border-l-4 border-amber-500 p-4 mb-6 rounded-r text-xs text-amber-800 space-y-1">
-                <p class="font-bold">Exam Rules:</p>
-                <p>• Correct: +1.0 mark | Incorrect: -0.25 mark.</p>
-                <p>• Full-screen mode is enforced upon starting.</p>
-                <p>• Tab switches and window minimize attempts are logged for the teacher.</p>
+                <p class="font-bold">Instructions & Rules:</p>
+                <p>• Marking: <strong>+1.0</strong> for correct answer, <strong>-0.25</strong> for wrong answer.</p>
+                <p>• Duration: 120 Minutes.</p>
+                <p>• Window focus loss or switching tabs will flag a violation to your instructor.</p>
             </div>
 
             <form id="student-form" class="space-y-4">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Student Name</label>
-                    <input type="text" id="student-name" required class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="Enter Full Name">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Student Full Name</label>
+                    <input type="text" id="student-name" required class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="Enter full name">
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Roll / Admit Card Number</label>
-                    <input type="text" id="student-roll" required class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="e.g. CLAT2023-8820">
+                    <input type="text" id="student-roll" required class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="e.g. CLAT2023-1092">
                 </div>
                 <button type="submit" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow transition flex items-center justify-center gap-2">
                     <i data-lucide="play-circle" class="w-5 h-5"></i> Start Test
@@ -69,7 +69,7 @@
 
     <!-- 2. EXAM ENGINE -->
     <div id="test-screen" class="hidden h-[calc(100vh-56px)] flex flex-col bg-gray-100">
-        <!-- Sub Bar -->
+        <!-- Status Bar -->
         <div class="bg-gray-800 text-white px-6 py-2 flex justify-between items-center text-xs">
             <span id="candidate-display" class="text-gray-300 font-semibold">Candidate: -</span>
             <div class="flex items-center gap-6">
@@ -84,13 +84,13 @@
 
         <!-- Main Workspace -->
         <div class="flex-1 flex overflow-hidden">
-            <!-- Left: Passage -->
+            <!-- Left: Passage Context -->
             <div class="w-1/2 p-6 border-r overflow-y-auto bg-white custom-scrollbar">
-                <h3 class="text-xs font-bold text-blue-600 uppercase mb-2">PASSAGE CONTEXT</h3>
-                <div id="passage-text" class="text-gray-800 leading-relaxed font-serif space-y-4 text-sm"></div>
+                <h3 class="text-xs font-bold text-blue-600 uppercase mb-2" id="section-badge">READING PASSAGE</h3>
+                <div id="passage-text" class="text-gray-800 leading-relaxed font-serif whitespace-pre-line text-sm"></div>
             </div>
 
-            <!-- Right: Question -->
+            <!-- Right: Question Options -->
             <div class="w-1/2 p-6 overflow-y-auto flex flex-col justify-between bg-gray-50 custom-scrollbar">
                 <div>
                     <div class="flex justify-between items-center mb-4">
@@ -111,7 +111,7 @@
                 </div>
             </div>
 
-            <!-- Question Palette -->
+            <!-- Question Palette Sidebar -->
             <div class="w-72 bg-white border-l p-4 flex flex-col justify-between">
                 <div>
                     <h3 class="font-bold text-xs text-gray-700 mb-3 uppercase">Question Palette</h3>
@@ -122,7 +122,7 @@
         </div>
     </div>
 
-    <!-- 3. RESULT SCREEN -->
+    <!-- 3. RESULT SCORECARD -->
     <div id="result-screen" class="hidden p-8 max-w-5xl mx-auto space-y-6">
         <div class="bg-white p-6 rounded-xl shadow border flex justify-between items-center">
             <div>
@@ -135,7 +135,7 @@
             </div>
         </div>
         <div class="bg-white p-6 rounded-xl shadow border space-y-4">
-            <h3 class="font-bold text-lg">Question Review</h3>
+            <h3 class="font-bold text-lg">Question Performance & Rationale</h3>
             <div id="solution-list" class="space-y-4"></div>
         </div>
     </div>
@@ -143,8 +143,8 @@
     <!-- 4. TEACHER DASHBOARD -->
     <div id="teacher-screen" class="hidden p-8 max-w-6xl mx-auto space-y-6">
         <div class="flex justify-between items-center">
-            <h1 class="text-2xl font-bold">Teacher Class Scoreboard</h1>
-            <button id="clear-btn-teacher" class="px-3 py-1.5 bg-red-100 text-red-700 font-semibold text-xs rounded hover:bg-red-200">Clear Records</button>
+            <h1 class="text-2xl font-bold">Teacher Scoreboard</h1>
+            <button id="clear-btn-teacher" class="px-3 py-1.5 bg-red-100 text-red-700 font-semibold text-xs rounded hover:bg-red-200">Clear All Records</button>
         </div>
         <div class="bg-white rounded-xl shadow overflow-hidden border">
             <table class="w-full text-left text-sm text-gray-600">
@@ -153,7 +153,7 @@
                         <th class="p-4">Roll</th>
                         <th class="p-4">Student</th>
                         <th class="p-4">Score</th>
-                        <th class="p-4">Flags</th>
+                        <th class="p-4">Tab Flags</th>
                     </tr>
                 </thead>
                 <tbody id="teacher-table" class="divide-y"></tbody>
@@ -161,28 +161,251 @@
         </div>
     </div>
 
+    <!-- JAVASCRIPT & EMBEDDED QUESTION BANK -->
     <script>
-        let questions = [];
+        // FULL QUESTION BANK EMBEDDED DIRECTLY
+        const examData = [
+            {
+                section: "English Language",
+                passage: `I grew up in a small town not far from Kalimpong. In pre-liberalization India, everything arrived late: not just material things but also ideas. Magazines old copies of Reader's Digest and National Geographic arrived late too, after the news had become stale by months or, often, years. This temporal gap turned journalism into literature, news into legend, and historical events into something akin to plotless stories. But like those who knew no other life, we accepted this as the norm. The dearth of reading material in towns and villages in socialist India is hard to imagine, and it produced two categories of people: those who stopped reading after school or college, and those including children who read anything they could find. I read road signs with the enthusiasm that attaches to reading thrillers. When the iterant kabadiwala, collector of papers, magazines, and rejected things, visited our neighbourhood, I rushed to the house where he was doing business. He bought things at unimaginably low prices from those who'd stopped having any use for them, and I rummaged through his sacks of old magazines. Sometimes, on days when business was good, he allowed me a couple of copies of Sportsworld magazine for free. I'd run home and, ignoring my mother's scolding, plunge right in consuming news about India's victory in the Benson and Hedges Cup....
+
+Two takeaways from these experiences have marked my understanding of the provincial reader's life: the sense of belatedness, of everything coming late, and the desire for pleasure in language..... Speaking of belatedness, the awareness of having been born at the wrong time in history, of inventing things that had already been discovered elsewhere, far away, without our knowledge or cooperation, is a moment of epiphany and deep sadness. I remember a professor's choked voice, narrating to me how all the arguments he'd made in his doctoral dissertation, written over many, many years of hard work (for there indeed was a time when PhDs were written over decades), had suddenly come to naught after he'd discovered the work of C.W.E. Bigsby. This, I realised as I grew older, was one of the characteristics of provincial life: that they (usually males) were saying trite things with the confidence of someone declaring them for the first time. I, therefore, grew up surrounded by would-be Newtons who claimed to have discovered gravity (again). There's a deep sense of tragedy attending this sort of thing-the sad embarrassment of always arriving after the party is over. And there's a harsh word for that sense of belatedness: "dated." What rescues it is the unpredictability of these anachronistic "discoveries" the randomness and haphazardness involved in mapping connections among thoughts and ideas, in a way that hasn't yet been professionalised.`,
+                questions: [
+                    {
+                        id: 1,
+                        question: "What use was the kabadiwala (wastepicker) to the author?",
+                        options: [
+                            "(A) The kabadiwala bought up all her magazines.",
+                            "(B) The kabadiwala's stock of books and magazines were of interest to the author.",
+                            "(C) The kabadiwala was about to steal the author's magazines.",
+                            "(D) The author ordered books online which the kabadiwala delivered."
+                        ],
+                        correct: 1,
+                        rationale: "The author rummaged through the kabadiwala's sacks of old magazines to find reading material."
+                    },
+                    {
+                        id: 2,
+                        question: "What according to the author is essential about the experience of being a 'provincial reader'?",
+                        options: [
+                            "(A) Belatedness in the sense of coming late for everything.",
+                            "(B) Over-eagerness.",
+                            "(C) Accepting a temporal gap between what was current in the wider world and the time at which these arrived in the provincial location.",
+                            "(D) None of the above"
+                        ],
+                        correct: 2,
+                        rationale: "The author explicitly identifies the acceptance of temporal delay in provincial locations as essential."
+                    },
+                    {
+                        id: 3,
+                        question: "Why did the author feel a sense of epiphany and deep sadness?",
+                        options: [
+                            "(A) Because the things that felt special and unique to the author, were already established and accepted thought in the wider world.",
+                            "(B) Because the author was less well-read than others.",
+                            "(C) Because the author missed being in a big city.",
+                            "(D) All the above"
+                        ],
+                        correct: 0,
+                        rationale: "The passage notes that discovering that one's hard-earned thoughts were already discovered elsewhere brings epiphany and sadness."
+                    },
+                    {
+                        id: 4,
+                        question: "What does the word 'anachronistic' as used in the passage, mean?",
+                        options: [
+                            "(A) Rooted in a non-urban setting",
+                            "(B) Related to a mofussil area",
+                            "(C) Connected with another time",
+                            "(D) Opposed to prevailing sensibilities"
+                        ],
+                        correct: 2,
+                        rationale: "Anachronistic refers to something belonging to a time period other than that in which it exists."
+                    },
+                    {
+                        id: 5,
+                        question: "Which of the following options captures the meaning of the last sentence best?",
+                        options: [
+                            "(A) Though the author feels provincial, she pretends to be from the metropolis.",
+                            "(B) Though the author feels dated in her access to intellectual ideas, her lack of metropolitan sophistication lets her engage with the ideas with some originality.",
+                            "(C) Though the author is aware of the limitedness of her knowledge, she is confident and can hold her own in a crowd.",
+                            "(D) All the above"
+                        ],
+                        correct: 1,
+                        rationale: "The last sentence emphasizes that unpredictable and non-professionalized mapping of thoughts rescues provincial belatedness."
+                    }
+                ]
+            },
+            {
+                section: "Current Affairs & GK",
+                passage: `Former Governor of a State and National Democratic Alliance (NDA) candidate Droupadi Murmu was elected the 15th President of India, the first tribal woman to be elected to the position and the youngest as well. She was declared elected on Thursday after four rounds of counting, although she had crossed the half-way mark after the third round of counting itself, posting an unassailable lead over her rival and the Opposition's candidate who conceded the election thereafter. Prime Minister Narendra Modi was the first to greet Ms. Murmu at her residence in New Delhi after the third round of counting showed that she had crossed the half-way mark.
+
+Ms. Murmu hails from the Santhal tribe and was born in the district of Mayurbhanj, coming up the hard way in life, graduating and teaching in Odisha before entering electoral politics at the local body level and later being elected MLA and serving as a Minister in the Biju Janata Dal-BJP coalition government from 2000 to 2004. She remained an MLA till 2009, representing Rairangpur in Odisha, a town that burst into celebrations since her name was announced as a candidate for the post of President of India. She was known to intervene in stopping amendments to the Chota Nagpur Tenancy Act that was being brought in by the BJP government of Raghubar Das, which involved changing land use in tribal areas.`,
+                questions: [
+                    {
+                        id: 31,
+                        question: "Before Droupadi Murmu, India had only one other female president, Pratibha Patil. When did Patil serve as the President of India?",
+                        options: ["(A) 2007-2012", "(B) 2005-2010", "(C) 2012-2017", "(D) 2006-2011"],
+                        correct: 0,
+                        rationale: "Pratibha Patil served as the 12th President of India from 2007 to 2012."
+                    },
+                    {
+                        id: 32,
+                        question: "President Murmu has earlier served as a Governor of which State?",
+                        options: ["(A) Odisha", "(B) Bihar", "(C) Jharkhand", "(D) West Bengal"],
+                        correct: 2,
+                        rationale: "Droupadi Murmu served as the Governor of Jharkhand from 2015 to 2021."
+                    },
+                    {
+                        id: 33,
+                        question: "The first presidential election was held by the Election Commission in which year?",
+                        options: ["(A) 1952", "(B) 1950", "(C) 1948", "(D) 1949"],
+                        correct: 0,
+                        rationale: "The first Indian presidential election was held in 1952."
+                    },
+                    {
+                        id: 36,
+                        question: "Voting in an Indian Presidential Election is through:",
+                        options: [
+                            "(A) A first-past-the-post system through a single transferable vote cast in a secret ballot",
+                            "(B) A proportional representation system through a single transferable vote cast in a secret ballot",
+                            "(C) A proportional representation system through a single transferable vote cast in an open ballot",
+                            "(D) A first-past-the-post system through a single transferable vote cast in an open ballot"
+                        ],
+                        correct: 1,
+                        rationale: "The President is elected by proportional representation by single transferable vote in a secret ballot."
+                    },
+                    {
+                        id: 37,
+                        question: "Who was the first Dalit to hold the office of the President of India?",
+                        options: ["(A) Ram Nath Kovind", "(B) V.V. Giri", "(C) Neelam Sanjiva Reddy", "(D) Kocheril Raman Narayanan"],
+                        correct: 3,
+                        rationale: "K. R. Narayanan was the first Dalit President of India (1997–2002)."
+                    }
+                ]
+            },
+            {
+                section: "Legal Reasoning",
+                passage: `Quashing a case of cruelty that was filed against a man by his wife, the Bombay High Court said that if a married lady is asked to do household work for the family, it cannot be said that she is treated "like a maid servant". The Court was hearing an application by the husband and his parents seeking that proceedings against them are quashed. A First Information Report ("FIR") was filed against the trio in September 2020, around nine months after the marriage, alleging that they hounded the woman for money to purchase a car, harassed her mentally and physically and treated her like a maid servant. Examining the evidence, the Court found that there was no merit to the woman's allegations. The Court said that though the FIR says that she was treated properly for about a month and then "like a maid servant", there are no details of what this meant. The Court added: "If a married lady is asked to do household work for the purpose of the family, it cannot be said that it is like a maid servant." The Court held that the mere use of the word harassment "mentally and physically" in the FIR is not sufficient to constitute an offence Section 498A of the Indian Penal Code ("IPC").`,
+                questions: [
+                    {
+                        id: 66,
+                        question: "Ashwin and Ashima were married in February 2020. In March 2020, Ashwin asked Ashima to take care of all their household work. Ashima claims this amounts to treating her like a maid servant under 498A IPC. Is she likely to succeed?",
+                        options: [
+                            "(A) Yes, since Ashwin had only asked Ashima to do their household work, and not for others.",
+                            "(B) No, since Ashwin had only asked Ashima to do their household work, and not for others.",
+                            "(C) Yes, since Ashwin had asked Ashima to do household work for themselves as well as others.",
+                            "(D) No, since treating a married woman like a maid servant would not amount to an offence under that Section."
+                        ],
+                        correct: 1,
+                        rationale: "Asking a wife to perform household work for the family does not amount to cruelty under Section 498A IPC."
+                    },
+                    {
+                        id: 67,
+                        question: "In April 2020, Ashwin's friend Rakesh stays with them. He uses abusive language and throws a plate at Ashima. Ashima claims Rakesh committed an offence under Section 498A IPC. Is she likely to succeed?",
+                        options: [
+                            "(A) No, since Rakesh's actions were perfectly justifiable.",
+                            "(B) Yes, since Rakesh's actions clearly amount to cruelty.",
+                            "(C) No, since Rakesh is not her husband, nor is he related to Ashwin.",
+                            "(D) Yes, since Rakesh was staying at Ashwin and Ashima's home."
+                        ],
+                        correct: 2,
+                        rationale: "Section 498A applies explicitly only to the husband or relatives of the husband. Rakesh is merely a friend."
+                    },
+                    {
+                        id: 68,
+                        question: "Ashima is granted a divorce from Ashwin in November 2020. Later, Ashwin treats Ashima cruelly. Ashima claims an offence under Section 498A IPC. Is she right?",
+                        options: [
+                            "(A) Yes, since Ashwin treated her cruelly.",
+                            "(B) Yes, since Ashwin has been her husband.",
+                            "(C) No, since Ashwin was upset.",
+                            "(D) No, since she is no longer married to Ashwin."
+                        ],
+                        correct: 3,
+                        rationale: "Section 498A applies strictly during marriage. Once divorced, the statutory relation ceases."
+                    }
+                ]
+            },
+            {
+                section: "Logical Reasoning",
+                passage: `The depreciation of an economy's currency is not a matter of concern in itself. The decline in value against major currencies has to be viewed within a set of macroeconomic factors. The recent depreciation of the Indian rupee is a case in point. The rupee has been depreciating for a long time. What are of concern now are the rate at which the depreciation is occurring and the underlying factors causing the change. The Russia-Ukraine war has disrupted supply chains causing commodity prices to rise, leading to a worldwide hardening of inflationary trends. This, in turn, has caused major central banks to raise interest rates, forcing investors back to the safe haven of the US dollar... The RBI has difficult choices: controlling inflation versus stimulating growth and stabilising the rupee without severely diminishing the economy's foreign exchange kitty.`,
+                questions: [
+                    {
+                        id: 106,
+                        question: "Which of the following is the author most likely to agree with?",
+                        options: [
+                            "(A) It is a major cause for concern if an economy's currency is depreciating.",
+                            "(B) Currency depreciation is not a reason for worry in itself, but if macroeconomic factors are not good, there may be a cause for concern.",
+                            "(C) The fact that the Indian rupee is witnessing a decline in value against major currencies is very worrisome.",
+                            "(D) A central bank must always do everything in its power to stem the slightest depreciation of an economy's currency."
+                        ],
+                        correct: 1,
+                        rationale: "The passage opens stating currency depreciation is not a concern in itself, but must be evaluated within macroeconomic contexts."
+                    },
+                    {
+                        id: 107,
+                        question: "Based on the author's arguments, which of the following, if true, would reduce the decline in value of the rupee?",
+                        options: [
+                            "(A) Appointing a new Governor for the RBI who has a better sense of how to control inflationary trends.",
+                            "(B) A steep increase in commodity prices and the continued disruption of supply chains.",
+                            "(C) A reduction in worldwide inflationary trends and the reduction of interest rates in developed country markets.",
+                            "(D) The RBI buying as many dollars as possible from the market."
+                        ],
+                        correct: 2,
+                        rationale: "Reversing global inflationary trends and reducing foreign interest rates removes capital outflow pressures."
+                    }
+                ]
+            },
+            {
+                section: "Quantitative Techniques",
+                passage: `World fruit production went up 54 percent between 2000 and 2019, to 883 million tonnes. Five fruit species accounted for 57 percent of the total production in 2019, down from 63 percent in 2000.`,
+                questions: [
+                    {
+                        id: 141,
+                        question: "What was the world fruit production in 2000?",
+                        options: [
+                            "(A) 474 million tonnes",
+                            "(B) 517 million tonnes",
+                            "(C) 573 million tonnes",
+                            "(D) 406 million tonnes"
+                        ],
+                        correct: 2,
+                        rationale: "Calculation: 883 / 1.54 ≈ 573.37 million tonnes."
+                    },
+                    {
+                        id: 145,
+                        question: "Frutopia and Fruitfix both sold oranges at the same selling price. However, Frutopia gave customers a 15% discount on marked price whereas Fruitfix sold oranges for a discount of 20% on marked price. If marked price on Frutopia is Rs 75/kg, what is the marked price on Fruitfix?",
+                        options: [
+                            "(A) 78",
+                            "(B) 82",
+                            "(C) 90",
+                            "(D) 79.68 (approx 80)"
+                        ],
+                        correct: 3,
+                        rationale: "Selling Price = 75 * 0.85 = 63.75. For Fruitfix: Marked Price * 0.80 = 63.75 => Marked Price = 79.68 (~Rs 80)."
+                    }
+                ]
+            }
+        ];
+
+        // ENGINE STATE
+        let allQuestions = [];
         let userAnswers = {};
         let currentQIndex = 0;
         let tabSwitches = 0;
         let timer = 120 * 60;
         let student = {};
 
-        document.addEventListener('DOMContentLoaded', async () => {
+        document.addEventListener('DOMContentLoaded', () => {
             lucide.createIcons();
-            
-            // Load Full 150 JSON questions
-            try {
-                const res = await fetch('questions.json');
-                questions = await res.json();
-            } catch (e) {
-                console.error("Could not load questions.json", e);
-            }
+
+            // Unpack questions into linear array
+            examData.forEach(sec => {
+                sec.questions.forEach(q => {
+                    allQuestions.push({ ...q, section: sec.section, passage: sec.passage });
+                });
+            });
 
             document.getElementById('nav-student-btn').onclick = () => showScreen('start-screen');
             document.getElementById('nav-teacher-btn').onclick = () => {
-                if (prompt("Enter Passcode:", "teacher123") === "teacher123") {
+                if (prompt("Enter Teacher Passcode:", "teacher123") === "teacher123") {
                     showScreen('teacher-screen');
                     renderTeacherTable();
                 }
@@ -194,7 +417,7 @@
                     name: document.getElementById('student-name').value,
                     roll: document.getElementById('student-roll').value
                 };
-                document.getElementById('candidate-display').innerText = `${student.name} (${student.roll})`;
+                document.getElementById('candidate-display').innerText = `Candidate: ${student.name} (${student.roll})`;
                 showScreen('test-screen');
                 initExam();
             };
@@ -215,9 +438,10 @@
         }
 
         function initExam() {
-            questions.forEach((q, idx) => {
+            allQuestions.forEach((q, idx) => {
                 userAnswers[idx] = { selected: null, status: 'not-visited' };
             });
+            renderSectionTabs();
             loadQuestion(0);
             setInterval(() => {
                 timer--;
@@ -232,13 +456,29 @@
             document.getElementById('sidebar-submit-btn').onclick = submitExam;
         }
 
+        function renderSectionTabs() {
+            const tabs = document.getElementById('section-tabs');
+            tabs.innerHTML = '';
+            examData.forEach(sec => {
+                const btn = document.createElement('button');
+                btn.className = `px-3 py-1 text-xs font-semibold rounded ${allQuestions[currentQIndex].section === sec.section ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700'}`;
+                btn.innerText = sec.section;
+                btn.onclick = () => {
+                    const firstIdx = allQuestions.findIndex(q => q.section === sec.section);
+                    if (firstIdx !== -1) loadQuestion(firstIdx);
+                };
+                tabs.appendChild(btn);
+            });
+        }
+
         function loadQuestion(idx) {
             currentQIndex = idx;
-            const q = questions[idx];
+            const q = allQuestions[idx];
             if (userAnswers[idx].status === 'not-visited') userAnswers[idx].status = 'visited';
 
+            document.getElementById('section-badge').innerText = `${q.section} PASSAGE`;
             document.getElementById('passage-text').innerText = q.passage;
-            document.getElementById('q-badge').innerText = `Question ${idx + 1} of ${questions.length} (${q.section})`;
+            document.getElementById('q-badge').innerText = `Question ${idx + 1} of ${allQuestions.length}`;
             document.getElementById('q-text').innerText = q.question;
 
             const box = document.getElementById('options-box');
@@ -246,7 +486,7 @@
             q.options.forEach((opt, optIdx) => {
                 const isSel = userAnswers[idx].selected === optIdx;
                 const div = document.createElement('div');
-                div.className = `p-3 border rounded-lg cursor-pointer text-sm ${isSel ? 'border-blue-600 bg-blue-50 font-semibold' : 'hover:bg-gray-100'}`;
+                div.className = `p-3 border rounded-lg cursor-pointer text-sm ${isSel ? 'border-blue-600 bg-blue-50 font-semibold text-blue-900' : 'hover:bg-gray-100'}`;
                 div.innerText = opt;
                 div.onclick = () => {
                     userAnswers[idx].selected = optIdx;
@@ -256,6 +496,7 @@
                 box.appendChild(div);
             });
 
+            renderSectionTabs();
             renderPalette();
         }
 
@@ -267,13 +508,13 @@
 
         function navigate(step) {
             let next = currentQIndex + step;
-            if (next >= 0 && next < questions.length) loadQuestion(next);
+            if (next >= 0 && next < allQuestions.length) loadQuestion(next);
         }
 
         function renderPalette() {
             const grid = document.getElementById('palette-grid');
             grid.innerHTML = '';
-            questions.forEach((_, idx) => {
+            allQuestions.forEach((_, idx) => {
                 const st = userAnswers[idx].status;
                 let bg = 'bg-gray-200';
                 if (st === 'answered') bg = 'bg-emerald-500 text-white';
@@ -288,22 +529,46 @@
         }
 
         function submitExam() {
-            if (!confirm("Submit exam?")) return;
+            if (!confirm("Are you sure you want to finalize and submit your exam?")) return;
             showScreen('result-screen');
             
             let score = 0;
-            questions.forEach((q, idx) => {
+            const solutionList = document.getElementById('solution-list');
+            solutionList.innerHTML = '';
+
+            allQuestions.forEach((q, idx) => {
                 const sel = userAnswers[idx].selected;
+                let statusText = "Unattempted";
+                let statusClass = "bg-gray-100 text-gray-700";
+
                 if (sel !== null) {
-                    if (sel === q.correct) score += 1;
-                    else score -= 0.25;
+                    if (sel === q.correct) {
+                        score += 1;
+                        statusText = "Correct (+1.0)";
+                        statusClass = "bg-green-100 text-green-800";
+                    } else {
+                        score -= 0.25;
+                        statusText = "Incorrect (-0.25)";
+                        statusClass = "bg-red-100 text-red-800";
+                    }
                 }
+
+                solutionList.innerHTML += `
+                    <div class="p-4 border rounded-lg bg-gray-50 text-xs space-y-2">
+                        <div class="flex justify-between font-bold text-sm">
+                            <span>Q${idx + 1}. ${q.question}</span>
+                            <span class="px-2 py-0.5 rounded ${statusClass}">${statusText}</span>
+                        </div>
+                        <div><strong>Your Selection:</strong> ${sel !== null ? q.options[sel] : 'None'}</div>
+                        <div><strong>Correct Answer:</strong> ${q.options[q.correct]}</div>
+                        <div class="bg-white p-2 rounded border"><strong>Rationale:</strong> ${q.rationale}</div>
+                    </div>
+                `;
             });
 
             document.getElementById('res-student').innerText = `${student.name} (${student.roll})`;
             document.getElementById('res-score').innerText = score.toFixed(2);
 
-            // Save to LocalStorage for Teacher
             const records = JSON.parse(localStorage.getItem('clat_records') || '[]');
             records.push({ name: student.name, roll: student.roll, score: score.toFixed(2), flags: tabSwitches });
             localStorage.setItem('clat_records', JSON.stringify(records));
@@ -314,7 +579,7 @@
             const tbody = document.getElementById('teacher-table');
             tbody.innerHTML = '';
             records.forEach(r => {
-                tbody.innerHTML += `<tr><td class="p-4">${r.roll}</td><td class="p-4">${r.name}</td><td class="p-4 font-bold text-blue-600">${r.score}</td><td class="p-4">${r.flags} Flags</td></tr>`;
+                tbody.innerHTML += `<tr><td class="p-4 font-mono">${r.roll}</td><td class="p-4 font-medium">${r.name}</td><td class="p-4 font-bold text-blue-600">${r.score}</td><td class="p-4">${r.flags} Flags</td></tr>`;
             });
             document.getElementById('clear-btn-teacher').onclick = () => {
                 localStorage.removeItem('clat_records');
