@@ -2,79 +2,282 @@
   {
     "id": 1,
     "section": "English Language",
-    "passage": "I grew up in a small town not far from Kalimpong. In pre-liberalization India, everything arrived late: not just material things but also ideas...[cite: 3]",
-    "question": "What use was the kabadiwala (wastepicker) to the author?[cite: 3]",
+    "passage": "I grew up in a small town not far from Kalimpong[cite: 3]. In pre-liberalization India, everything arrived late: not just material things but also ideas[cite: 3]. Magazines old copies of Reader's Digest and National Geographic arrived late too, after the news had become stale by months or, often, years[cite: 3]. This temporal gap turned journalism into literature, news into legend, and historical events into something akin to plotless stories[cite: 3]. But like those who knew no other life, we accepted this as the norm[cite: 3]. The dearth of reading material in towns and villages in socialist India is hard to imagine, and it produced two categories of people: those who stopped reading after school or college, and those including children who read anything they could find[cite: 3]. I read road signs with the enthusiasm that attaches to reading thrillers[cite: 3]. When the iterant kabadiwala, collector of papers, magazines, and rejected things, visited our neighbourhood, I rushed to the house where he was doing business[cite: 3]. He bought things at unimaginably low prices from those who'd stopped having any use for them, and I rummaged through his sacks of old magazines[cite: 3]. Sometimes, on days when business was good, he allowed me a couple of copies of Sportsworld magazine for free[cite: 3]. I'd run home and, ignoring my mother's scolding, plunge right in consuming news about India's victory in the Benson and Hedges Cup[cite: 3].\n\nTwo takeaways from these experiences have marked my understanding of the provincial reader's life: the sense of belatedness, of everything coming late, and the desire for pleasure in language[cite: 3]. Speaking of belatedness, the awareness of having been born at the wrong time in history, of inventing things that had already been discovered elsewhere, far away, without our knowledge or cooperation, is a moment of epiphany and deep sadness[cite: 3]. I remember a professor's choked voice, narrating to me how all the arguments he'd made in his doctoral dissertation, written over many, many years of hard work (for there indeed was a time when PhDs were written over decades), had suddenly come to naught after he'd discovered the work of C.W.E. Bigsby[cite: 3]. This, I realised as I grew older, was one of the characteristics of provincial life: that they (usually males) were saying trite things with the confidence of someone declaring them for the first time[cite: 3]. I, therefore, grew up surrounded by would-be Newtons who claimed to have discovered gravity (again)[cite: 3]. There's a deep sense of tragedy attending this sort of thing-the sad embarrassment of always arriving after the party is over[cite: 3]. And there's a harsh word for that sense of belatedness: 'dated.' What rescues it is the unpredictability of these anachronistic 'discoveries' the randomness and haphazardness involved in mapping connections among thoughts and ideas, in a way that hasn't yet been professionalised[cite: 3].",
+    "question": "What use was the kabadiwala (wastepicker) to the author?",
     "options": [
-      "(A) The kabadiwala bought up all her magazines.[cite: 3]",
-      "(B) The kabadiwala's stock of books and magazines were of interest to the author.[cite: 3]",
-      "(C) The kabadiwala was about to steal the author's magazines.[cite: 3]",
-      "(D) The author ordered books online which the kabadiwala delivered.[cite: 3]"
+      "(A) The kabadiwala bought up all her magazines.",
+      "(B) The kabadiwala's stock of books and magazines were of interest to the author.",
+      "(C) The kabadiwala was about to steal the author's magazines.",
+      "(D) The author ordered books online which the kabadiwala delivered."
     ],
-    "correct": 1
+    "correct": 1,
+    "rationale": "The author rummaged through the kabadiwala's sacks of old magazines to find reading material."
   },
   {
     "id": 2,
     "section": "English Language",
-    "passage": "I grew up in a small town not far from Kalimpong...[cite: 3]",
-    "question": "What according to the author is essential about the experience of being a 'provincial reader'?[cite: 4]",
+    "passage": "I grew up in a small town not far from Kalimpong[cite: 3]...",
+    "question": "What according to the author is essential about the experience of being a 'provincial reader'?",
     "options": [
-      "(A) Belatedness in the sense of coming late for everything.[cite: 4]",
-      "(B) Over-eagerness.[cite: 4]",
-      "(C) Accepting a temporal gap between what was current in the wider world and the time at which these arrived in the provincial location.[cite: 4]",
-      "(D) None of the above[cite: 4]"
+      "(A) Belatedness in the sense of coming late for everything.",
+      "(B) Over-eagerness.",
+      "(C) Accepting a temporal gap between what was current in the wider world and the time at which these arrived in the provincial location.",
+      "(D) None of the above"
     ],
-    "correct": 2
+    "correct": 2,
+    "rationale": "The author explicitly identifies the acceptance of temporal delay in provincial locations as essential."
+  },
+  {
+    "id": 3,
+    "section": "English Language",
+    "passage": "I grew up in a small town not far from Kalimpong[cite: 3]...",
+    "question": "Why did the author feel a sense of epiphany and deep sadness?",
+    "options": [
+      "(A) Because the things that felt special and unique to the author, were already established and accepted thought in the wider world.",
+      "(B) Because the author was less well-read than others.",
+      "(C) Because the author missed being in a big city.",
+      "(D) All the above"
+    ],
+    "correct": 0,
+    "rationale": "Discovering that one's hard-earned thoughts were already discovered elsewhere brings epiphany and sadness."
+  },
+  {
+    "id": 4,
+    "section": "English Language",
+    "passage": "I grew up in a small town not far from Kalimpong[cite: 3]...",
+    "question": "What does the word 'anachronistic' as used in the passage, mean?",
+    "options": [
+      "(A) Rooted in a non-urban setting",
+      "(B) Related to a mofussil area",
+      "(C) Connected with another time",
+      "(D) Opposed to prevailing sensibilities"
+    ],
+    "correct": 2,
+    "rationale": "Anachronistic refers to something belonging to a time period other than that in which it exists."
+  },
+  {
+    "id": 5,
+    "section": "English Language",
+    "passage": "I grew up in a small town not far from Kalimpong[cite: 3]...",
+    "question": "Which of the following options captures the meaning of the last sentence best?",
+    "options": [
+      "(A) Though the author feels provincial, she pretends to be from the metropolis.",
+      "(B) Though the author feels dated in her access to intellectual ideas, her lack of metropolitan sophistication lets her engage with the ideas with some originality.",
+      "(C) Though the author is aware of the limitedness of her knowledge, she is confident and can hold her own in a crowd.",
+      "(D) All the above"
+    ],
+    "correct": 1,
+    "rationale": "The last sentence emphasizes that unpredictable and non-professionalized mapping of thoughts rescues provincial belatedness."
   },
   {
     "id": 31,
     "section": "Current Affairs Including General Knowledge",
-    "passage": "Former Governor of a State and National Democratic Alliance (NDA) candidate Droupadi Murmu was elected the 15th President of India...[cite: 12]",
-    "question": "Before Droupadi Murmu, India had only one other female president, Pratibha Patil. When did Patil serve as the President of India?[cite: 12]",
+    "passage": "Former Governor of a State and National Democratic Alliance (NDA) candidate Droupadi Murmu was elected the 15th President of India, the first tribal woman to be elected to the position and the youngest as well[cite: 12]. She was declared elected on Thursday after four rounds of counting, although she had crossed the half-way mark after the third round of counting itself, posting an unassailable lead over her rival and the Opposition's candidate who conceded the election thereafter[cite: 12]. Prime Minister Narendra Modi was the first to greet Ms. Murmu at her residence in New Delhi after the third round of counting showed that she had crossed the half-way mark[cite: 12].\n\nMs. Murmu hails from the Santhal tribe and was born in the district of Mayurbhanj, coming up the hard way in life, graduating and teaching in Odisha before entering electoral politics at the local body level and later being elected MLA and serving as a Minister in the Biju Janata Dal-BJP coalition government from 2000 to 2004[cite: 12]. She remained an MLA till 2009, representing Rairangpur in Odisha, a town that burst into celebrations since her name was announced as a candidate for the post of President of India[cite: 12]. She was known to intervene in stopping amendments to the Chota Nagpur Tenancy Act that was being brought in by the BJP government of Raghubar Das, which involved changing land use in tribal areas[cite: 12].",
+    "question": "Before Droupadi Murmu, India had only one other female president, Pratibha Patil[cite: 12]. When did Patil serve as the President of India?[cite: 12]",
     "options": [
-      "(A) 2007-2012[cite: 12]",
-      "(B) 2005-2010[cite: 12]",
-      "(C) 2012-2017[cite: 12]",
-      "(D) 2006-2011[cite: 12]"
+      "(A) 2007-2012",
+      "(B) 2005-2010",
+      "(C) 2012-2017",
+      "(D) 2006-2011"
     ],
-    "correct": 0
+    "correct": 0,
+    "rationale": "Pratibha Patil served as the 12th President of India from 2007 to 2012."
+  },
+  {
+    "id": 32,
+    "section": "Current Affairs Including General Knowledge",
+    "passage": "Former Governor of a State and National Democratic Alliance (NDA) candidate Droupadi Murmu was elected the 15th President of India[cite: 12]...",
+    "question": "President Murmu has earlier served as a Governor of which State?",
+    "options": [
+      "(A) Odisha",
+      "(B) Bihar",
+      "(C) Jharkhand",
+      "(D) West Bengal"
+    ],
+    "correct": 2,
+    "rationale": "Droupadi Murmu served as the Governor of Jharkhand from 2015 to 2021."
+  },
+  {
+    "id": 33,
+    "section": "Current Affairs Including General Knowledge",
+    "passage": "Former Governor of a State and National Democratic Alliance (NDA) candidate Droupadi Murmu was elected the 15th President of India[cite: 12]...",
+    "question": "The first presidential election was held by the Election Commission in which year?",
+    "options": [
+      "(A) 1952",
+      "(B) 1950",
+      "(C) 1948",
+      "(D) 1949"
+    ],
+    "correct": 0,
+    "rationale": "The first Indian presidential election was held in 1952."
+  },
+  {
+    "id": 36,
+    "section": "Current Affairs Including General Knowledge",
+    "passage": "Former Governor of a State and National Democratic Alliance (NDA) candidate Droupadi Murmu was elected the 15th President of India[cite: 12]...",
+    "question": "Voting in an Indian Presidential Election is through:",
+    "options": [
+      "(A) A first-past-the-post system through a single transferable vote cast in a secret ballot",
+      "(B) A proportional representation system through a single transferable vote cast in a secret ballot",
+      "(C) A proportional representation system through a single transferable vote cast in an open ballot",
+      "(D) A first-past-the-post system through a single transferable vote cast in an open ballot"
+    ],
+    "correct": 1,
+    "rationale": "The President is elected by proportional representation by single transferable vote in a secret ballot."
+  },
+  {
+    "id": 37,
+    "section": "Current Affairs Including General Knowledge",
+    "passage": "Former Governor of a State and National Democratic Alliance (NDA) candidate Droupadi Murmu was elected the 15th President of India[cite: 12]...",
+    "question": "Who was the first Dalit to hold the office of the President of India?",
+    "options": [
+      "(A) Ram Nath Kovind",
+      "(B) V.V. Giri",
+      "(C) Neelam Sanjiva Reddy",
+      "(D) Kocheril Raman Narayanan"
+    ],
+    "correct": 3,
+    "rationale": "K. R. Narayanan was the first Dalit President of India (1997–2002)."
+  },
+  {
+    "id": 61,
+    "section": "Legal Reasoning",
+    "passage": "Quashing a case of cruelty that was filed against a man by his wife, the Bombay High Court said that if a married lady is asked to do household work for the family, it cannot be said that she is treated 'like a maid servant'[cite: 18]. The Court was hearing an application by the husband and his parents seeking that proceedings against them are quashed[cite: 18]. A First Information Report ('FIR') was filed against the trio in September 2020, around nine months after the marriage, alleging that they hounded the woman for money to purchase a car, harassed her mentally and physically and treated her like a maid servant[cite: 18]. Examining the evidence, the Court found that there was no merit to the woman's allegations[cite: 18]. The Court said that though the FIR says that she was treated properly for about a month and then 'like a maid servant', there are no details of what this meant[cite: 18]. The Court added: 'If a married lady is asked to do household work for the purpose of the family, it cannot be said that it is like a maid servant.'[cite: 18] The Court held that the mere use of the word harassment 'mentally and physically' in the FIR is not sufficient to constitute an offence Section 498A of the Indian Penal Code ('IPC')[cite: 18].",
+    "question": "Which of the following is the High Court most likely to agree with?",
+    "options": [
+      "(A) Asking a married woman to do household work amounts to cruelty under Section 498A IPC.",
+      "(B) Mere use of the words 'harassment mentally and physically' without specific instances does not satisfy Section 498A IPC.",
+      "(C) Husbands are automatically exempt from prosecution under Section 498A IPC.",
+      "(D) Filing an FIR 9 months after marriage is strictly illegal."
+    ],
+    "correct": 1,
+    "rationale": "The Bombay High Court explicitly held that general allegations of harassment without specific details are insufficient under Section 498A IPC."
   },
   {
     "id": 66,
     "section": "Legal Reasoning",
-    "passage": "Quashing a case of cruelty that was filed against a man by his wife, the Bombay High Court said that if a married lady is asked to do household work for the family, it cannot be said that she is treated 'like a maid servant'...[cite: 18]",
-    "question": "Ashwin and Ashima were married in February 2020. In March 2020, Ashwin asked Ashima to take care of all their household work... Is she likely to succeed?[cite: 18]",
+    "passage": "Quashing a case of cruelty that was filed against a man by his wife, the Bombay High Court said that if a married lady is asked to do household work for the family, it cannot be said that she is treated 'like a maid servant'[cite: 18]...",
+    "question": "Ashwin and Ashima were married in February 2020. In March 2020, Ashwin asked Ashima to take care of all their household work. Ashima claims this amounts to treating her like a maid servant under 498A IPC. Is she likely to succeed?",
     "options": [
-      "(A) Yes, since Ashwin had only asked Ashima to do their household work, and not for others.[cite: 18]",
-      "(B) No, since Ashwin had only asked Ashima to do their household work, and not for others.[cite: 18]",
-      "(C) Yes, since Ashwin had asked Ashima to do household work for themselves as well as others.[cite: 18]",
-      "(D) No, since treating a married woman like a maid servant would not amount to an offence under that Section.[cite: 18]"
+      "(A) Yes, since Ashwin had only asked Ashima to do their household work, and not for others.",
+      "(B) No, since Ashwin had only asked Ashima to do their household work, and not for others.",
+      "(C) Yes, since Ashwin had asked Ashima to do household work for themselves as well as others.",
+      "(D) No, since treating a married woman like a maid servant would not amount to an offence under that Section."
     ],
-    "correct": 1
+    "correct": 1,
+    "rationale": "Asking a wife to perform household work for the family does not amount to cruelty under Section 498A IPC."
+  },
+  {
+    "id": 67,
+    "section": "Legal Reasoning",
+    "passage": "Quashing a case of cruelty that was filed against a man by his wife, the Bombay High Court said that if a married lady is asked to do household work for the family, it cannot be said that she is treated 'like a maid servant'[cite: 18]...",
+    "question": "In April 2020, Ashwin's friend Rakesh stays with them. He uses abusive language and throws a plate at Ashima. Ashima claims Rakesh committed an offence under Section 498A IPC. Is she likely to succeed?",
+    "options": [
+      "(A) No, since Rakesh's actions were perfectly justifiable.",
+      "(B) Yes, since Rakesh's actions clearly amount to cruelty.",
+      "(C) No, since Rakesh is not her husband, nor is he related to Ashwin.",
+      "(D) Yes, since Rakesh was staying at Ashwin and Ashima's home."
+    ],
+    "correct": 2,
+    "rationale": "Section 498A IPC applies explicitly only to the husband or relatives of the husband. Rakesh is merely a friend."
+  },
+  {
+    "id": 68,
+    "section": "Legal Reasoning",
+    "passage": "Quashing a case of cruelty that was filed against a man by his wife, the Bombay High Court said that if a married lady is asked to do household work for the family, it cannot be said that she is treated 'like a maid servant'[cite: 18]...",
+    "question": "Ashima is granted a divorce from Ashwin in November 2020. Later, Ashwin treats Ashima cruelly. Ashima claims an offence under Section 498A IPC. Is she right?",
+    "options": [
+      "(A) Yes, since Ashwin treated her cruelly.",
+      "(B) Yes, since Ashwin has been her husband.",
+      "(C) No, since Ashwin was upset.",
+      "(D) No, since she is no longer married to Ashwin."
+    ],
+    "correct": 3,
+    "rationale": "Section 498A IPC applies strictly during marriage. Once divorced, the marital relationship ceases to exist."
+  },
+  {
+    "id": 75,
+    "section": "Legal Reasoning",
+    "passage": "A contract is an agreement enforceable by law. An agreement becomes a binding contract when there is free consent of parties competent to contract, for a lawful consideration and with a lawful object. Consent is said to be free when it is not caused by coercion, undue influence, fraud, misrepresentation, or mistake. Where consent to an agreement is caused by coercion, fraud, or misrepresentation, the agreement is a contract voidable at the option of the party whose consent was so caused.",
+    "question": "A threatens to shoot B if B does not sell his house to A for Rs. 5 Lakhs. B agrees and signs the contract. What is the legal status of this contract?",
+    "options": [
+      "(A) Valid and binding on both parties.",
+      "(B) Void ab initio from the very beginning.",
+      "(C) Voidable at the option of B whose consent was obtained by coercion.",
+      "(D) Illegal and punishable under criminal law only."
+    ],
+    "correct": 2,
+    "rationale": "Consent obtained through physical threat or coercion makes the contract voidable at the option of the aggrieved party."
   },
   {
     "id": 106,
     "section": "Logical Reasoning",
-    "passage": "The depreciation of an economy's currency is not a matter of concern in itself...[cite: 38]",
-    "question": "Which of the following is the author most likely to agree with?[cite: 38]",
+    "passage": "The depreciation of an economy's currency is not a matter of concern in itself. The decline in value against major currencies has to be viewed within a set of macroeconomic factors. The recent depreciation of the Indian rupee is a case in point. The rupee has been depreciating for a long time. What are of concern now are the rate at which the depreciation is occurring and the underlying factors causing the change. The Russia-Ukraine war has disrupted supply chains causing commodity prices to rise, leading to a worldwide hardening of inflationary trends. This, in turn, has caused major central banks to raise interest rates, forcing investors back to the safe haven of the US dollar... The RBI has difficult choices: controlling inflation versus stimulating growth and stabilising the rupee without severely diminishing the economy's foreign exchange kitty.",
+    "question": "Which of the following is the author most likely to agree with?",
     "options": [
-      "(A) It is a major cause for concern if an economy's currency is depreciating.[cite: 38]",
-      "(B) Currency depreciation is not a reason for worry in itself, but if macroeconomic factors are not good, there may be a cause for concern.[cite: 38]",
-      "(C) The fact that the Indian rupee is witnessing a decline in value against major currencies is very worrisome.[cite: 38]",
-      "(D) A central bank must always do everything in its power to stem the slightest depreciation of an economy's currency.[cite: 38]"
+      "(A) It is a major cause for concern if an economy's currency is depreciating.",
+      "(B) Currency depreciation is not a reason for worry in itself, but if macroeconomic factors are not good, there may be a cause for concern.",
+      "(C) The fact that the Indian rupee is witnessing a decline in value against major currencies is very worrisome.",
+      "(D) A central bank must always do everything in its power to stem the slightest depreciation of an economy's currency."
     ],
-    "correct": 1
+    "correct": 1,
+    "rationale": "The passage opens stating currency depreciation is not a concern in itself, but must be evaluated within macroeconomic contexts."
+  },
+  {
+    "id": 107,
+    "section": "Logical Reasoning",
+    "passage": "The depreciation of an economy's currency is not a matter of concern in itself...",
+    "question": "Based on the author's arguments, which of the following, if true, would reduce the decline in value of the rupee?",
+    "options": [
+      "(A) Appointing a new Governor for the RBI who has a better sense of how to control inflationary trends.",
+      "(B) A steep increase in commodity prices and the continued disruption of supply chains.",
+      "(C) A reduction in worldwide inflationary trends and the reduction of interest rates in developed country markets.",
+      "(D) The RBI buying as many dollars as possible from the market."
+    ],
+    "correct": 2,
+    "rationale": "Reversing global inflationary trends and reducing foreign interest rates removes capital outflow pressures."
   },
   {
     "id": 141,
     "section": "Quantitative Techniques",
-    "passage": "World fruit production went up 54 percent between 2000 and 2019, to 883 million tonnes...[cite: 49]",
-    "question": "What was the world fruit production in 2000?[cite: 49]",
+    "passage": "World fruit production went up 54 percent between 2000 and 2019, to 883 million tonnes. Five fruit species accounted for 57 percent of the total production in 2019, down from 63 percent in 2000.",
+    "question": "What was the world fruit production in 2000?",
     "options": [
-      "(A) 474 million tonnes[cite: 49]",
-      "(B) 517 million tonnes[cite: 49]",
-      "(C) 573 million tonnes[cite: 49]",
-      "(D) 406 million tonnes[cite: 49]"
+      "(A) 474 million tonnes",
+      "(B) 517 million tonnes",
+      "(C) 573 million tonnes",
+      "(D) 406 million tonnes"
     ],
-    "correct": 2
+    "correct": 2,
+    "rationale": "Calculation: 883 / 1.54 = 573.37 million tonnes."
+  },
+  {
+    "id": 145,
+    "section": "Quantitative Techniques",
+    "passage": "Frutopia and Fruitfix both sold oranges at the same selling price. However, Frutopia gave customers a 15% discount on marked price whereas Fruitfix sold oranges for a discount of 20% on marked price. If marked price on Frutopia is Rs 75/kg, what is the marked price on Fruitfix?",
+    "question": "What is the marked price on Fruitfix?",
+    "options": [
+      "(A) 78",
+      "(B) 82",
+      "(C) 90",
+      "(D) 79.68 (approx 80)"
+    ],
+    "correct": 3,
+    "rationale": "Selling Price = 75 * 0.85 = 63.75. For Fruitfix: Marked Price * 0.80 = 63.75 => Marked Price = 79.68 (~Rs 80)."
+  },
+  {
+    "id": 150,
+    "section": "Quantitative Techniques",
+    "passage": "World fruit production went up 54 percent between 2000 and 2019, to 883 million tonnes...",
+    "question": "If total fruit production increases by another 10% in 2020 relative to 2019, what will be the total fruit production in 2020?",
+    "options": [
+      "(A) 971.3 million tonnes",
+      "(B) 950.0 million tonnes",
+      "(C) 980.5 million tonnes",
+      "(D) 920.0 million tonnes"
+    ],
+    "correct": 0,
+    "rationale": "Calculation: 883 * 1.10 = 971.3 million tonnes."
   }
+
 ]
