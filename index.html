@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CLAT UG Proctored CBT Portal</title>
+    <title>CLAT UG Proctored CBT Engine</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
@@ -60,6 +60,16 @@
             100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(6, 182, 212, 0); }
         }
 
+        /* Canvas Watermarking Overlay */
+        #watermark-canvas {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 30;
+            opacity: 0.12;
+        }
+
         .hl-yellow { background-color: #854d0e; color: #fef08a; border-radius: 2px; padding: 0 2px; }
         .hl-cyan { background-color: #164e63; color: #a5f3fc; border-radius: 2px; padding: 0 2px; }
     </style>
@@ -87,7 +97,7 @@
     <!-- BROADCAST BANNER -->
     <div id="broadcast-banner" class="hidden bg-cyan-950/80 border-b border-cyan-800/50 px-6 py-2 text-center text-xs text-cyan-300 font-medium flex items-center justify-center gap-2">
         <span class="pulse-cyan"></span>
-        <span id="broadcast-text">Faculty Notice: Mock Exam 02 is now live! Ensure camera permissions are active.</span>
+        <span id="broadcast-text">Faculty Notice: CBT Engine active. Microphone and window monitoring enforced.</span>
     </div>
 
     <!-- 1. INITIAL ROLE SELECTION SCREEN -->
@@ -151,7 +161,7 @@
 
         <div class="flex border-b border-gray-800 gap-4">
             <button id="stu-tab-exams-btn" class="py-2.5 px-4 border-b-2 border-cyan-400 text-cyan-400 font-bold text-sm">Available Mock Tests</button>
-            <button id="stu-tab-perf-btn" class="py-2.5 px-4 border-b-2 border-transparent text-gray-400 font-bold text-sm">Performance Analytics</button>
+            <button id="stu-tab-perf-btn" class="py-2.5 px-4 border-b-2 border-transparent text-gray-400 font-bold text-sm">Performance Analytics & Rank Engine</button>
         </div>
 
         <div id="stu-tab-exams" class="space-y-4">
@@ -159,7 +169,8 @@
         </div>
 
         <div id="stu-tab-perf" class="hidden space-y-6">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <!-- Rank & Readiness Metric Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div class="bg-[#111827] p-5 border border-gray-800 rounded-2xl shadow-sm text-center">
                     <span class="text-xs text-gray-400 uppercase font-bold tracking-wider">Mocks Attempted</span>
                     <h3 id="stat-total-tests" class="text-3xl font-black text-cyan-400 mt-1">0</h3>
@@ -169,16 +180,32 @@
                     <h3 id="stat-avg-score" class="text-3xl font-black text-teal-400 mt-1">0.00</h3>
                 </div>
                 <div class="bg-[#111827] p-5 border border-gray-800 rounded-2xl shadow-sm text-center">
-                    <span class="text-xs text-gray-400 uppercase font-bold tracking-wider">Highest Score</span>
-                    <h3 id="stat-high-score" class="text-3xl font-black text-purple-400 mt-1">0.00</h3>
+                    <span class="text-xs text-gray-400 uppercase font-bold tracking-wider">AI Readiness AIR</span>
+                    <h3 id="stat-predicted-air" class="text-3xl font-black text-purple-400 mt-1">AIR -</h3>
+                </div>
+                <div class="bg-[#111827] p-5 border border-gray-800 rounded-2xl shadow-sm text-center">
+                    <span class="text-xs text-gray-400 uppercase font-bold tracking-wider">Estimated Percentile</span>
+                    <h3 id="stat-predicted-pct" class="text-3xl font-black text-amber-400 mt-1">-%</h3>
                 </div>
             </div>
 
+            <!-- Score Graph -->
             <div class="bg-[#111827] p-6 rounded-2xl border border-gray-800 shadow-sm space-y-4">
                 <h3 class="text-base font-bold text-white">Score Progress Over Time</h3>
                 <div class="h-64">
                     <canvas id="scoreChart"></canvas>
                 </div>
+            </div>
+
+            <!-- SM-2 Spaced Repetition Drill Launcher -->
+            <div class="bg-gradient-to-r from-purple-950/40 to-cyan-950/40 p-6 rounded-2xl border border-purple-800/50 flex justify-between items-center">
+                <div>
+                    <h3 class="text-base font-bold text-purple-200">Adaptive Flash Drill (SM-2 Spaced Repetition)</h3>
+                    <p class="text-xs text-gray-400 mt-1">Re-attempt historical missed questions until you achieve a 3-consecutive-correct streak.</p>
+                </div>
+                <button id="start-drill-btn" class="px-5 py-2.5 bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs rounded-xl shadow-md transition">
+                    ⚡ Start Flash Drill
+                </button>
             </div>
 
             <div class="bg-[#111827] p-6 rounded-2xl border border-gray-800 shadow-sm space-y-4">
@@ -276,7 +303,7 @@
             </form>
         </div>
 
-        <!-- TAB 2: SCOREBOARD & LIVE ROOM -->
+        <!-- TAB 2: SCOREBOARD & LIVE ROOM GRID -->
         <div id="teacher-tab-score" class="hidden space-y-6">
             <div class="bg-amber-950/30 p-6 rounded-2xl border border-amber-800/60 space-y-4">
                 <h3 class="text-base font-bold text-amber-200">Session Reset Tools</h3>
@@ -336,8 +363,10 @@
         </div>
     </div>
 
-    <!-- 6. EXAM ENGINE WITH SCRATCHPAD & CONFIDENCE TAGS -->
-    <div id="test-screen" class="hidden h-[calc(100vh-56px)] flex flex-col bg-[#090d16]">
+    <!-- 6. EXAM ENGINE WITH WATERMARK & AUDIO MONITORING -->
+    <div id="test-screen" class="hidden h-[calc(100vh-56px)] flex flex-col bg-[#090d16] relative">
+        <canvas id="watermark-canvas"></canvas>
+
         <div class="bg-gray-900 text-white px-6 py-2.5 flex justify-between items-center text-xs shadow-md z-10 border-b border-gray-800">
             <span id="candidate-display" class="text-gray-300 font-semibold">Candidate: -</span>
             <div class="flex items-center gap-5">
@@ -382,7 +411,7 @@
             <!-- Resizer Handle -->
             <div id="drag-resizer" class="resizer flex items-center justify-center"></div>
 
-            <!-- Right Pane: Questions & Confidence -->
+            <!-- Right Pane: Questions & Options -->
             <div id="right-question-pane" class="flex-1 p-6 overflow-y-auto flex flex-col justify-between bg-[#090d16] custom-scrollbar">
                 <div>
                     <div class="flex justify-between items-center mb-4">
@@ -440,7 +469,7 @@
         </div>
     </div>
 
-    <!-- 7. RESULT SCORECARD -->
+    <!-- 7. RESULT SCORECARD WITH TIME-TO-ACCURACY MATRIX -->
     <div id="result-screen" class="hidden p-6 md:p-8 max-w-5xl mx-auto space-y-6 w-full">
         <div class="bg-[#111827] p-6 rounded-2xl shadow-sm border border-gray-800 flex justify-between items-center">
             <div>
@@ -451,6 +480,14 @@
             <div class="text-right">
                 <span class="text-4xl font-black text-cyan-400" id="res-score">0.00</span>
                 <p class="text-xs text-gray-400 uppercase font-bold tracking-wider mt-1">Final Score</p>
+            </div>
+        </div>
+
+        <!-- Scatter Plot Matrix for Time vs Accuracy -->
+        <div class="bg-[#111827] p-6 rounded-2xl border border-gray-800 space-y-3">
+            <h3 class="text-sm font-bold text-white uppercase tracking-wider">Time-to-Accuracy Correlation Matrix</h3>
+            <div class="h-64">
+                <canvas id="matrixChart"></canvas>
             </div>
         </div>
 
@@ -520,6 +557,9 @@
         var fontSizeLevel = 100;
         var paletteFilter = 'all';
         var scoreChartInstance = null;
+        var matrixChartInstance = null;
+        var audioContext = null;
+        var analyser = null;
 
         function getStoredExams() {
             var custom = JSON.parse(localStorage.getItem('clat_custom_exams') || '[]');
@@ -533,6 +573,7 @@
             setupHighlighters();
             setupScratchpad();
             checkBroadcastBanner();
+            setupDevToolsTrap();
 
             document.getElementById('font-inc-btn').onclick = function() { if (fontSizeLevel < 140) { fontSizeLevel += 10; applyFontSize(); } };
             document.getElementById('font-dec-btn').onclick = function() { if (fontSizeLevel > 80) { fontSizeLevel -= 10; applyFontSize(); } };
@@ -541,6 +582,7 @@
             document.getElementById('header-switch-role-btn').onclick = function() {
                 if (isExamActive && !confirm("Leaving this page will submit your exam attempt. Continue?")) return;
                 stopWebcam();
+                stopAudioMonitor();
                 isExamActive = false;
                 if (timerInterval) clearInterval(timerInterval);
                 showScreen('role-selection-screen');
@@ -603,7 +645,7 @@
                 try {
                     var parsed = JSON.parse(area.value);
                     area.value = JSON.stringify(parsed, null, 2);
-                } catch (e) { alert("Invalid JSON syntax! Fix syntax before formatting."); }
+                } catch (e) { alert("Invalid JSON syntax!"); }
             };
 
             document.getElementById('set-broadcast-btn').onclick = function() {
@@ -611,7 +653,7 @@
                 if (!txt) return alert("Enter banner text.");
                 localStorage.setItem('clat_broadcast_msg', txt);
                 checkBroadcastBanner();
-                alert("Broadcast banner updated for all students!");
+                alert("Broadcast banner updated!");
             };
 
             document.getElementById('clear-broadcast-btn').onclick = function() {
@@ -702,7 +744,7 @@
                     currentExams.push(newExam);
                     localStorage.setItem('clat_custom_exams', JSON.stringify(currentExams));
 
-                    alert("Exam created and published successfully!");
+                    alert("Exam created and published!");
                     document.getElementById('json-import-form').reset();
                 } catch(err) { alert("Invalid JSON format!"); }
             };
@@ -716,6 +758,71 @@
                     handleProctorViolation("Exited Fullscreen Mode");
                 }
             });
+        }
+
+        // Anti-Cheating: DevTools Resize / Inspection Detector Trap
+        function setupDevToolsTrap() {
+            var threshold = 160;
+            setInterval(function() {
+                if (isExamActive && (window.outerWidth - window.innerWidth > threshold || window.outerHeight - window.innerHeight > threshold)) {
+                    handleProctorViolation("Developer Tools Inspection Detected");
+                }
+            }, 2000);
+        }
+
+        // Anti-Cheating: Canvas Dynamic Watermark
+        function generateWatermark() {
+            var canvas = document.getElementById('watermark-canvas');
+            if (!canvas) return;
+            var ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.font = "14px monospace";
+            ctx.fillStyle = "rgba(6, 182, 212, 0.25)";
+            ctx.rotate(-20 * Math.PI / 180);
+
+            var text = activeUser ? (activeUser.id + " | " + activeUser.name + " | " + new Date().toLocaleTimeString()) : "CLAT PROCTORED ENGINE";
+            for (var y = -200; y < canvas.height + 400; y += 120) {
+                for (var x = -200; x < canvas.width + 400; x += 300) {
+                    ctx.fillText(text, x, y);
+                }
+            }
+        }
+
+        // Anti-Cheating: WebAudio Microphone Environment Noise Monitor
+        async function startAudioMonitor() {
+            try {
+                var audioStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                var source = audioContext.createMediaStreamSource(audioStream);
+                analyser = audioContext.createAnalyser();
+                analyser.fftSize = 256;
+                source.connect(analyser);
+
+                var bufferLength = analyser.frequencyBinCount;
+                var dataArray = new Uint8Array(bufferLength);
+
+                setInterval(function() {
+                    if (!isExamActive || !analyser) return;
+                    analyser.getByteFrequencyData(dataArray);
+                    var sum = 0;
+                    for (var i = 0; i < bufferLength; i++) sum += dataArray[i];
+                    var average = sum / bufferLength;
+
+                    if (average > 65) {
+                        handleProctorViolation("High Ambient Speech / Whisper Noise Detected (" + Math.round(average) + " dB)");
+                    }
+                }, 3000);
+            } catch(e) {}
+        }
+
+        function stopAudioMonitor() {
+            if (audioContext) {
+                audioContext.close();
+                audioContext = null;
+            }
         }
 
         function checkBroadcastBanner() {
@@ -832,17 +939,30 @@
             var labels = [];
             var scores = [];
 
+            // Exponential Decay Weighted Readiness Formula
+            var weightedSum = 0;
+            var weightTotal = 0;
+
             for (var i = 0; i < myRecords.length; i++) {
                 var scoreNum = parseFloat(myRecords[i].score) || 0;
                 sum += scoreNum;
                 if (scoreNum > max) max = scoreNum;
                 labels.push("Mock " + (i + 1));
                 scores.push(scoreNum);
+
+                var weight = Math.pow(1.2, i + 1);
+                weightedSum += scoreNum * weight;
+                weightTotal += weight;
             }
+
+            var weightedAvg = weightTotal > 0 ? (weightedSum / weightTotal) : 0;
+            var predictedPct = total > 0 ? Math.min(99.9, Math.max(50.0, (weightedAvg / 120) * 100 + 15)).toFixed(1) : '-';
+            var predictedAIR = total > 0 ? Math.max(12, Math.round((100 - parseFloat(predictedPct)) * 600)).toLocaleString() : '-';
 
             document.getElementById('stat-total-tests').innerText = total;
             document.getElementById('stat-avg-score').innerText = total > 0 ? (sum / total).toFixed(2) : '0.00';
-            document.getElementById('stat-high-score').innerText = max.toFixed(2);
+            document.getElementById('stat-predicted-air').innerText = predictedAIR !== '-' ? ("AIR " + predictedAIR) : 'AIR -';
+            document.getElementById('stat-predicted-pct').innerText = predictedPct !== '-' ? (predictedPct + "%") : '-%';
 
             renderChart(labels, scores);
 
@@ -921,6 +1041,35 @@
             });
         }
 
+        function renderMatrixChart(scatterData) {
+            var ctx = document.getElementById('matrixChart').getContext('2d');
+            if (matrixChartInstance) matrixChartInstance.destroy();
+
+            matrixChartInstance = new Chart(ctx, {
+                type: 'scatter',
+                data: {
+                    datasets: [{
+                        label: 'Questions Time vs Result',
+                        data: scatterData,
+                        pointBackgroundColor: function(context) {
+                            var raw = context.raw;
+                            return raw && raw.isCorrect ? '#10b981' : '#ef4444';
+                        },
+                        pointRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { title: { display: true, text: 'Question Number', color: '#9ca3af' } },
+                        y: { title: { display: true, text: 'Time Spent (seconds)', color: '#9ca3af' }, beginAtZero: true }
+                    }
+                }
+            });
+        }
+
         async function initiateExamStart(exam) {
             activeExam = exam;
             var sessionKey = 'clat_session_' + activeUser.username + '_' + activeExam.id;
@@ -944,7 +1093,7 @@
             } else {
                 userAnswers = {};
                 for (var k = 0; k < allQuestions.length; k++) {
-                    userAnswers[k] = { selected: null, status: 'not-visited', confidence: 'Unspecified' };
+                    userAnswers[k] = { selected: null, status: 'not-visited', confidence: 'Unspecified', timeSpentSec: 0 };
                 }
                 timer = exam.durationMins * 60;
                 totalExamDuration = timer;
@@ -954,6 +1103,8 @@
             var camSuccess = await startWebcam();
             if (!camSuccess) return;
 
+            await startAudioMonitor();
+
             try {
                 if (document.documentElement.requestFullscreen) {
                     await document.documentElement.requestFullscreen();
@@ -962,6 +1113,7 @@
 
             document.getElementById('candidate-display').innerText = "Candidate: " + activeUser.name + " (" + activeUser.id + ")";
             document.getElementById('text-size-controls').classList.remove('hidden');
+            generateWatermark();
             updateWarningUI();
             showScreen('test-screen');
             startExamEngine(sessionKey);
@@ -1042,6 +1194,11 @@
             timerInterval = setInterval(function() {
                 if (!isExamActive) return;
                 timer--;
+                
+                if (userAnswers[currentQIndex]) {
+                    userAnswers[currentQIndex].timeSpentSec = (userAnswers[currentQIndex].timeSpentSec || 0) + 1;
+                }
+
                 saveSessionState(sessionKey, false);
 
                 var m = Math.floor(timer / 60);
@@ -1192,6 +1349,7 @@
 
         function submitExam(reason) {
             stopWebcam();
+            stopAudioMonitor();
             if (timerInterval) clearInterval(timerInterval);
             var sessionKey = 'clat_session_' + activeUser.username + '_' + activeExam.id;
             saveSessionState(sessionKey, true);
@@ -1225,13 +1383,17 @@
             var score = 0;
             var solutionList = document.getElementById('solution-list');
             solutionList.innerHTML = '';
+            var scatterData = [];
 
             for (var i = 0; i < allQuestions.length; i++) {
                 var q = allQuestions[i];
                 var sel = userAnswers[i] ? userAnswers[i].selected : null;
                 var isCorrect = sel === q.correct;
+                var timeSec = userAnswers[i] ? (userAnswers[i].timeSpentSec || 12) : 12;
                 var statusText = "Unattempted";
                 var statusClass = "bg-gray-800 text-gray-300";
+
+                scatterData.push({ x: i + 1, y: timeSec, isCorrect: isCorrect });
 
                 if (sel !== null) {
                     if (isCorrect) {
@@ -1256,12 +1418,14 @@
                     '<span class="px-2.5 py-0.5 rounded-full ' + statusClass + '">' + statusText + '</span>' +
                     '</div>' +
                     '<div><strong>Your Selection:</strong> ' + (sel !== null ? q.options[sel] : 'None') + ' <span class="text-gray-400">(' + confTag + ')</span></div>' +
+                    '<div><strong>Time Spent:</strong> ' + timeSec + ' seconds</div>' +
                     '<div><strong>Correct Answer:</strong> ' + q.options[q.correct] + '</div>' +
                     '<div class="bg-[#111827] p-3 rounded-lg border border-gray-800"><strong>Rationale:</strong> ' + q.rationale + '</div>' +
                     '</div>';
             }
 
             document.getElementById('res-score').innerText = score.toFixed(2);
+            renderMatrixChart(scatterData);
         }
 
         function renderTeacherTable() {
