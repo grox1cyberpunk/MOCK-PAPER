@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CLAT UG 2023 Official CBT Mock Test</title>
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         .custom-scrollbar::-webkit-scrollbar { width: 6px; }
@@ -14,52 +15,76 @@
 </head>
 <body class="bg-gray-50 text-gray-800 font-sans no-select" oncontextmenu="return false;">
 
+    <!-- TOP BAR -->
     <header class="bg-gray-900 text-white px-6 py-3 flex justify-between items-center shadow-md">
-        <span class="font-bold text-lg text-blue-400">CLAT Proctored CBT Engine</span>
-        <div class="flex gap-3">
-            <button id="nav-student-btn" class="px-3 py-1.5 bg-blue-600 text-white text-xs rounded">Student Exam</button>
-            <button id="nav-teacher-btn" class="px-3 py-1.5 bg-purple-600 text-white text-xs rounded">Teacher Dashboard</button>
+        <div class="flex items-center gap-2">
+            <span class="font-bold text-lg text-blue-400">CLAT Proctored CBT Engine</span>
+        </div>
+        <div class="flex items-center gap-3">
+            <button id="nav-student-btn" class="px-3.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs rounded transition">
+                Student Exam
+            </button>
+            <button id="nav-teacher-btn" class="px-3.5 py-1.5 bg-purple-600 hover:bg-purple-700 text-white font-medium text-xs rounded transition">
+                Teacher Dashboard
+            </button>
         </div>
     </header>
 
-    <!-- START SCREEN -->
+    <!-- 1. START SCREEN -->
     <div id="start-screen" class="min-h-[calc(100vh-56px)] flex items-center justify-center p-4">
-        <div class="max-w-xl w-full bg-white rounded-xl shadow border p-8">
-            <h1 class="text-2xl font-bold text-center mb-2">CLAT UG 2023 Official Mock CBT</h1>
-            <p class="text-center text-gray-500 text-sm mb-6">Enter your details to begin the proctored test.</p>
+        <div class="max-w-xl w-full bg-white rounded-xl shadow-lg border border-gray-200 p-8">
+            <div class="text-center mb-6">
+                <h1 class="text-2xl font-bold text-gray-900">CLAT UG 2023 Official Mock CBT</h1>
+                <p class="text-gray-600 text-sm mt-1">Proctored Computer-Based Test Engine</p>
+            </div>
+
+            <div class="bg-amber-50 border-l-4 border-amber-500 p-4 mb-6 rounded-r text-xs text-amber-800 space-y-1">
+                <p class="font-bold">Instructions & Rules:</p>
+                <p>• Marking: <strong>+1.0</strong> for correct answer, <strong>-0.25</strong> for wrong answer.</p>
+                <p>• Duration: 120 Minutes.</p>
+                <p>• Window focus loss or switching tabs will flag a violation to your instructor.</p>
+            </div>
+
             <form id="student-form" class="space-y-4">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Student Full Name</label>
-                    <input type="text" id="student-name" required class="w-full px-4 py-2 border rounded-lg" placeholder="Enter full name">
+                    <input type="text" id="student-name" required class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="Enter full name">
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Roll / Admit Card Number</label>
-                    <input type="text" id="student-roll" required class="w-full px-4 py-2 border rounded-lg" placeholder="e.g. CLAT2023-1092">
+                    <input type="text" id="student-roll" required class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="e.g. CLAT2023-1092">
                 </div>
-                <button type="submit" class="w-full py-3 bg-blue-600 text-white font-semibold rounded-lg">Start Test</button>
+                <button type="submit" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow transition">
+                    Start Test
+                </button>
             </form>
         </div>
     </div>
 
-    <!-- TEST ENGINE -->
+    <!-- 2. EXAM ENGINE -->
     <div id="test-screen" class="hidden h-[calc(100vh-56px)] flex flex-col bg-gray-100">
+        <!-- Status Bar -->
         <div class="bg-gray-800 text-white px-6 py-2 flex justify-between items-center text-xs">
             <span id="candidate-display" class="text-gray-300 font-semibold">Candidate: -</span>
             <div class="flex items-center gap-6">
                 <span class="text-amber-400 font-semibold">Tab Switches: <span id="violation-count">0</span></span>
                 <div class="bg-gray-900 px-3 py-1 rounded font-mono text-base font-bold text-yellow-400" id="timer">120:00</div>
-                <button id="finish-btn" class="bg-red-600 text-white font-semibold px-3 py-1 rounded">Submit</button>
+                <button id="finish-btn" class="bg-red-600 hover:bg-red-700 text-white font-semibold px-3 py-1 rounded transition">Submit</button>
             </div>
         </div>
 
+        <!-- Section Navigation -->
         <nav class="bg-white border-b px-6 py-2 flex gap-2 overflow-x-auto" id="section-tabs"></nav>
 
+        <!-- Main Workspace -->
         <div class="flex-1 flex overflow-hidden">
+            <!-- Left: Passage Context -->
             <div class="w-1/2 p-6 border-r overflow-y-auto bg-white custom-scrollbar">
                 <h3 class="text-xs font-bold text-blue-600 uppercase mb-2" id="section-badge">READING PASSAGE</h3>
-                <div id="passage-text" class="text-gray-800 leading-relaxed font-serif text-sm whitespace-pre-line"></div>
+                <div id="passage-text" class="text-gray-800 leading-relaxed font-serif whitespace-pre-line text-sm"></div>
             </div>
 
+            <!-- Right: Question Options -->
             <div class="w-1/2 p-6 overflow-y-auto flex flex-col justify-between bg-gray-50 custom-scrollbar">
                 <div>
                     <div class="flex justify-between items-center mb-4">
@@ -71,26 +96,27 @@
                 </div>
 
                 <div class="pt-4 border-t flex justify-between items-center">
-                    <button id="mark-review-btn" class="px-3 py-1.5 bg-purple-100 text-purple-700 text-xs font-semibold rounded">Mark for Review</button>
+                    <button id="mark-review-btn" class="px-3 py-1.5 bg-purple-100 text-purple-700 text-xs font-semibold rounded hover:bg-purple-200">Mark for Review</button>
                     <div class="flex gap-2 text-xs">
-                        <button id="clear-btn" class="px-3 py-1.5 border text-gray-600 rounded">Clear</button>
-                        <button id="prev-btn" class="px-3 py-1.5 bg-gray-200 text-gray-700 rounded">Previous</button>
-                        <button id="next-btn" class="px-4 py-1.5 bg-blue-600 text-white font-semibold rounded">Save & Next</button>
+                        <button id="clear-btn" class="px-3 py-1.5 border text-gray-600 rounded hover:bg-gray-100">Clear</button>
+                        <button id="prev-btn" class="px-3 py-1.5 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">Previous</button>
+                        <button id="next-btn" class="px-4 py-1.5 bg-blue-600 text-white font-semibold rounded hover:bg-blue-700">Save & Next</button>
                     </div>
                 </div>
             </div>
 
+            <!-- Question Palette Sidebar -->
             <div class="w-72 bg-white border-l p-4 flex flex-col justify-between">
                 <div>
                     <h3 class="font-bold text-xs text-gray-700 mb-3 uppercase">Question Palette</h3>
-                    <div id="palette-grid" class="grid grid-cols-5 gap-2 max-h-[60vh] overflow-y-auto p-1"></div>
+                    <div id="palette-grid" class="grid grid-cols-5 gap-2 max-h-[60vh] overflow-y-auto custom-scrollbar p-1"></div>
                 </div>
-                <button id="sidebar-submit-btn" class="w-full py-2 bg-green-600 text-white font-bold text-xs rounded">Final Submit</button>
+                <button id="sidebar-submit-btn" class="w-full py-2 bg-green-600 text-white font-bold text-xs rounded hover:bg-green-700">Final Submit</button>
             </div>
         </div>
     </div>
 
-    <!-- RESULT SCREEN -->
+    <!-- 3. RESULT SCORECARD -->
     <div id="result-screen" class="hidden p-8 max-w-5xl mx-auto space-y-6">
         <div class="bg-white p-6 rounded-xl shadow border flex justify-between items-center">
             <div>
@@ -104,15 +130,15 @@
         </div>
         <div class="bg-white p-6 rounded-xl shadow border space-y-4">
             <h3 class="font-bold text-lg">Question Performance & Rationale</h3>
-            <div id="solution-list" class="space-y-4"></div>
+            <div id="solution-list" class="space-y-4 max-h-[60vh] overflow-y-auto"></div>
         </div>
     </div>
 
-    <!-- TEACHER DASHBOARD -->
+    <!-- 4. TEACHER DASHBOARD -->
     <div id="teacher-screen" class="hidden p-8 max-w-6xl mx-auto space-y-6">
         <div class="flex justify-between items-center">
             <h1 class="text-2xl font-bold">Teacher Scoreboard</h1>
-            <button id="clear-btn-teacher" class="px-3 py-1.5 bg-red-100 text-red-700 font-semibold text-xs rounded">Clear All Records</button>
+            <button id="clear-btn-teacher" class="px-3 py-1.5 bg-red-100 text-red-700 font-semibold text-xs rounded hover:bg-red-200">Clear All Records</button>
         </div>
         <div class="bg-white rounded-xl shadow overflow-hidden border">
             <table class="w-full text-left text-sm text-gray-600">
@@ -129,11 +155,12 @@
         </div>
     </div>
 
+    <!-- SINGLE MERGED ENGINE & QUESTION DATA -->
     <script>
         var examData = [
             {
                 section: "English Language",
-                passage: "I grew up in a small town not far from Kalimpong. In pre-liberalization India, everything arrived late: not just material things but also ideas. Magazines old copies of Reader's Digest and National Geographic arrived late too, after the news had become stale by months or, often, years. This temporal gap turned journalism into literature, news into legend, and historical events into something akin to plotless stories. But like those who knew no other life, we accepted this as the norm. The dearth of reading material in towns and villages in socialist India is hard to imagine, and it produced two categories of people: those who stopped reading after school or college, and those including children who read anything they could find.",
+                passage: "I grew up in a small town not far from Kalimpong. In pre-liberalization India, everything arrived late: not just material things but also ideas. Magazines old copies of Reader's Digest and National Geographic arrived late too, after the news had become stale by months or, often, years. This temporal gap turned journalism into literature, news into legend, and historical events into something akin to plotless stories. But like those who knew no other life, we accepted this as the norm. The dearth of reading material in towns and villages in socialist India is hard to imagine, and it produced two categories of people: those who stopped reading after school or college, and those including children who read anything they could find. I read road signs with the enthusiasm that attaches to reading thrillers. When the iterant kabadiwala, collector of papers, magazines, and rejected things, visited our neighbourhood, I rushed to the house where he was doing business. He bought things at unimaginably low prices from those who'd stopped having any use for them, and I rummaged through his sacks of old magazines. Sometimes, on days when business was good, he allowed me a couple of copies of Sportsworld magazine for free. I'd run home and, ignoring my mother's scolding, plunge right in consuming news about India's victory in the Benson and Hedges Cup.\n\nTwo takeaways from these experiences have marked my understanding of the provincial reader's life: the sense of belatedness, of everything coming late, and the desire for pleasure in language. Speaking of belatedness, the awareness of having been born at the wrong time in history, of inventing things that had already been discovered elsewhere, far away, without our knowledge or cooperation, is a moment of epiphany and deep sadness. I remember a professor's choked voice, narrating to me how all the arguments he'd made in his doctoral dissertation, written over many, many years of hard work, had suddenly come to naught after he'd discovered the work of C.W.E. Bigsby. This, I realised as I grew older, was one of the characteristics of provincial life: that they were saying trite things with the confidence of someone declaring them for the first time. What rescues it is the unpredictability of these anachronistic discoveries.",
                 questions: [
                     {
                         id: 1,
@@ -158,12 +185,48 @@
                         ],
                         correct: 2,
                         rationale: "The author explicitly identifies the acceptance of temporal delay in provincial locations as essential."
+                    },
+                    {
+                        id: 3,
+                        question: "Why did the author feel a sense of epiphany and deep sadness?",
+                        options: [
+                            "(A) Because the things that felt special and unique to the author, were already established and accepted thought in the wider world.",
+                            "(B) Because the author was less well-read than others.",
+                            "(C) Because the author missed being in a big city.",
+                            "(D) All the above"
+                        ],
+                        correct: 0,
+                        rationale: "Discovering that one's hard-earned thoughts were already discovered elsewhere brings epiphany and sadness."
+                    },
+                    {
+                        id: 4,
+                        question: "What does the word 'anachronistic' as used in the passage, mean?",
+                        options: [
+                            "(A) Rooted in a non-urban setting",
+                            "(B) Related to a mofussil area",
+                            "(C) Connected with another time",
+                            "(D) Opposed to prevailing sensibilities"
+                        ],
+                        correct: 2,
+                        rationale: "Anachronistic refers to something belonging to a time period other than that in which it exists."
+                    },
+                    {
+                        id: 5,
+                        question: "Which of the following options captures the meaning of the last sentence best?",
+                        options: [
+                            "(A) Though the author feels provincial, she pretends to be from the metropolis.",
+                            "(B) Though the author feels dated in her access to intellectual ideas, her lack of metropolitan sophistication lets her engage with the ideas with some originality.",
+                            "(C) Though the author is aware of the limitedness of her knowledge, she is confident and can hold her own in a crowd.",
+                            "(D) All the above"
+                        ],
+                        correct: 1,
+                        rationale: "The last sentence emphasizes that unpredictable and non-professionalized mapping of thoughts rescues provincial belatedness."
                     }
                 ]
             },
             {
                 section: "Current Affairs & GK",
-                passage: "Former Governor of a State and National Democratic Alliance (NDA) candidate Droupadi Murmu was elected the 15th President of India, the first tribal woman to be elected to the position and the youngest as well. She was declared elected on Thursday after four rounds of counting, although she had crossed the half-way mark after the third round of counting itself.",
+                passage: "Former Governor of a State and National Democratic Alliance (NDA) candidate Droupadi Murmu was elected the 15th President of India, the first tribal woman to be elected to the position and the youngest as well. She was declared elected on Thursday after four rounds of counting, although she had crossed the half-way mark after the third round of counting itself, posting an unassailable lead over her rival and the Opposition's candidate who conceded the election thereafter. Prime Minister Narendra Modi was the first to greet Ms. Murmu at her residence in New Delhi after the third round of counting showed that she had crossed the half-way mark.\n\nMs. Murmu hails from the Santhal tribe and was born in the district of Mayurbhanj, coming up the hard way in life, graduating and teaching in Odisha before entering electoral politics at the local body level and later being elected MLA and serving as a Minister in the Biju Janata Dal-BJP coalition government from 2000 to 2004. She remained an MLA till 2009, representing Rairangpur in Odisha, a town that burst into celebrations since her name was announced as a candidate for the post of President of India. She was known to intervene in stopping amendments to the Chota Nagpur Tenancy Act that was being brought in by the BJP government of Raghubar Das, which involved changing land use in tribal areas.",
                 questions: [
                     {
                         id: 31,
@@ -178,13 +241,51 @@
                         options: ["(A) Odisha", "(B) Bihar", "(C) Jharkhand", "(D) West Bengal"],
                         correct: 2,
                         rationale: "Droupadi Murmu served as the Governor of Jharkhand from 2015 to 2021."
+                    },
+                    {
+                        id: 33,
+                        question: "The first presidential election was held by the Election Commission in which year?",
+                        options: ["(A) 1952", "(B) 1950", "(C) 1948", "(D) 1949"],
+                        correct: 0,
+                        rationale: "The first Indian presidential election was held in 1952."
+                    },
+                    {
+                        id: 36,
+                        question: "Voting in an Indian Presidential Election is through:",
+                        options: [
+                            "(A) A first-past-the-post system through a single transferable vote cast in a secret ballot",
+                            "(B) A proportional representation system through a single transferable vote cast in a secret ballot",
+                            "(C) A proportional representation system through a single transferable vote cast in an open ballot",
+                            "(D) A first-past-the-post system through a single transferable vote cast in an open ballot"
+                        ],
+                        correct: 1,
+                        rationale: "The President is elected by proportional representation by single transferable vote in a secret ballot."
+                    },
+                    {
+                        id: 37,
+                        question: "Who was the first Dalit to hold the office of the President of India?",
+                        options: ["(A) Ram Nath Kovind", "(B) V.V. Giri", "(C) Neelam Sanjiva Reddy", "(D) Kocheril Raman Narayanan"],
+                        correct: 3,
+                        rationale: "K. R. Narayanan was the first Dalit President of India (1997–2002)."
                     }
                 ]
             },
             {
                 section: "Legal Reasoning",
-                passage: "Quashing a case of cruelty that was filed against a man by his wife, the Bombay High Court said that if a married lady is asked to do household work for the family, it cannot be said that she is treated 'like a maid servant'. Examining the evidence, the Court found that there was no merit to the woman's allegations under Section 498A IPC.",
+                passage: "Quashing a case of cruelty that was filed against a man by his wife, the Bombay High Court said that if a married lady is asked to do household work for the family, it cannot be said that she is treated 'like a maid servant'. The Court was hearing an application by the husband and his parents seeking that proceedings against them are quashed. A First Information Report ('FIR') was filed against the trio in September 2020, around nine months after the marriage, alleging that they hounded the woman for money to purchase a car, harassed her mentally and physically and treated her like a maid servant. Examining the evidence, the Court found that there was no merit to the woman's allegations. The Court said that though the FIR says that she was treated properly for about a month and then 'like a maid servant', there are no details of what this meant. The Court added: 'If a married lady is asked to do household work for the purpose of the family, it cannot be said that it is like a maid servant.' The Court held that the mere use of the word harassment 'mentally and physically' in the FIR is not sufficient to constitute an offence Section 498A of the Indian Penal Code ('IPC').",
                 questions: [
+                    {
+                        id: 61,
+                        question: "Which of the following is the High Court most likely to agree with?",
+                        options: [
+                            "(A) Asking a married woman to do household work amounts to cruelty under Section 498A IPC.",
+                            "(B) Mere use of the words 'harassment mentally and physically' without specific instances does not satisfy Section 498A IPC.",
+                            "(C) Husbands are automatically exempt from prosecution under Section 498A IPC.",
+                            "(D) Filing an FIR 9 months after marriage is strictly illegal."
+                        ],
+                        correct: 1,
+                        rationale: "The Bombay High Court explicitly held that general allegations of harassment without specific details are insufficient under Section 498A IPC."
+                    },
                     {
                         id: 66,
                         question: "Ashwin and Ashima were married in February 2020. In March 2020, Ashwin asked Ashima to take care of all their household work. Ashima claims this amounts to treating her like a maid servant under 498A IPC. Is she likely to succeed?",
@@ -196,6 +297,102 @@
                         ],
                         correct: 1,
                         rationale: "Asking a wife to perform household work for the family does not amount to cruelty under Section 498A IPC."
+                    },
+                    {
+                        id: 67,
+                        question: "In April 2020, Ashwin's friend Rakesh stays with them. He uses abusive language and throws a plate at Ashima. Ashima claims Rakesh committed an offence under Section 498A IPC. Is she likely to succeed?",
+                        options: [
+                            "(A) No, since Rakesh's actions were perfectly justifiable.",
+                            "(B) Yes, since Rakesh's actions clearly amount to cruelty.",
+                            "(C) No, since Rakesh is not her husband, nor is he related to Ashwin.",
+                            "(D) Yes, since Rakesh was staying at Ashwin and Ashima's home."
+                        ],
+                        correct: 2,
+                        rationale: "Section 498A IPC applies explicitly only to the husband or relatives of the husband. Rakesh is merely a friend."
+                    },
+                    {
+                        id: 68,
+                        question: "Ashima is granted a divorce from Ashwin in November 2020. Later, Ashwin treats Ashima cruelly. Ashima claims an offence under Section 498A IPC. Is she right?",
+                        options: [
+                            "(A) Yes, since Ashwin treated her cruelly.",
+                            "(B) Yes, since Ashwin has been her husband.",
+                            "(C) No, since Ashwin was upset.",
+                            "(D) No, since she is no longer married to Ashwin."
+                        ],
+                        correct: 3,
+                        rationale: "Section 498A IPC applies strictly during marriage. Once divorced, the marital relationship ceases to exist."
+                    }
+                ]
+            },
+            {
+                section: "Logical Reasoning",
+                passage: "The depreciation of an economy's currency is not a matter of concern in itself. The decline in value against major currencies has to be viewed within a set of macroeconomic factors. The recent depreciation of the Indian rupee is a case in point. The rupee has been depreciating for a long time. What are of concern now are the rate at which the depreciation is occurring and the underlying factors causing the change. The Russia-Ukraine war has disrupted supply chains causing commodity prices to rise, leading to a worldwide hardening of inflationary trends. This, in turn, has caused major central banks to raise interest rates, forcing investors back to the safe haven of the US dollar... The RBI has difficult choices: controlling inflation versus stimulating growth and stabilising the rupee without severely diminishing the economy's foreign exchange kitty.",
+                questions: [
+                    {
+                        id: 106,
+                        question: "Which of the following is the author most likely to agree with?",
+                        options: [
+                            "(A) It is a major cause for concern if an economy's currency is depreciating.",
+                            "(B) Currency depreciation is not a reason for worry in itself, but if macroeconomic factors are not good, there may be a cause for concern.",
+                            "(C) The fact that the Indian rupee is witnessing a decline in value against major currencies is very worrisome.",
+                            "(D) A central bank must always do everything in its power to stem the slightest depreciation of an economy's currency."
+                        ],
+                        correct: 1,
+                        rationale: "The passage opens stating currency depreciation is not a concern in itself, but must be evaluated within macroeconomic contexts."
+                    },
+                    {
+                        id: 107,
+                        question: "Based on the author's arguments, which of the following, if true, would reduce the decline in value of the rupee?",
+                        options: [
+                            "(A) Appointing a new Governor for the RBI who has a better sense of how to control inflationary trends.",
+                            "(B) A steep increase in commodity prices and the continued disruption of supply chains.",
+                            "(C) A reduction in worldwide inflationary trends and the reduction of interest rates in developed country markets.",
+                            "(D) The RBI buying as many dollars as possible from the market."
+                        ],
+                        correct: 2,
+                        rationale: "Reversing global inflationary trends and reducing foreign interest rates removes capital outflow pressures."
+                    }
+                ]
+            },
+            {
+                section: "Quantitative Techniques",
+                passage: "World fruit production went up 54 percent between 2000 and 2019, to 883 million tonnes. Five fruit species accounted for 57 percent of the total production in 2019, down from 63 percent in 2000.",
+                questions: [
+                    {
+                        id: 141,
+                        question: "What was the world fruit production in 2000?",
+                        options: [
+                            "(A) 474 million tonnes",
+                            "(B) 517 million tonnes",
+                            "(C) 573 million tonnes",
+                            "(D) 406 million tonnes"
+                        ],
+                        correct: 2,
+                        rationale: "Calculation: 883 / 1.54 = 573.37 million tonnes."
+                    },
+                    {
+                        id: 145,
+                        question: "Frutopia and Fruitfix both sold oranges at the same selling price. However, Frutopia gave customers a 15% discount on marked price whereas Fruitfix sold oranges for a discount of 20% on marked price. If marked price on Frutopia is Rs 75/kg, what is the marked price on Fruitfix?",
+                        options: [
+                            "(A) 78",
+                            "(B) 82",
+                            "(C) 90",
+                            "(D) 79.68 (approx 80)"
+                        ],
+                        correct: 3,
+                        rationale: "Selling Price = 75 * 0.85 = 63.75. For Fruitfix: Marked Price * 0.80 = 63.75 => Marked Price = 79.68 (~Rs 80)."
+                    },
+                    {
+                        id: 150,
+                        question: "If total fruit production increases by another 10% in 2020 relative to 2019, what will be the total fruit production in 2020?",
+                        options: [
+                            "(A) 971.3 million tonnes",
+                            "(B) 950.0 million tonnes",
+                            "(C) 980.5 million tonnes",
+                            "(D) 920.0 million tonnes"
+                        ],
+                        correct: 0,
+                        rationale: "Calculation: 883 * 1.10 = 971.3 million tonnes."
                     }
                 ]
             }
