@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CLAT UG Official CBT Mock Portal</title>
+    <title>CLAT UG Proctored CBT Portal</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         .custom-scrollbar::-webkit-scrollbar { width: 6px; }
@@ -14,7 +14,7 @@
 </head>
 <body class="bg-gray-50 text-gray-800 font-sans no-select" oncontextmenu="return false;">
 
-    <!-- TOP BAR -->
+    <!-- TOP HEADER -->
     <header class="bg-gray-900 text-white px-6 py-3 flex justify-between items-center shadow-md">
         <div class="flex items-center gap-2">
             <span class="font-bold text-lg text-blue-400">CLAT Proctored CBT Engine</span>
@@ -75,19 +75,45 @@
         </div>
     </div>
 
-    <!-- 3. STUDENT DASHBOARD -->
+    <!-- 3. STUDENT DASHBOARD (WITH PERFORMANCE ANALYTICS TAB) -->
     <div id="student-dashboard-screen" class="hidden p-8 max-w-5xl mx-auto space-y-6">
         <div class="flex justify-between items-center bg-white p-6 rounded-xl border shadow-sm">
             <div>
-                <h1 class="text-2xl font-bold text-gray-900">Student Exam Portal</h1>
+                <h1 class="text-2xl font-bold text-gray-900">Student Portal</h1>
                 <p id="stu-logged-welcome" class="text-xs text-gray-500 mt-1"></p>
             </div>
             <button id="stu-logout-btn" class="px-3 py-1.5 bg-gray-200 hover:bg-gray-300 text-xs font-semibold rounded">Log Out</button>
         </div>
 
-        <div class="space-y-4">
-            <h3 class="text-lg font-bold text-gray-800">Available Mock Tests</h3>
+        <!-- Student Navigation Tabs -->
+        <div class="flex border-b border-gray-200 gap-4">
+            <button id="stu-tab-exams-btn" class="py-2 px-4 border-b-2 border-blue-600 text-blue-600 font-bold text-sm">Available Mock Tests</button>
+            <button id="stu-tab-perf-btn" class="py-2 px-4 border-b-2 border-transparent text-gray-500 hover:text-gray-700 font-bold text-sm">My Test Performance</button>
+        </div>
+
+        <!-- Student Tab 1: Exams List -->
+        <div id="stu-tab-exams" class="space-y-4">
             <div id="student-tests-container" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+        </div>
+
+        <!-- Student Tab 2: Performance Dashboard -->
+        <div id="stu-tab-perf" class="hidden space-y-4">
+            <div class="bg-white p-6 rounded-xl border shadow-sm space-y-4">
+                <h3 class="text-lg font-bold text-gray-900">Past Test History & Scorecards</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm text-gray-600">
+                        <thead class="bg-gray-100 uppercase text-xs font-semibold">
+                            <tr>
+                                <th class="p-3">Test Title</th>
+                                <th class="p-3">Score</th>
+                                <th class="p-3">Status</th>
+                                <th class="p-3">Date Completed</th>
+                            </tr>
+                        </thead>
+                        <tbody id="student-performance-table" class="divide-y"></tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -119,27 +145,27 @@
         </div>
     </div>
 
-    <!-- 5. TEACHER DASHBOARD -->
-    <div id="teacher-screen" class="hidden p-8 max-w-6xl mx-auto space-y-8">
+    <!-- 5. TEACHER DASHBOARD (TABBED: CREATE vs SCOREBOARD) -->
+    <div id="teacher-screen" class="hidden p-8 max-w-6xl mx-auto space-y-6">
         <div class="flex justify-between items-center bg-white p-6 rounded-xl border shadow-sm">
             <div>
                 <h1 class="text-2xl font-bold">Teacher Control Panel</h1>
                 <p id="teacher-logged-user" class="text-xs text-purple-700 font-semibold mt-1">Instructor Logged In</p>
             </div>
-            <div class="flex gap-2">
-                <button id="reset-student-sessions-btn" class="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white font-semibold text-xs rounded transition shadow">
-                    🔄 Reset All Student Sessions
-                </button>
-                <button id="clear-btn-teacher" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-semibold text-xs rounded transition shadow">
-                    🗑️ Clear Scoreboard
-                </button>
-            </div>
+            <button id="teacher-logout-btn" class="px-3 py-1.5 bg-gray-200 hover:bg-gray-300 text-xs font-semibold rounded">Log Out</button>
         </div>
 
-        <div class="bg-white p-6 rounded-xl border shadow-sm space-y-4">
-            <h2 class="text-xl font-bold text-gray-900 border-b pb-3">Create & Publish Test via AI JSON Payload</h2>
+        <!-- Teacher Dashboard Navigation Tabs -->
+        <div class="flex border-b border-gray-200 gap-4">
+            <button id="teacher-tab-create-btn" class="py-2.5 px-4 border-b-2 border-purple-600 text-purple-600 font-bold text-sm">Create & Schedule Test</button>
+            <button id="teacher-tab-score-btn" class="py-2.5 px-4 border-b-2 border-transparent text-gray-500 hover:text-gray-700 font-bold text-sm">Student Scoreboard & Session Reset</button>
+        </div>
+
+        <!-- TAB 1: CREATE & SCHEDULE TEST -->
+        <div id="teacher-tab-create" class="bg-white p-6 rounded-xl border shadow-sm space-y-4">
+            <h2 class="text-xl font-bold text-gray-900 border-b pb-3">Create & Schedule Mock Test</h2>
             <form id="json-import-form" class="space-y-4">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div>
                         <label class="block text-xs font-semibold text-gray-700 mb-1">Test Title</label>
                         <input type="text" id="json-test-title" required class="w-full px-3 py-2 border rounded text-sm" placeholder="e.g. CLAT Legal Reasoning Mock 02">
@@ -147,6 +173,10 @@
                     <div>
                         <label class="block text-xs font-semibold text-gray-700 mb-1">Duration (Minutes)</label>
                         <input type="number" id="json-test-duration" value="120" required class="w-full px-3 py-2 border rounded text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-700 mb-1">Schedule Start Date & Time (Optional)</label>
+                        <input type="datetime-local" id="json-test-schedule" class="w-full px-3 py-2 border rounded text-sm">
                     </div>
                 </div>
                 <div>
@@ -159,21 +189,47 @@
             </form>
         </div>
 
-        <div class="bg-white rounded-xl shadow overflow-hidden border space-y-2">
-            <h2 class="text-lg font-bold text-gray-900 p-4 border-b">Student Scoreboard</h2>
-            <table class="w-full text-left text-sm text-gray-600">
-                <thead class="bg-gray-100 uppercase text-xs font-semibold">
-                    <tr>
-                        <th class="p-4">Student ID</th>
-                        <th class="p-4">Student Name</th>
-                        <th class="p-4">Exam Taken</th>
-                        <th class="p-4">Score</th>
-                        <th class="p-4">Submission Status</th>
-                        <th class="p-4">Timestamp</th>
-                    </tr>
-                </thead>
-                <tbody id="teacher-table" class="divide-y"></tbody>
-            </table>
+        <!-- TAB 2: SCOREBOARD & TARGETED RESET -->
+        <div id="teacher-tab-score" class="hidden space-y-6">
+            <!-- Reset Options Box -->
+            <div class="bg-amber-50 p-6 rounded-xl border border-amber-200 space-y-4">
+                <h3 class="text-base font-bold text-amber-900">Student Session Management</h3>
+                <div class="flex flex-col md:flex-row gap-4 items-end">
+                    <div class="flex-1">
+                        <label class="block text-xs font-semibold text-amber-800 mb-1">Reset Specific Student Attempt (Enter Student ID or Username)</label>
+                        <input type="text" id="reset-single-id" class="w-full px-3 py-2 border rounded text-sm bg-white" placeholder="e.g. student01 or STU-2026-01">
+                    </div>
+                    <button id="reset-single-btn" class="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs rounded shadow transition">
+                        Reset Single Student
+                    </button>
+                    <button id="reset-student-sessions-btn" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-bold text-xs rounded shadow transition">
+                        ⚠️ Reset ALL Students
+                    </button>
+                </div>
+            </div>
+
+            <!-- Scoreboard Table -->
+            <div class="bg-white rounded-xl shadow overflow-hidden border space-y-2">
+                <div class="flex justify-between items-center p-4 border-b">
+                    <h2 class="text-lg font-bold text-gray-900">Student Scoreboard</h2>
+                    <button id="clear-btn-teacher" class="px-3 py-1.5 bg-gray-200 hover:bg-gray-300 text-xs font-semibold rounded">Clear Scoreboard</button>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm text-gray-600">
+                        <thead class="bg-gray-100 uppercase text-xs font-semibold">
+                            <tr>
+                                <th class="p-4">Student ID</th>
+                                <th class="p-4">Student Name</th>
+                                <th class="p-4">Exam Taken</th>
+                                <th class="p-4">Score</th>
+                                <th class="p-4">Status</th>
+                                <th class="p-4">Timestamp</th>
+                            </tr>
+                        </thead>
+                        <tbody id="teacher-table" class="divide-y"></tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -268,6 +324,7 @@
             id: "default-clat-2023",
             title: "CLAT UG Official Mock Exam 01",
             durationMins: 120,
+            scheduledTime: null,
             data: [
                 {
                     section: "English Language",
@@ -318,6 +375,37 @@
             document.getElementById('select-student-btn').onclick = function() { showScreen('student-login-screen'); };
             document.getElementById('select-teacher-btn').onclick = function() { showScreen('teacher-login-screen'); };
 
+            // STUDENT TABS NAVIGATION
+            document.getElementById('stu-tab-exams-btn').onclick = function() {
+                this.className = "py-2 px-4 border-b-2 border-blue-600 text-blue-600 font-bold text-sm";
+                document.getElementById('stu-tab-perf-btn').className = "py-2 px-4 border-b-2 border-transparent text-gray-500 hover:text-gray-700 font-bold text-sm";
+                document.getElementById('stu-tab-exams').classList.remove('hidden');
+                document.getElementById('stu-tab-perf').classList.add('hidden');
+            };
+            document.getElementById('stu-tab-perf-btn').onclick = function() {
+                this.className = "py-2 px-4 border-b-2 border-blue-600 text-blue-600 font-bold text-sm";
+                document.getElementById('stu-tab-exams-btn').className = "py-2 px-4 border-b-2 border-transparent text-gray-500 hover:text-gray-700 font-bold text-sm";
+                document.getElementById('stu-tab-perf').classList.remove('hidden');
+                document.getElementById('stu-tab-exams').classList.add('hidden');
+                renderStudentPerformance();
+            };
+
+            // TEACHER TABS NAVIGATION
+            document.getElementById('teacher-tab-create-btn').onclick = function() {
+                this.className = "py-2.5 px-4 border-b-2 border-purple-600 text-purple-600 font-bold text-sm";
+                document.getElementById('teacher-tab-score-btn').className = "py-2.5 px-4 border-b-2 border-transparent text-gray-500 hover:text-gray-700 font-bold text-sm";
+                document.getElementById('teacher-tab-create').classList.remove('hidden');
+                document.getElementById('teacher-tab-score').classList.add('hidden');
+            };
+            document.getElementById('teacher-tab-score-btn').onclick = function() {
+                this.className = "py-2.5 px-4 border-b-2 border-purple-600 text-purple-600 font-bold text-sm";
+                document.getElementById('teacher-tab-create-btn').className = "py-2.5 px-4 border-b-2 border-transparent text-gray-500 hover:text-gray-700 font-bold text-sm";
+                document.getElementById('teacher-tab-score').classList.remove('hidden');
+                document.getElementById('teacher-tab-create').classList.add('hidden');
+                renderTeacherTable();
+            };
+
+            // LOGIN HANDLERS
             document.getElementById('student-login-form').onsubmit = function(e) {
                 e.preventDefault();
                 var u = document.getElementById('stu-user-input').value.trim().toLowerCase();
@@ -354,27 +442,68 @@
                 }
             };
 
+            document.getElementById('teacher-logout-btn').onclick = function() {
+                showScreen('teacher-login-screen');
+            };
+
+            // RESET ALL STUDENTS
             document.getElementById('reset-student-sessions-btn').onclick = function() {
-                if (confirm("Reset test attempts for all 40 students? They will be able to attempt all tests again.")) {
+                if (confirm("Reset test attempts for ALL students? They will all be able to attempt tests again.")) {
                     for (var key in localStorage) {
                         if (key.indexOf('clat_session_') === 0) {
                             localStorage.removeItem(key);
                         }
                     }
-                    alert("All student test sessions reset successfully!");
+                    alert("All student sessions cleared!");
                 }
             };
 
+            // RESET TARGETED SINGLE STUDENT
+            document.getElementById('reset-single-btn').onclick = function() {
+                var query = document.getElementById('reset-single-id').value.trim().toLowerCase();
+                if (!query) {
+                    alert("Please enter a Student Username (e.g. student01) or Student ID (e.g. STU-2026-01).");
+                    return;
+                }
+
+                var targetUser = null;
+                for (var u in studentDatabase) {
+                    if (u.toLowerCase() === query || studentDatabase[u].id.toLowerCase() === query) {
+                        targetUser = u;
+                        break;
+                    }
+                }
+
+                if (!targetUser) {
+                    alert("Student not found! Check username or ID.");
+                    return;
+                }
+
+                var count = 0;
+                for (var key in localStorage) {
+                    if (key.indexOf('clat_session_' + targetUser + '_') === 0) {
+                        localStorage.removeItem(key);
+                        count++;
+                    }
+                }
+
+                alert("Successfully reset test sessions for " + studentDatabase[targetUser].name + " (" + studentDatabase[targetUser].id + ")!");
+                document.getElementById('reset-single-id').value = '';
+            };
+
+            // CREATE TEST FORM
             document.getElementById('json-import-form').onsubmit = function(e) {
                 e.preventDefault();
                 try {
                     var payloadText = document.getElementById('json-test-payload').value.trim();
                     var parsedData = JSON.parse(payloadText);
+                    var sched = document.getElementById('json-test-schedule').value;
 
                     var newExam = {
                         id: 'custom-' + Date.now(),
                         title: document.getElementById('json-test-title').value.trim(),
                         durationMins: parseInt(document.getElementById('json-test-duration').value) || 120,
+                        scheduledTime: sched ? new Date(sched).getTime() : null,
                         data: parsedData
                     };
 
@@ -382,10 +511,10 @@
                     currentExams.push(newExam);
                     localStorage.setItem('clat_custom_exams', JSON.stringify(currentExams));
 
-                    alert("Exam successfully imported and published to student portals!");
+                    alert("Exam created and published successfully!");
                     document.getElementById('json-import-form').reset();
                 } catch(err) {
-                    alert("Invalid JSON syntax! Please check that you copied the complete array block from the AI output.");
+                    alert("Invalid JSON format! Make sure you copied the complete array from AI output.");
                 }
             };
 
@@ -400,30 +529,61 @@
             var container = document.getElementById('student-tests-container');
             container.innerHTML = '';
             var exams = getStoredExams();
+            var now = Date.now();
 
             for (var i = 0; i < exams.length; i++) {
                 (function(exam) {
                     var sessionKey = 'clat_session_' + activeUser.username + '_' + exam.id;
                     var savedSession = JSON.parse(localStorage.getItem(sessionKey) || 'null');
                     var isSubmitted = savedSession && savedSession.submitted;
+                    var isLocked = exam.scheduledTime && now < exam.scheduledTime;
+                    var schedText = exam.scheduledTime ? new Date(exam.scheduledTime).toLocaleString() : 'Immediate Access';
 
                     var card = document.createElement('div');
                     card.className = "bg-white p-5 rounded-xl border shadow-sm flex flex-col justify-between space-y-4";
 
-                    var btnHtml = isSubmitted ?
-                        '<button disabled class="w-full py-2 bg-gray-300 text-gray-600 font-bold text-xs rounded">Already Submitted</button>' :
-                        '<button class="start-exam-btn w-full py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded shadow">Start / Resume Test</button>';
+                    var btnHtml = '';
+                    if (isSubmitted) {
+                        btnHtml = '<button disabled class="w-full py-2 bg-gray-300 text-gray-600 font-bold text-xs rounded">Already Submitted</button>';
+                    } else if (isLocked) {
+                        btnHtml = '<button disabled class="w-full py-2 bg-amber-200 text-amber-800 font-bold text-xs rounded">Scheduled for ' + schedText + '</button>';
+                    } else {
+                        btnHtml = '<button class="start-exam-btn w-full py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded shadow">Start / Resume Test</button>';
+                    }
 
                     card.innerHTML = '<div>' +
                         '<div class="flex justify-between items-center mb-1"><span class="px-2 py-0.5 bg-blue-100 text-blue-800 font-bold text-[10px] rounded uppercase">Interactive Mock</span><span class="text-xs text-gray-500 font-medium">' + exam.durationMins + ' Mins</span></div>' +
                         '<h4 class="font-bold text-base text-gray-900">' + exam.title + '</h4>' +
+                        '<p class="text-xs text-gray-500 mt-1">Available: ' + schedText + '</p>' +
                         '</div>' + btnHtml;
 
-                    if (!isSubmitted) {
+                    if (!isSubmitted && !isLocked) {
                         card.querySelector('.start-exam-btn').onclick = function() { initiateExamStart(exam); };
                     }
                     container.appendChild(card);
                 })(exams[i]);
+            }
+        }
+
+        function renderStudentPerformance() {
+            var tbody = document.getElementById('student-performance-table');
+            tbody.innerHTML = '';
+            var records = JSON.parse(localStorage.getItem('clat_records') || '[]');
+            var myRecords = records.filter(function(r) { return r.id === activeUser.id; });
+
+            if (myRecords.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" class="p-4 text-center text-gray-400 text-xs">No completed tests found.</td></tr>';
+                return;
+            }
+
+            for (var i = 0; i < myRecords.length; i++) {
+                var r = myRecords[i];
+                tbody.innerHTML += '<tr>' +
+                    '<td class="p-3 font-semibold text-gray-800">' + r.examTitle + '</td>' +
+                    '<td class="p-3 font-bold text-blue-600">' + r.score + '</td>' +
+                    '<td class="p-3 text-xs"><span class="px-2 py-0.5 bg-green-100 text-green-800 rounded font-semibold">' + r.status + '</span></td>' +
+                    '<td class="p-3 text-xs text-gray-500">' + r.timestamp + '</td>' +
+                    '</tr>';
             }
         }
 
@@ -472,11 +632,11 @@
             updateWarningUI();
 
             if (warningCount === 1) {
-                alert("PROCTOR WARNING (1/1): " + reason + " detected. This is your final warning! A second violation will auto-submit your exam.");
+                alert("PROCTOR WARNING (1/1): " + reason + " detected. This is your final warning!");
             } else if (warningCount >= 2) {
                 isExamActive = false;
-                alert("PROCTOR VIOLATION (2/2): Second violation detected (" + reason + "). Exam is automatically submitted.");
-                submitExam("AUTO-SUBMITTED (Proctor Violation: " + reason + ")");
+                alert("PROCTOR VIOLATION (2/2): Second violation detected (" + reason + "). Exam auto-submitted.");
+                submitExam("AUTO-SUBMITTED (Proctor Violation)");
             }
         }
 
@@ -510,7 +670,7 @@
                 };
                 return true;
             } catch (err) {
-                alert("PROCTOR MANDATE: Camera access is required to take this exam. Enable webcam permissions and try again.");
+                alert("PROCTOR MANDATE: Camera access is required to take this exam. Enable webcam permissions.");
                 return false;
             }
         }
