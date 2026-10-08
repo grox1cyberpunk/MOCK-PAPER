@@ -5,59 +5,112 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CLAT UG Proctored CBT Portal</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         tailwind.config = {
             darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: { 50: '#f0f9ff', 500: '#0284c7', 600: '#0284c7', 700: '#0369a1' },
+                        slateDark: '#0b0f19'
+                    }
+                }
+            }
         }
     </script>
     <style>
-        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar { width: 5px; height: 5px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
-        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background: #475569; }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; }
         .no-select { -webkit-user-select: none; user-select: none; }
-        .resizer { width: 8px; cursor: col-resize; background: #e2e8f0; transition: background 0.2s; }
-        .dark .resizer { background: #334155; }
+        
+        .resizer { width: 6px; cursor: col-resize; background: #e2e8f0; transition: background 0.2s; }
+        .dark .resizer { background: #1e293b; }
         .resizer:hover, .resizer:active { background: #3b82f6; }
+
+        /* Glassmorphism Styling */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+        .dark .glass-panel {
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(51, 65, 85, 0.5);
+        }
+
+        /* Glowing Border Animation */
+        .glow-card {
+            position: relative;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .glow-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.15);
+        }
+
+        /* Pulsing Status Dot */
+        .pulse-dot {
+            width: 8px;
+            height: 8px;
+            background-color: #10b981;
+            border-radius: 50%;
+            box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+            animation: pulse-green 2s infinite;
+        }
+        @keyframes pulse-green {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        }
+
+        /* Custom Highlighted Text in Passage */
+        .hl-yellow { background-color: #fef08a; color: #854d0e; border-radius: 2px; padding: 0 2px; }
+        .dark .hl-yellow { background-color: #713f12; color: #fef08a; }
+        .hl-cyan { background-color: #a5f3fc; color: #155e75; border-radius: 2px; padding: 0 2px; }
+        .dark .hl-cyan { background-color: #164e63; color: #a5f3fc; }
     </style>
 </head>
-<body class="bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100 font-sans no-select transition-colors duration-200" oncontextmenu="return false;">
+<body class="bg-gray-50 dark:bg-[#0b0f19] text-gray-800 dark:text-gray-100 font-sans no-select transition-colors duration-200 min-h-screen flex flex-col" oncontextmenu="return false;">
 
     <!-- TOP HEADER -->
-    <header class="bg-gray-900 text-white px-6 py-3 flex justify-between items-center shadow-md">
+    <header class="sticky top-0 z-40 glass-panel px-6 py-3 flex justify-between items-center shadow-sm">
         <div class="flex items-center gap-3">
-            <span class="font-bold text-lg text-blue-400">CLAT Proctored CBT Engine</span>
-            <div id="text-size-controls" class="hidden md:flex items-center bg-gray-800 border border-gray-700 rounded px-2 py-0.5 gap-2 text-xs">
+            <span class="font-black text-xl tracking-tight bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 bg-clip-text text-transparent">CLAT PROCTOR CBT</span>
+            <div id="text-size-controls" class="hidden md:flex items-center bg-gray-100 dark:bg-gray-800 border dark:border-gray-700 rounded-lg px-2 py-0.5 gap-2 text-xs">
                 <span class="text-gray-400 font-semibold">Text:</span>
-                <button id="font-dec-btn" class="hover:text-blue-400 font-bold px-1">A-</button>
-                <button id="font-reset-btn" class="hover:text-blue-400 px-1">100%</button>
-                <button id="font-inc-btn" class="hover:text-blue-400 font-bold px-1">A+</button>
+                <button id="font-dec-btn" class="hover:text-blue-500 font-bold px-1">A-</button>
+                <button id="font-reset-btn" class="hover:text-blue-500 px-1">100%</button>
+                <button id="font-inc-btn" class="hover:text-blue-500 font-bold px-1">A+</button>
             </div>
         </div>
         <div class="flex items-center gap-3">
-            <button id="dark-mode-toggle" class="px-3 py-1.5 bg-gray-800 hover:bg-gray-700 text-yellow-400 border border-gray-700 font-medium text-xs rounded transition flex items-center gap-1">
-                🌙 <span>Dark Mode</span>
+            <button id="dark-mode-toggle" class="px-3 py-1.5 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-yellow-400 border dark:border-gray-700 font-semibold text-xs rounded-lg transition flex items-center gap-1.5">
+                <span>🌙</span> <span class="hidden sm:inline">Theme</span>
             </button>
-            <button id="header-switch-role-btn" class="px-3.5 py-1.5 bg-gray-700 hover:bg-gray-600 text-white font-medium text-xs rounded transition">
+            <button id="header-switch-role-btn" class="px-3.5 py-1.5 bg-gray-900 dark:bg-gray-700 hover:bg-gray-800 dark:hover:bg-gray-600 text-white font-semibold text-xs rounded-lg transition shadow-sm">
                 Switch Role / Home
             </button>
         </div>
     </header>
 
     <!-- 1. INITIAL ROLE SELECTION SCREEN -->
-    <div id="role-selection-screen" class="min-h-[calc(100vh-56px)] flex items-center justify-center p-4 bg-gray-100 dark:bg-gray-900">
-        <div class="max-w-md w-full bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 p-8 text-center space-y-6">
+    <div id="role-selection-screen" class="flex-1 flex items-center justify-center p-4">
+        <div class="max-w-md w-full bg-white dark:bg-gray-800/90 rounded-2xl shadow-2xl border border-gray-100 dark:border-gray-700/60 p-8 text-center space-y-6">
             <div>
-                <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Welcome to CLAT CBT</h1>
-                <p class="text-gray-600 dark:text-gray-400 text-sm mt-1">Please select your role to proceed</p>
+                <h1 class="text-3xl font-black text-gray-900 dark:text-white tracking-tight">Welcome to CLAT CBT</h1>
+                <p class="text-gray-500 dark:text-gray-400 text-sm mt-1.5">Select your portal to continue</p>
             </div>
 
             <div class="grid grid-cols-1 gap-4 pt-2">
-                <button id="select-student-btn" class="py-4 px-6 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-lg transition flex items-center justify-center gap-3">
+                <button id="select-student-btn" class="py-4 px-6 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-lg shadow-blue-500/20 transition-all transform active:scale-95 flex items-center justify-center gap-3">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0112 20.055a11.952 11.952 0 01-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"/></svg>
                     <span>I am a Student</span>
                 </button>
-                <button id="select-teacher-btn" class="py-4 px-6 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-xl shadow-lg transition flex items-center justify-center gap-3">
+                <button id="select-teacher-btn" class="py-4 px-6 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-xl shadow-lg shadow-purple-500/20 transition-all transform active:scale-95 flex items-center justify-center gap-3">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/></svg>
                     <span>I am a Teacher</span>
                 </button>
@@ -66,73 +119,81 @@
     </div>
 
     <!-- 2. STUDENT LOGIN SCREEN -->
-    <div id="student-login-screen" class="hidden min-h-[calc(100vh-56px)] flex items-center justify-center p-4">
-        <div class="max-w-md w-full bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 p-8">
+    <div id="student-login-screen" class="hidden flex-1 flex items-center justify-center p-4">
+        <div class="max-w-md w-full bg-white dark:bg-gray-800/90 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 p-8">
             <div class="text-center mb-6">
                 <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Student Portal Login</h2>
-                <p class="text-gray-600 dark:text-gray-400 text-xs mt-1">Enter your assigned student credentials</p>
+                <p class="text-gray-500 dark:text-gray-400 text-xs mt-1">Enter your candidate credentials</p>
             </div>
 
             <form id="student-login-form" class="space-y-4">
                 <div>
                     <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">Student Username</label>
-                    <input type="text" id="stu-user-input" required class="w-full px-4 py-2 border rounded-lg text-sm dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="e.g. student01">
+                    <input type="text" id="stu-user-input" required class="w-full px-4 py-2.5 border rounded-xl text-sm dark:bg-gray-900 dark:border-gray-700 focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="e.g. student01">
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">Password</label>
                     <div class="relative">
-                        <input type="password" id="stu-pass-input" required class="w-full px-4 py-2 border rounded-lg text-sm dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:outline-none pr-16" placeholder="e.g. clat_stu_101">
-                        <button type="button" id="toggle-stu-pass" class="absolute right-2 top-1/2 -translate-y-1/2 px-2 py-1 text-xs font-semibold text-blue-600 dark:text-blue-400">Show</button>
+                        <input type="password" id="stu-pass-input" required class="w-full px-4 py-2.5 border rounded-xl text-sm dark:bg-gray-900 dark:border-gray-700 focus:ring-2 focus:ring-blue-500 focus:outline-none pr-16" placeholder="e.g. clat_stu_101">
+                        <button type="button" id="toggle-stu-pass" class="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-semibold text-blue-600 dark:text-blue-400">Show</button>
                     </div>
                 </div>
-                <p id="stu-auth-err" class="text-xs text-red-600 font-semibold hidden">Invalid student credentials!</p>
-                <button type="submit" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow transition">
+                <p id="stu-auth-err" class="text-xs text-red-500 font-semibold hidden">Invalid student credentials!</p>
+                <button type="submit" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-md transition">
                     Access Portal
                 </button>
             </form>
         </div>
     </div>
 
-    <!-- 3. STUDENT DASHBOARD -->
-    <div id="student-dashboard-screen" class="hidden p-8 max-w-5xl mx-auto space-y-6">
-        <div class="flex justify-between items-center bg-white dark:bg-gray-800 p-6 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm">
+    <!-- 3. STUDENT DASHBOARD (ANALYTICS & CHARTS) -->
+    <div id="student-dashboard-screen" class="hidden p-6 md:p-8 max-w-6xl mx-auto space-y-6 w-full">
+        <div class="flex justify-between items-center bg-white dark:bg-gray-800/80 p-6 rounded-2xl border dark:border-gray-700 shadow-sm">
             <div>
-                <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Student Portal</h1>
+                <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Student Command Center</h1>
                 <p id="stu-logged-welcome" class="text-xs text-gray-500 dark:text-gray-400 mt-1"></p>
             </div>
-            <button id="stu-logout-btn" class="px-3 py-1.5 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-xs font-semibold rounded">Log Out</button>
+            <button id="stu-logout-btn" class="px-3.5 py-1.5 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 text-xs font-bold rounded-lg">Log Out</button>
         </div>
 
         <div class="flex border-b border-gray-200 dark:border-gray-700 gap-4">
-            <button id="stu-tab-exams-btn" class="py-2 px-4 border-b-2 border-blue-600 text-blue-600 font-bold text-sm">Available Mock Tests</button>
-            <button id="stu-tab-perf-btn" class="py-2 px-4 border-b-2 border-transparent text-gray-500 dark:text-gray-400 font-bold text-sm">My Test Performance</button>
+            <button id="stu-tab-exams-btn" class="py-2.5 px-4 border-b-2 border-blue-600 text-blue-600 font-bold text-sm">Available Mock Tests</button>
+            <button id="stu-tab-perf-btn" class="py-2.5 px-4 border-b-2 border-transparent text-gray-500 dark:text-gray-400 font-bold text-sm">Performance Analytics</button>
         </div>
 
         <div id="stu-tab-exams" class="space-y-4">
             <div id="student-tests-container" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
         </div>
 
-        <div id="stu-tab-perf" class="hidden space-y-4">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                <div class="bg-white dark:bg-gray-800 p-4 border dark:border-gray-700 rounded-xl shadow-sm text-center">
-                    <span class="text-xs text-gray-500 uppercase font-semibold">Total Attempted</span>
-                    <h3 id="stat-total-tests" class="text-2xl font-bold text-blue-600 dark:text-blue-400 mt-1">0</h3>
+        <div id="stu-tab-perf" class="hidden space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="bg-white dark:bg-gray-800 p-5 border dark:border-gray-700 rounded-2xl shadow-sm text-center">
+                    <span class="text-xs text-gray-400 uppercase font-bold tracking-wider">Mocks Attempted</span>
+                    <h3 id="stat-total-tests" class="text-3xl font-black text-blue-600 dark:text-blue-400 mt-1">0</h3>
                 </div>
-                <div class="bg-white dark:bg-gray-800 p-4 border dark:border-gray-700 rounded-xl shadow-sm text-center">
-                    <span class="text-xs text-gray-500 uppercase font-semibold">Average Score</span>
-                    <h3 id="stat-avg-score" class="text-2xl font-bold text-green-600 dark:text-green-400 mt-1">0.00</h3>
+                <div class="bg-white dark:bg-gray-800 p-5 border dark:border-gray-700 rounded-2xl shadow-sm text-center">
+                    <span class="text-xs text-gray-400 uppercase font-bold tracking-wider">Average Score</span>
+                    <h3 id="stat-avg-score" class="text-3xl font-black text-emerald-500 mt-1">0.00</h3>
                 </div>
-                <div class="bg-white dark:bg-gray-800 p-4 border dark:border-gray-700 rounded-xl shadow-sm text-center">
-                    <span class="text-xs text-gray-500 uppercase font-semibold">Highest Score</span>
-                    <h3 id="stat-high-score" class="text-2xl font-bold text-purple-600 dark:text-purple-400 mt-1">0.00</h3>
+                <div class="bg-white dark:bg-gray-800 p-5 border dark:border-gray-700 rounded-2xl shadow-sm text-center">
+                    <span class="text-xs text-gray-400 uppercase font-bold tracking-wider">Highest Score</span>
+                    <h3 id="stat-high-score" class="text-3xl font-black text-purple-500 mt-1">0.00</h3>
                 </div>
             </div>
 
-            <div class="bg-white dark:bg-gray-800 p-6 rounded-xl border dark:border-gray-700 shadow-sm space-y-4">
-                <h3 class="text-lg font-bold text-gray-900 dark:text-white">Past Test History</h3>
+            <!-- Chart Section -->
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl border dark:border-gray-700 shadow-sm space-y-4">
+                <h3 class="text-base font-bold text-gray-900 dark:text-white">Score Progress Over Time</h3>
+                <div class="h-64">
+                    <canvas id="scoreChart"></canvas>
+                </div>
+            </div>
+
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl border dark:border-gray-700 shadow-sm space-y-4">
+                <h3 class="text-base font-bold text-gray-900 dark:text-white">Past Test Logs</h3>
                 <div class="overflow-x-auto">
                     <table class="w-full text-left text-sm text-gray-600 dark:text-gray-300">
-                        <thead class="bg-gray-100 dark:bg-gray-700 uppercase text-xs font-semibold">
+                        <thead class="bg-gray-50 dark:bg-gray-900/50 uppercase text-xs font-semibold">
                             <tr>
                                 <th class="p-3">Test Title</th>
                                 <th class="p-3">Score</th>
@@ -148,105 +209,109 @@
     </div>
 
     <!-- 4. TEACHER LOGIN SCREEN -->
-    <div id="teacher-login-screen" class="hidden min-h-[calc(100vh-56px)] flex items-center justify-center p-4">
-        <div class="max-w-md w-full bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 p-8">
+    <div id="teacher-login-screen" class="hidden flex-1 flex items-center justify-center p-4">
+        <div class="max-w-md w-full bg-white dark:bg-gray-800/90 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 p-8">
             <div class="text-center mb-6">
                 <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Teacher Dashboard Login</h2>
-                <p class="text-gray-600 dark:text-gray-400 text-xs mt-1">Access restricted to Leo & Siddhi</p>
+                <p class="text-gray-500 dark:text-gray-400 text-xs mt-1">Restricted to Authorized Faculty</p>
             </div>
 
             <form id="teacher-login-form" class="space-y-4">
                 <div>
                     <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">Teacher Username</label>
-                    <input type="text" id="teacher-user-input" required class="w-full px-4 py-2 border rounded-lg text-sm dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-purple-500 focus:outline-none">
+                    <input type="text" id="teacher-user-input" required class="w-full px-4 py-2.5 border rounded-xl text-sm dark:bg-gray-900 dark:border-gray-700 focus:ring-2 focus:ring-purple-500 focus:outline-none">
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">Password</label>
                     <div class="relative">
-                        <input type="password" id="teacher-pass-input" required class="w-full px-4 py-2 border rounded-lg text-sm dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-purple-500 focus:outline-none pr-16">
-                        <button type="button" id="toggle-teacher-pass" class="absolute right-2 top-1/2 -translate-y-1/2 px-2 py-1 text-xs font-semibold text-purple-600 dark:text-purple-400">Show</button>
+                        <input type="password" id="teacher-pass-input" required class="w-full px-4 py-2.5 border rounded-xl text-sm dark:bg-gray-900 dark:border-gray-700 focus:ring-2 focus:ring-purple-500 focus:outline-none pr-16">
+                        <button type="button" id="toggle-teacher-pass" class="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-semibold text-purple-600 dark:text-purple-400">Show</button>
                     </div>
                 </div>
-                <p id="teacher-auth-err" class="text-xs text-red-600 font-semibold hidden">Invalid teacher credentials!</p>
-                <button type="submit" class="w-full py-3 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-lg shadow transition">
-                    Login to Dashboard
+                <p id="teacher-auth-err" class="text-xs text-red-500 font-semibold hidden">Invalid teacher credentials!</p>
+                <button type="submit" class="w-full py-3 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-xl shadow-md transition">
+                    Login to Control Panel
                 </button>
             </form>
         </div>
     </div>
 
-    <!-- 5. TEACHER DASHBOARD -->
-    <div id="teacher-screen" class="hidden p-8 max-w-6xl mx-auto space-y-6">
-        <div class="flex justify-between items-center bg-white dark:bg-gray-800 p-6 rounded-xl border dark:border-gray-700 shadow-sm">
+    <!-- 5. TEACHER DASHBOARD (MONACO-STYLE EDITOR & CSV EXPORT) -->
+    <div id="teacher-screen" class="hidden p-6 md:p-8 max-w-6xl mx-auto space-y-6 w-full">
+        <div class="flex justify-between items-center bg-white dark:bg-gray-800 p-6 rounded-2xl border dark:border-gray-700 shadow-sm">
             <div>
                 <h1 class="text-2xl font-bold">Teacher Control Panel</h1>
-                <p id="teacher-logged-user" class="text-xs text-purple-600 dark:text-purple-400 font-semibold mt-1">Instructor Logged In</p>
+                <p id="teacher-logged-user" class="text-xs text-purple-600 dark:text-purple-400 font-bold mt-1"></p>
             </div>
-            <button id="teacher-logout-btn" class="px-3 py-1.5 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 text-xs font-semibold rounded">Log Out</button>
+            <button id="teacher-logout-btn" class="px-3.5 py-1.5 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 text-xs font-bold rounded-lg">Log Out</button>
         </div>
 
         <div class="flex border-b border-gray-200 dark:border-gray-700 gap-4">
             <button id="teacher-tab-create-btn" class="py-2.5 px-4 border-b-2 border-purple-600 text-purple-600 font-bold text-sm">Create & Schedule Test</button>
-            <button id="teacher-tab-score-btn" class="py-2.5 px-4 border-b-2 border-transparent text-gray-500 dark:text-gray-400 font-bold text-sm">Scoreboard & Live Monitoring</button>
+            <button id="teacher-tab-score-btn" class="py-2.5 px-4 border-b-2 border-transparent text-gray-500 font-bold text-sm">Scoreboard & Resets</button>
         </div>
 
         <!-- TAB 1: CREATE TEST -->
-        <div id="teacher-tab-create" class="bg-white dark:bg-gray-800 p-6 rounded-xl border dark:border-gray-700 shadow-sm space-y-4">
-            <h2 class="text-xl font-bold text-gray-900 dark:text-white border-b dark:border-gray-700 pb-3">Create & Schedule Mock Test</h2>
+        <div id="teacher-tab-create" class="bg-white dark:bg-gray-800 p-6 rounded-2xl border dark:border-gray-700 shadow-sm space-y-4">
+            <h2 class="text-xl font-bold text-gray-900 dark:text-white border-b dark:border-gray-700 pb-3">Publish New Test Paper</h2>
             <form id="json-import-form" class="space-y-4">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div>
                         <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">Test Title</label>
-                        <input type="text" id="json-test-title" required class="w-full px-3 py-2 border dark:border-gray-600 dark:bg-gray-700 rounded text-sm" placeholder="e.g. CLAT Legal Reasoning Mock 02">
+                        <input type="text" id="json-test-title" required class="w-full px-3 py-2 border dark:border-gray-700 dark:bg-gray-900 rounded-xl text-sm" placeholder="e.g. CLAT Legal Mock 02">
                     </div>
                     <div>
                         <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">Duration (Minutes)</label>
-                        <input type="number" id="json-test-duration" value="120" required class="w-full px-3 py-2 border dark:border-gray-600 dark:bg-gray-700 rounded text-sm">
+                        <input type="number" id="json-test-duration" value="120" required class="w-full px-3 py-2 border dark:border-gray-700 dark:bg-gray-900 rounded-xl text-sm">
                     </div>
                     <div>
                         <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">Schedule Start Date & Time (Optional)</label>
-                        <input type="datetime-local" id="json-test-schedule" class="w-full px-3 py-2 border dark:border-gray-600 dark:bg-gray-700 rounded text-sm">
+                        <input type="datetime-local" id="json-test-schedule" class="w-full px-3 py-2 border dark:border-gray-700 dark:bg-gray-900 rounded-xl text-sm">
                     </div>
                 </div>
+
                 <div>
-                    <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">Paste AI-Generated Test JSON Array</label>
-                    <textarea id="json-test-payload" rows="8" required class="w-full px-3 py-2 border dark:border-gray-600 rounded text-xs font-mono bg-gray-50 dark:bg-gray-900" placeholder="Paste the JSON output here..."></textarea>
+                    <div class="flex justify-between items-center mb-1">
+                        <label class="text-xs font-semibold text-gray-700 dark:text-gray-300">Paste AI-Generated Test JSON Array</label>
+                        <button type="button" id="prettify-json-btn" class="text-xs text-purple-600 dark:text-purple-400 font-bold hover:underline">✨ Format / Prettify JSON</button>
+                    </div>
+                    <textarea id="json-test-payload" rows="10" required class="w-full px-4 py-3 border dark:border-gray-700 rounded-xl text-xs font-mono bg-gray-900 text-emerald-400 leading-relaxed" placeholder="Paste generated JSON here..."></textarea>
                 </div>
-                <button type="submit" class="px-6 py-2.5 bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs rounded shadow transition">
+                <button type="submit" class="px-6 py-2.5 bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs rounded-xl shadow-md transition">
                     🚀 Publish Exam to Student Portal
                 </button>
             </form>
         </div>
 
-        <!-- TAB 2: SCOREBOARD & MONITORING -->
+        <!-- TAB 2: SCOREBOARD -->
         <div id="teacher-tab-score" class="hidden space-y-6">
-            <div class="bg-amber-50 dark:bg-amber-950/40 p-6 rounded-xl border border-amber-200 dark:border-amber-800 space-y-4">
-                <h3 class="text-base font-bold text-amber-900 dark:text-amber-200">Student Session Management</h3>
+            <div class="bg-amber-50 dark:bg-amber-950/40 p-6 rounded-2xl border border-amber-200 dark:border-amber-800 space-y-4">
+                <h3 class="text-base font-bold text-amber-900 dark:text-amber-200">Session Reset Tools</h3>
                 <div class="flex flex-col md:flex-row gap-4 items-end">
                     <div class="flex-1">
-                        <label class="block text-xs font-semibold text-amber-800 dark:text-amber-300 mb-1">Reset Specific Student Attempt (Username or Student ID)</label>
-                        <input type="text" id="reset-single-id" class="w-full px-3 py-2 border dark:border-gray-600 rounded text-sm bg-white dark:bg-gray-800" placeholder="e.g. student01 or STU-2026-01">
+                        <label class="block text-xs font-semibold text-amber-800 dark:text-amber-300 mb-1">Reset Specific Student Attempt (Username or ID)</label>
+                        <input type="text" id="reset-single-id" class="w-full px-3 py-2 border dark:border-gray-700 rounded-xl text-sm bg-white dark:bg-gray-900" placeholder="e.g. student01 or STU-2026-01">
                     </div>
-                    <button id="reset-single-btn" class="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs rounded shadow transition">Reset Single Student</button>
-                    <button id="reset-student-sessions-btn" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-bold text-xs rounded shadow transition">⚠️ Reset ALL Students</button>
+                    <button id="reset-single-btn" class="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs rounded-xl shadow transition">Reset Single Student</button>
+                    <button id="reset-student-sessions-btn" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-bold text-xs rounded-xl shadow transition">⚠️ Reset ALL Students</button>
                 </div>
             </div>
 
-            <div class="bg-white dark:bg-gray-800 rounded-xl shadow overflow-hidden border dark:border-gray-700 space-y-2">
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow overflow-hidden border dark:border-gray-700 space-y-2">
                 <div class="flex justify-between items-center p-4 border-b dark:border-gray-700">
-                    <h2 class="text-lg font-bold text-gray-900 dark:text-white">Student Scoreboard</h2>
+                    <h2 class="text-lg font-bold">Student Scoreboard</h2>
                     <div class="flex gap-2">
-                        <button id="export-csv-btn" class="px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white font-bold text-xs rounded shadow">📥 Export CSV</button>
-                        <button id="clear-btn-teacher" class="px-3 py-1.5 bg-gray-200 dark:bg-gray-700 text-xs font-semibold rounded">Clear Scoreboard</button>
+                        <button id="export-csv-btn" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-lg shadow">📥 Export CSV</button>
+                        <button id="clear-btn-teacher" class="px-3 py-1.5 bg-gray-100 dark:bg-gray-700 text-xs font-semibold rounded-lg">Clear Table</button>
                     </div>
                 </div>
                 <div class="overflow-x-auto">
                     <table class="w-full text-left text-sm text-gray-600 dark:text-gray-300">
-                        <thead class="bg-gray-100 dark:bg-gray-700 uppercase text-xs font-semibold">
+                        <thead class="bg-gray-50 dark:bg-gray-900 uppercase text-xs font-semibold">
                             <tr>
                                 <th class="p-4">Student ID</th>
                                 <th class="p-4">Student Name</th>
-                                <th class="p-4">Exam Taken</th>
+                                <th class="p-4">Exam Title</th>
                                 <th class="p-4">Score</th>
                                 <th class="p-4">Status</th>
                                 <th class="p-4">Timestamp</th>
@@ -259,88 +324,113 @@
         </div>
     </div>
 
-    <!-- 6. EXAM ENGINE WITH RESIZABLE SPLIT & FULLSCREEN MANDATE -->
-    <div id="test-screen" class="hidden h-[calc(100vh-56px)] flex flex-col bg-gray-100 dark:bg-gray-900">
-        <div class="bg-gray-800 text-white px-6 py-2 flex justify-between items-center text-xs">
+    <!-- 6. EXAM ENGINE WITH CIRCULAR TIMER & HIGHLIGHTER -->
+    <div id="test-screen" class="hidden h-[calc(100vh-56px)] flex flex-col bg-gray-100 dark:bg-[#0b0f19]">
+        <!-- Exam Top Bar -->
+        <div class="bg-gray-900 text-white px-6 py-2.5 flex justify-between items-center text-xs shadow-md z-10">
             <span id="candidate-display" class="text-gray-300 font-semibold">Candidate: -</span>
-            <div class="flex items-center gap-4">
-                <div class="relative w-24 h-16 bg-black rounded border border-gray-600 overflow-hidden flex items-center justify-center">
+            <div class="flex items-center gap-5">
+                <!-- Live PIP Webcam Feed -->
+                <div class="relative w-28 h-16 bg-black rounded-lg border border-gray-700 overflow-hidden flex items-center justify-center shadow-inner">
                     <video id="proctor-cam" autoplay playsinline muted class="w-full h-full object-cover"></video>
-                    <span id="cam-status" class="absolute bottom-0 left-0 right-0 bg-red-600 text-white text-[9px] text-center font-bold px-1 py-0.5 hidden">CAM OFF</span>
+                    <div class="absolute top-1 left-1 flex items-center gap-1 bg-black/60 px-1.5 py-0.5 rounded backdrop-blur">
+                        <div class="pulse-dot"></div>
+                        <span class="text-[8px] font-bold text-emerald-400">AI PROCTOR</span>
+                    </div>
                 </div>
-                <span class="text-amber-400 font-semibold">Proctor Warnings: <span id="violation-display" class="text-green-400 font-bold">0 / 1</span></span>
-                <div class="bg-gray-900 px-3 py-1 rounded font-mono text-base font-bold text-yellow-400" id="timer">120:00</div>
-                <button id="finish-btn" class="bg-red-600 hover:bg-red-700 text-white font-semibold px-3 py-1 rounded transition">Submit Exam</button>
+
+                <span class="text-amber-400 font-semibold">Warnings: <span id="violation-display" class="text-emerald-400 font-bold">0 / 1</span></span>
+
+                <!-- Animated SVG Countdown Timer Ring -->
+                <div class="flex items-center gap-2 bg-gray-800 px-3 py-1.5 rounded-xl border border-gray-700">
+                    <svg class="w-6 h-6 transform -rotate-90">
+                        <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2.5" class="text-gray-700" fill="transparent" />
+                        <circle id="timer-ring" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2.5" class="text-emerald-400 transition-all duration-1000" fill="transparent" stroke-dasharray="62.8" stroke-dashoffset="0" />
+                    </svg>
+                    <span id="timer" class="font-mono text-base font-black text-yellow-400">120:00</span>
+                </div>
+
+                <button id="finish-btn" class="bg-red-600 hover:bg-red-700 text-white font-bold px-3.5 py-1.5 rounded-lg shadow transition">Submit Exam</button>
             </div>
         </div>
 
         <nav class="bg-white dark:bg-gray-800 border-b dark:border-gray-700 px-6 py-2 flex gap-2 overflow-x-auto" id="section-tabs"></nav>
 
         <div class="flex-1 flex overflow-hidden relative" id="workspace-container">
-            <div id="left-passage-pane" class="w-1/2 p-6 border-r dark:border-gray-700 overflow-y-auto bg-white dark:bg-gray-800 custom-scrollbar">
-                <h3 class="text-xs font-bold text-blue-600 dark:text-blue-400 uppercase mb-2" id="section-badge">READING PASSAGE</h3>
-                <div id="passage-text" class="text-gray-800 dark:text-gray-200 leading-relaxed font-serif whitespace-pre-line text-sm"></div>
+            <!-- Left Pane: Passage -->
+            <div id="left-passage-pane" class="w-1/2 p-6 border-r dark:border-gray-700 overflow-y-auto bg-white dark:bg-gray-800 custom-scrollbar relative">
+                <div class="flex justify-between items-center mb-3">
+                    <h3 class="text-xs font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider" id="section-badge">READING PASSAGE</h3>
+                    <div class="flex gap-1.5 text-xs">
+                        <button id="hl-yellow-btn" class="px-2 py-0.5 bg-yellow-200 text-yellow-800 font-bold rounded">Highlight Yellow</button>
+                        <button id="hl-cyan-btn" class="px-2 py-0.5 bg-cyan-200 text-cyan-800 font-bold rounded">Highlight Cyan</button>
+                    </div>
+                </div>
+                <div id="passage-text" class="text-gray-800 dark:text-gray-200 leading-relaxed font-serif text-sm"></div>
             </div>
 
+            <!-- Resizer Handle -->
             <div id="drag-resizer" class="resizer flex items-center justify-center"></div>
 
-            <div id="right-question-pane" class="flex-1 p-6 overflow-y-auto flex flex-col justify-between bg-gray-50 dark:bg-gray-900 custom-scrollbar">
+            <!-- Right Pane: Questions & Options -->
+            <div id="right-question-pane" class="flex-1 p-6 overflow-y-auto flex flex-col justify-between bg-gray-50 dark:bg-[#0b0f19] custom-scrollbar">
                 <div>
                     <div class="flex justify-between items-center mb-4">
-                        <span id="q-badge" class="px-3 py-1 bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 font-semibold text-xs rounded-full">Question 1</span>
+                        <span id="q-badge" class="px-3 py-1 bg-blue-100 text-blue-800 dark:bg-blue-900/60 dark:text-blue-200 font-bold text-xs rounded-full">Question 1</span>
                         <span class="text-xs text-gray-500 dark:text-gray-400">Marks: +1.0, -0.25</span>
                     </div>
-                    <div id="q-text" class="text-gray-900 dark:text-white font-medium mb-6 text-base"></div>
+                    <div id="q-text" class="text-gray-900 dark:text-white font-medium mb-6 text-base leading-relaxed"></div>
                     <div id="options-box" class="space-y-3"></div>
                 </div>
 
                 <div class="pt-4 border-t dark:border-gray-700 flex justify-between items-center">
-                    <button id="mark-review-btn" class="px-3 py-1.5 bg-purple-100 dark:bg-purple-900 text-purple-700 dark:text-purple-300 text-xs font-semibold rounded hover:bg-purple-200">Mark for Review</button>
+                    <button id="mark-review-btn" class="px-3.5 py-1.5 bg-purple-100 dark:bg-purple-900/60 text-purple-700 dark:text-purple-300 text-xs font-bold rounded-lg hover:bg-purple-200">Mark for Review</button>
                     <div class="flex gap-2 text-xs">
-                        <button id="clear-btn" class="px-3 py-1.5 border dark:border-gray-700 text-gray-600 dark:text-gray-300 rounded hover:bg-gray-100 dark:hover:bg-gray-800">Clear</button>
-                        <button id="prev-btn" class="px-3 py-1.5 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded">Previous</button>
-                        <button id="next-btn" class="px-4 py-1.5 bg-blue-600 text-white font-semibold rounded hover:bg-blue-700">Save & Next</button>
+                        <button id="clear-btn" class="px-3 py-1.5 border dark:border-gray-700 text-gray-600 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800">Clear</button>
+                        <button id="prev-btn" class="px-3.5 py-1.5 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 font-bold rounded-lg">Previous</button>
+                        <button id="next-btn" class="px-4 py-1.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg shadow">Save & Next</button>
                     </div>
                 </div>
             </div>
 
+            <!-- Sidebar Question Palette -->
             <div class="w-72 bg-white dark:bg-gray-800 border-l dark:border-gray-700 p-4 flex flex-col justify-between">
                 <div>
-                    <h3 class="font-bold text-xs text-gray-700 dark:text-gray-300 mb-2 uppercase">Question Palette</h3>
-                    <div class="flex gap-1 mb-3 text-[10px] border-b dark:border-gray-700 pb-2 overflow-x-auto">
+                    <h3 class="font-bold text-xs text-gray-700 dark:text-gray-300 mb-2 uppercase tracking-wider">Question Palette</h3>
+                    <div class="flex gap-1 mb-3 text-[10px] border-b dark:border-gray-700 pb-2">
                         <button id="filter-all" class="px-2 py-0.5 bg-gray-200 dark:bg-gray-700 font-bold rounded">All</button>
                         <button id="filter-ans" class="px-2 py-0.5 bg-emerald-100 text-emerald-800 font-bold rounded">Ans</button>
                         <button id="filter-not-ans" class="px-2 py-0.5 bg-red-100 text-red-800 font-bold rounded">Unans</button>
                         <button id="filter-marked" class="px-2 py-0.5 bg-purple-100 text-purple-800 font-bold rounded">Marked</button>
                     </div>
-                    <div id="palette-grid" class="grid grid-cols-5 gap-2 max-h-[55vh] overflow-y-auto custom-scrollbar p-1"></div>
+                    <div id="palette-grid" class="grid grid-cols-5 gap-2 max-h-[50vh] overflow-y-auto custom-scrollbar p-1"></div>
                 </div>
-                <button id="sidebar-submit-btn" class="w-full py-2 bg-green-600 text-white font-bold text-xs rounded hover:bg-green-700">Final Submit</button>
+                <button id="sidebar-submit-btn" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow">Final Submit</button>
             </div>
         </div>
     </div>
 
-    <!-- 7. RESULT SCORECARD WITH FILTERABLE SOLUTIONS -->
-    <div id="result-screen" class="hidden p-8 max-w-5xl mx-auto space-y-6">
-        <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow border dark:border-gray-700 flex justify-between items-center">
+    <!-- 7. RESULT SCORECARD -->
+    <div id="result-screen" class="hidden p-6 md:p-8 max-w-5xl mx-auto space-y-6 w-full">
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border dark:border-gray-700 flex justify-between items-center">
             <div>
-                <h1 class="text-2xl font-bold">Exam Result Scorecard</h1>
-                <p id="res-student" class="text-gray-500 text-sm"></p>
-                <p id="res-reason" class="text-xs text-red-600 mt-1 font-semibold"></p>
+                <h1 class="text-2xl font-bold">Exam Performance Report</h1>
+                <p id="res-student" class="text-gray-500 text-sm mt-0.5"></p>
+                <p id="res-reason" class="text-xs text-red-500 mt-1 font-bold"></p>
             </div>
             <div class="text-right">
-                <span class="text-3xl font-bold text-blue-600 dark:text-blue-400" id="res-score">0.00</span>
-                <p class="text-xs text-gray-400">Total Score</p>
+                <span class="text-4xl font-black text-blue-600 dark:text-blue-400" id="res-score">0.00</span>
+                <p class="text-xs text-gray-400 uppercase font-bold tracking-wider mt-1">Final Score</p>
             </div>
         </div>
 
-        <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow border dark:border-gray-700 space-y-4">
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border dark:border-gray-700 space-y-4">
             <div class="flex justify-between items-center border-b dark:border-gray-700 pb-3">
-                <h3 class="font-bold text-lg">Question Performance & Rationale</h3>
+                <h3 class="font-bold text-lg">Solution Breakdown</h3>
                 <div class="flex gap-2 text-xs">
-                    <button id="sol-filter-all" class="px-3 py-1 bg-blue-600 text-white rounded font-semibold">All</button>
-                    <button id="sol-filter-correct" class="px-3 py-1 bg-gray-200 dark:bg-gray-700 rounded font-semibold">Correct</button>
-                    <button id="sol-filter-incorrect" class="px-3 py-1 bg-gray-200 dark:bg-gray-700 rounded font-semibold">Incorrect</button>
+                    <button id="sol-filter-all" class="px-3 py-1 bg-blue-600 text-white rounded-lg font-bold">All</button>
+                    <button id="sol-filter-correct" class="px-3 py-1 bg-gray-100 dark:bg-gray-700 rounded-lg font-bold">Correct</button>
+                    <button id="sol-filter-incorrect" class="px-3 py-1 bg-gray-100 dark:bg-gray-700 rounded-lg font-bold">Incorrect</button>
                 </div>
             </div>
             <div id="solution-list" class="space-y-4 max-h-[60vh] overflow-y-auto custom-scrollbar"></div>
@@ -390,6 +480,7 @@
         var userAnswers = {};
         var currentQIndex = 0;
         var timer = 120 * 60;
+        var totalExamDuration = 120 * 60;
         var activeUser = null;
         var activeExam = null;
         var timerInterval = null;
@@ -398,6 +489,7 @@
         var warningCount = 0;
         var fontSizeLevel = 100;
         var paletteFilter = 'all';
+        var scoreChartInstance = null;
 
         function getStoredExams() {
             var custom = JSON.parse(localStorage.getItem('clat_custom_exams') || '[]');
@@ -408,22 +500,15 @@
             setupPasswordToggle('stu-pass-input', 'toggle-stu-pass');
             setupPasswordToggle('teacher-pass-input', 'toggle-teacher-pass');
             setupResizablePanes();
+            setupHighlighters();
 
-            // DARK MODE TOGGLE
             document.getElementById('dark-mode-toggle').onclick = function() {
                 document.documentElement.classList.toggle('dark');
             };
 
-            // FONT RESIZER
-            document.getElementById('font-inc-btn').onclick = function() {
-                if (fontSizeLevel < 140) { fontSizeLevel += 10; applyFontSize(); }
-            };
-            document.getElementById('font-dec-btn').onclick = function() {
-                if (fontSizeLevel > 80) { fontSizeLevel -= 10; applyFontSize(); }
-            };
-            document.getElementById('font-reset-btn').onclick = function() {
-                fontSizeLevel = 100; applyFontSize();
-            };
+            document.getElementById('font-inc-btn').onclick = function() { if (fontSizeLevel < 140) { fontSizeLevel += 10; applyFontSize(); } };
+            document.getElementById('font-dec-btn').onclick = function() { if (fontSizeLevel > 80) { fontSizeLevel -= 10; applyFontSize(); } };
+            document.getElementById('font-reset-btn').onclick = function() { fontSizeLevel = 100; applyFontSize(); };
 
             document.getElementById('header-switch-role-btn').onclick = function() {
                 if (isExamActive && !confirm("Leaving this page will submit your exam attempt. Continue?")) return;
@@ -436,22 +521,20 @@
             document.getElementById('select-student-btn').onclick = function() { showScreen('student-login-screen'); };
             document.getElementById('select-teacher-btn').onclick = function() { showScreen('teacher-login-screen'); };
 
-            // STUDENT TABS
             document.getElementById('stu-tab-exams-btn').onclick = function() {
-                this.className = "py-2 px-4 border-b-2 border-blue-600 text-blue-600 font-bold text-sm";
-                document.getElementById('stu-tab-perf-btn').className = "py-2 px-4 border-b-2 border-transparent text-gray-500 font-bold text-sm";
+                this.className = "py-2.5 px-4 border-b-2 border-blue-600 text-blue-600 font-bold text-sm";
+                document.getElementById('stu-tab-perf-btn').className = "py-2.5 px-4 border-b-2 border-transparent text-gray-500 font-bold text-sm";
                 document.getElementById('stu-tab-exams').classList.remove('hidden');
                 document.getElementById('stu-tab-perf').classList.add('hidden');
             };
             document.getElementById('stu-tab-perf-btn').onclick = function() {
-                this.className = "py-2 px-4 border-b-2 border-blue-600 text-blue-600 font-bold text-sm";
-                document.getElementById('stu-tab-exams-btn').className = "py-2 px-4 border-b-2 border-transparent text-gray-500 font-bold text-sm";
+                this.className = "py-2.5 px-4 border-b-2 border-blue-600 text-blue-600 font-bold text-sm";
+                document.getElementById('stu-tab-exams-btn').className = "py-2.5 px-4 border-b-2 border-transparent text-gray-500 font-bold text-sm";
                 document.getElementById('stu-tab-perf').classList.remove('hidden');
                 document.getElementById('stu-tab-exams').classList.add('hidden');
                 renderStudentPerformance();
             };
 
-            // TEACHER TABS
             document.getElementById('teacher-tab-create-btn').onclick = function() {
                 this.className = "py-2.5 px-4 border-b-2 border-purple-600 text-purple-600 font-bold text-sm";
                 document.getElementById('teacher-tab-score-btn').className = "py-2.5 px-4 border-b-2 border-transparent text-gray-500 font-bold text-sm";
@@ -466,13 +549,19 @@
                 renderTeacherTable();
             };
 
-            // PALETTE QUICK FILTERS
             document.getElementById('filter-all').onclick = function() { paletteFilter = 'all'; renderPalette(); };
             document.getElementById('filter-ans').onclick = function() { paletteFilter = 'answered'; renderPalette(); };
             document.getElementById('filter-not-ans').onclick = function() { paletteFilter = 'visited'; renderPalette(); };
             document.getElementById('filter-marked').onclick = function() { paletteFilter = 'marked'; renderPalette(); };
 
-            // LOGIN
+            document.getElementById('prettify-json-btn').onclick = function() {
+                var area = document.getElementById('json-test-payload');
+                try {
+                    var parsed = JSON.parse(area.value);
+                    area.value = JSON.stringify(parsed, null, 2);
+                } catch (e) { alert("Invalid JSON syntax! Fix syntax before formatting."); }
+            };
+
             document.getElementById('student-login-form').onsubmit = function(e) {
                 e.preventDefault();
                 var u = document.getElementById('stu-user-input').value.trim().toLowerCase();
@@ -498,7 +587,7 @@
 
                 if (authorizedTeachers[u] && authorizedTeachers[u].password === p) {
                     document.getElementById('teacher-auth-err').classList.add('hidden');
-                    document.getElementById('teacher-logged-user').innerText = "Instructor Logged In: " + authorizedTeachers[u].name;
+                    document.getElementById('teacher-logged-user').innerText = "Logged in: " + authorizedTeachers[u].name;
                     showScreen('teacher-screen');
                     renderTeacherTable();
                 } else {
@@ -507,11 +596,8 @@
             };
 
             document.getElementById('teacher-logout-btn').onclick = function() { showScreen('teacher-login-screen'); };
-
-            // EXPORT CSV
             document.getElementById('export-csv-btn').onclick = exportTableToCSV;
 
-            // RESETS
             document.getElementById('reset-student-sessions-btn').onclick = function() {
                 if (confirm("Reset test attempts for ALL students?")) {
                     for (var key in localStorage) {
@@ -538,7 +624,6 @@
                 document.getElementById('reset-single-id').value = '';
             };
 
-            // CREATE TEST
             document.getElementById('json-import-form').onsubmit = function(e) {
                 e.preventDefault();
                 try {
@@ -560,12 +645,9 @@
 
                     alert("Exam created and published successfully!");
                     document.getElementById('json-import-form').reset();
-                } catch(err) {
-                    alert("Invalid JSON format!");
-                }
+                } catch(err) { alert("Invalid JSON format!"); }
             };
 
-            // PROCTOR MONITORING
             window.addEventListener('blur', function() {
                 if (isExamActive) handleProctorViolation("Tab Switch / Window Focus Lost");
             });
@@ -587,24 +669,29 @@
             var leftPane = document.getElementById('left-passage-pane');
             var isDragging = false;
 
-            resizer.addEventListener('mousedown', function(e) {
-                isDragging = true;
-                document.body.style.cursor = 'col-resize';
-            });
-
+            resizer.addEventListener('mousedown', function() { isDragging = true; });
             document.addEventListener('mousemove', function(e) {
                 if (!isDragging) return;
                 var containerWidth = document.getElementById('workspace-container').offsetWidth;
                 var newLeftWidth = (e.clientX / containerWidth) * 100;
-                if (newLeftWidth > 20 && newLeftWidth < 80) {
-                    leftPane.style.width = newLeftWidth + '%';
-                }
+                if (newLeftWidth > 20 && newLeftWidth < 80) leftPane.style.width = newLeftWidth + '%';
             });
+            document.addEventListener('mouseup', function() { isDragging = false; });
+        }
 
-            document.addEventListener('mouseup', function() {
-                isDragging = false;
-                document.body.style.cursor = 'default';
-            });
+        function setupHighlighters() {
+            document.getElementById('hl-yellow-btn').onclick = function() { applySelectionHighlight('hl-yellow'); };
+            document.getElementById('hl-cyan-btn').onclick = function() { applySelectionHighlight('hl-cyan'); };
+        }
+
+        function applySelectionHighlight(className) {
+            var sel = window.getSelection();
+            if (!sel.rangeCount || sel.isCollapsed) return;
+            var range = sel.getRangeAt(0);
+            var span = document.createElement('span');
+            span.className = className;
+            range.surroundContents(span);
+            sel.removeAllRanges();
         }
 
         function renderStudentTests() {
@@ -622,21 +709,21 @@
                     var schedText = exam.scheduledTime ? new Date(exam.scheduledTime).toLocaleString() : 'Immediate Access';
 
                     var card = document.createElement('div');
-                    card.className = "bg-white dark:bg-gray-800 p-5 rounded-xl border dark:border-gray-700 shadow-sm flex flex-col justify-between space-y-4";
+                    card.className = "glow-card bg-white dark:bg-gray-800 p-6 rounded-2xl border dark:border-gray-700 shadow-sm flex flex-col justify-between space-y-4";
 
                     var btnHtml = '';
                     if (isSubmitted) {
-                        btnHtml = '<button disabled class="w-full py-2 bg-gray-300 dark:bg-gray-700 text-gray-600 dark:text-gray-400 font-bold text-xs rounded">Already Submitted</button>';
+                        btnHtml = '<button disabled class="w-full py-2.5 bg-gray-100 dark:bg-gray-700 text-gray-500 font-bold text-xs rounded-xl">Already Submitted</button>';
                     } else if (isLocked) {
-                        btnHtml = '<button disabled class="w-full py-2 bg-amber-200 dark:bg-amber-900 text-amber-800 dark:text-amber-200 font-bold text-xs rounded">Scheduled: ' + schedText + '</button>';
+                        btnHtml = '<button disabled class="w-full py-2.5 bg-amber-100 text-amber-800 font-bold text-xs rounded-xl">Scheduled: ' + schedText + '</button>';
                     } else {
-                        btnHtml = '<button class="start-exam-btn w-full py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded shadow">Start Test (Fullscreen)</button>';
+                        btnHtml = '<button class="start-exam-btn w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow-md shadow-blue-500/10 transition">Start Test (Fullscreen)</button>';
                     }
 
                     card.innerHTML = '<div>' +
-                        '<div class="flex justify-between items-center mb-1"><span class="px-2 py-0.5 bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 font-bold text-[10px] rounded uppercase">Interactive Mock</span><span class="text-xs text-gray-500 font-medium">' + exam.durationMins + ' Mins</span></div>' +
-                        '<h4 class="font-bold text-base text-gray-900 dark:text-white">' + exam.title + '</h4>' +
-                        '<p class="text-xs text-gray-500 mt-1">Available: ' + schedText + '</p>' +
+                        '<div class="flex justify-between items-center mb-2"><span class="px-2.5 py-0.5 bg-blue-50 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300 font-bold text-[10px] rounded-full uppercase tracking-wider">Official Mock</span><span class="text-xs text-gray-400 font-semibold">' + exam.durationMins + ' Mins</span></div>' +
+                        '<h4 class="font-bold text-lg text-gray-900 dark:text-white tracking-tight">' + exam.title + '</h4>' +
+                        '<p class="text-xs text-gray-400 mt-1">Available: ' + schedText + '</p>' +
                         '</div>' + btnHtml;
 
                     if (!isSubmitted && !isLocked) {
@@ -656,16 +743,22 @@
             var total = myRecords.length;
             var sum = 0;
             var max = 0;
+            var labels = [];
+            var scores = [];
 
             for (var i = 0; i < myRecords.length; i++) {
                 var scoreNum = parseFloat(myRecords[i].score) || 0;
                 sum += scoreNum;
                 if (scoreNum > max) max = scoreNum;
+                labels.push("Mock " + (i + 1));
+                scores.push(scoreNum);
             }
 
             document.getElementById('stat-total-tests').innerText = total;
             document.getElementById('stat-avg-score').innerText = total > 0 ? (sum / total).toFixed(2) : '0.00';
             document.getElementById('stat-high-score').innerText = max.toFixed(2);
+
+            renderChart(labels, scores);
 
             if (myRecords.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="4" class="p-4 text-center text-gray-400 text-xs">No completed tests found.</td></tr>';
@@ -677,10 +770,38 @@
                 tbody.innerHTML += '<tr>' +
                     '<td class="p-3 font-semibold text-gray-800 dark:text-gray-200">' + r.examTitle + '</td>' +
                     '<td class="p-3 font-bold text-blue-600 dark:text-blue-400">' + r.score + '</td>' +
-                    '<td class="p-3 text-xs"><span class="px-2 py-0.5 bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 rounded font-semibold">' + r.status + '</span></td>' +
-                    '<td class="p-3 text-xs text-gray-500 dark:text-gray-400">' + r.timestamp + '</td>' +
+                    '<td class="p-3 text-xs"><span class="px-2 py-0.5 bg-emerald-100 text-emerald-800 rounded font-semibold">' + r.status + '</span></td>' +
+                    '<td class="p-3 text-xs text-gray-400">' + r.timestamp + '</td>' +
                     '</tr>';
             }
+        }
+
+        function renderChart(labels, data) {
+            var ctx = document.getElementById('scoreChart').getContext('2d');
+            if (scoreChartInstance) scoreChartInstance.destroy();
+
+            scoreChartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Score',
+                        data: data,
+                        borderColor: '#3b82f6',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        fill: true,
+                        tension: 0.3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { beginAtZero: true }
+                    }
+                }
+            });
         }
 
         async function initiateExamStart(exam) {
@@ -709,13 +830,13 @@
                     userAnswers[k] = { selected: null, status: 'not-visited' };
                 }
                 timer = exam.durationMins * 60;
+                totalExamDuration = timer;
                 warningCount = 0;
             }
 
             var camSuccess = await startWebcam();
             if (!camSuccess) return;
 
-            // ENTER FULLSCREEN
             try {
                 if (document.documentElement.requestFullscreen) {
                     await document.documentElement.requestFullscreen();
@@ -748,7 +869,7 @@
             var elem = document.getElementById('violation-display');
             if (elem) {
                 elem.innerText = warningCount + " / 1";
-                elem.className = warningCount >= 1 ? "text-red-400 font-bold" : "text-green-400 font-bold";
+                elem.className = warningCount >= 1 ? "text-red-400 font-bold" : "text-emerald-400 font-bold";
             }
         }
 
@@ -767,14 +888,9 @@
                 mediaStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
                 var videoElem = document.getElementById('proctor-cam');
                 videoElem.srcObject = mediaStream;
-                document.getElementById('cam-status').classList.add('hidden');
-
-                mediaStream.getVideoTracks()[0].onended = function() {
-                    if (isExamActive) handleProctorViolation("Webcam Disconnected");
-                };
                 return true;
             } catch (err) {
-                alert("PROCTOR MANDATE: Camera access is required.");
+                alert("PROCTOR MANDATE: Camera access required.");
                 return false;
             }
         }
@@ -815,6 +931,11 @@
                 var s = timer % 60;
                 document.getElementById('timer').innerText = (m < 10 ? '0' + m : m) + ":" + (s < 10 ? '0' + s : s);
 
+                // Update Timer Ring Animation
+                var ring = document.getElementById('timer-ring');
+                var offset = 62.8 - (timer / totalExamDuration) * 62.8;
+                ring.style.strokeDashoffset = offset;
+
                 if (timer <= 0) {
                     isExamActive = false;
                     clearInterval(timerInterval);
@@ -853,7 +974,7 @@
                 (function(sec) {
                     var btn = document.createElement('button');
                     var isCurrent = allQuestions[currentQIndex] && allQuestions[currentQIndex].section === sec.section;
-                    btn.className = "px-3 py-1 text-xs font-semibold rounded " + (isCurrent ? 'bg-blue-600 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300');
+                    btn.className = "px-3.5 py-1.5 text-xs font-bold rounded-lg transition " + (isCurrent ? 'bg-blue-600 text-white shadow-sm' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300');
                     btn.innerText = sec.section;
                     btn.onclick = function() {
                         for (var k = 0; k < allQuestions.length; k++) {
@@ -889,7 +1010,7 @@
                     var opt = opts[optIdx];
                     var isSel = userAnswers[idx] ? userAnswers[idx].selected === optIdx : false;
                     var div = document.createElement('div');
-                    div.className = "p-3 border dark:border-gray-700 rounded-lg cursor-pointer text-sm " + (isSel ? 'border-blue-600 bg-blue-50 dark:bg-blue-950 font-semibold text-blue-900 dark:text-blue-200' : 'hover:bg-gray-100 dark:hover:bg-gray-800');
+                    div.className = "p-3.5 border dark:border-gray-700 rounded-xl cursor-pointer text-sm font-medium transition " + (isSel ? 'border-blue-600 bg-blue-50 dark:bg-blue-950/60 font-bold text-blue-900 dark:text-blue-200' : 'hover:bg-gray-100 dark:hover:bg-gray-800');
                     div.innerText = opt;
                     div.onclick = function() {
                         if (userAnswers[idx]) {
@@ -945,7 +1066,7 @@
                     if (st === 'visited') bg = 'bg-red-500 text-white';
 
                     var btn = document.createElement('button');
-                    btn.className = "w-8 h-8 rounded text-xs font-semibold " + bg + (idx === currentQIndex ? ' ring-2 ring-blue-600' : '');
+                    btn.className = "w-8 h-8 rounded-lg text-xs font-bold transition " + bg + (idx === currentQIndex ? ' ring-2 ring-blue-500' : '');
                     btn.innerText = idx + 1;
                     btn.onclick = function() { loadQuestion(idx); };
                     grid.appendChild(btn);
@@ -1000,25 +1121,25 @@
                     if (isCorrect) {
                         score += 1;
                         statusText = "Correct (+1.0)";
-                        statusClass = "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200";
+                        statusClass = "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/60 dark:text-emerald-200";
                     } else {
                         score -= 0.25;
                         statusText = "Incorrect (-0.25)";
-                        statusClass = "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200";
+                        statusClass = "bg-red-100 text-red-800 dark:bg-red-900/60 dark:text-red-200";
                     }
                 }
 
                 if (filter === 'correct' && !isCorrect) continue;
                 if (filter === 'incorrect' && (isCorrect || sel === null)) continue;
 
-                solutionList.innerHTML += '<div class="p-4 border dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-900 text-xs space-y-2">' +
+                solutionList.innerHTML += '<div class="p-4 border dark:border-gray-700 rounded-xl bg-gray-50 dark:bg-gray-900/50 text-xs space-y-2">' +
                     '<div class="flex justify-between font-bold text-sm">' +
                     '<span>Q' + (i + 1) + '. ' + q.question + '</span>' +
-                    '<span class="px-2 py-0.5 rounded ' + statusClass + '">' + statusText + '</span>' +
+                    '<span class="px-2 py-0.5 rounded-full ' + statusClass + '">' + statusText + '</span>' +
                     '</div>' +
                     '<div><strong>Your Selection:</strong> ' + (sel !== null ? q.options[sel] : 'None') + '</div>' +
                     '<div><strong>Correct Answer:</strong> ' + q.options[q.correct] + '</div>' +
-                    '<div class="bg-white dark:bg-gray-800 p-2 rounded border dark:border-gray-700"><strong>Rationale:</strong> ' + q.rationale + '</div>' +
+                    '<div class="bg-white dark:bg-gray-800 p-3 rounded-lg border dark:border-gray-700"><strong>Rationale:</strong> ' + q.rationale + '</div>' +
                     '</div>';
             }
 
@@ -1031,8 +1152,8 @@
             tbody.innerHTML = '';
             for (var i = 0; i < records.length; i++) {
                 var r = records[i];
-                var statusColor = r.status.includes('Proctor') ? 'text-red-600 font-bold' : 'text-green-600 font-medium';
-                tbody.innerHTML += '<tr><td class="p-4 font-mono">' + r.id + '</td><td class="p-4 font-medium">' + r.name + '</td><td class="p-4 font-semibold text-gray-700 dark:text-gray-300">' + (r.examTitle || 'CLAT Mock') + '</td><td class="p-4 font-bold text-blue-600 dark:text-blue-400">' + r.score + '</td><td class="p-4 ' + statusColor + '">' + r.status + '</td><td class="p-4 text-xs text-gray-500 dark:text-gray-400">' + r.timestamp + '</td></tr>';
+                var statusColor = r.status.includes('Proctor') ? 'text-red-500 font-bold' : 'text-emerald-500 font-semibold';
+                tbody.innerHTML += '<tr><td class="p-4 font-mono">' + r.id + '</td><td class="p-4 font-medium">' + r.name + '</td><td class="p-4 font-semibold text-gray-700 dark:text-gray-300">' + (r.examTitle || 'CLAT Mock') + '</td><td class="p-4 font-bold text-blue-600 dark:text-blue-400">' + r.score + '</td><td class="p-4 ' + statusColor + '">' + r.status + '</td><td class="p-4 text-xs text-gray-400">' + r.timestamp + '</td></tr>';
             }
             document.getElementById('clear-btn-teacher').onclick = function() {
                 if (confirm("Clear all student score records?")) {
