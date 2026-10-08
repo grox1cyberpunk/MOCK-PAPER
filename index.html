@@ -3,13 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CLAT UG Official CBT Mock Engine</title>
+    <title>CLAT UG Official CBT Mock Portal</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Mozilla PDF.js Library for PDF Rendering -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
-    <script>
-        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
-    </script>
     <style>
         .custom-scrollbar::-webkit-scrollbar { width: 6px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: #f1f1f1; }
@@ -19,10 +14,10 @@
 </head>
 <body class="bg-gray-50 text-gray-800 font-sans no-select" oncontextmenu="return false;">
 
-    <!-- TOP HEADER -->
+    <!-- TOP BAR -->
     <header class="bg-gray-900 text-white px-6 py-3 flex justify-between items-center shadow-md">
         <div class="flex items-center gap-2">
-            <span class="font-bold text-lg text-blue-400">CLAT Proctored CBT Portal</span>
+            <span class="font-bold text-lg text-blue-400">CLAT Proctored CBT Engine</span>
         </div>
         <div class="flex items-center gap-3">
             <button id="header-switch-role-btn" class="px-3.5 py-1.5 bg-gray-700 hover:bg-gray-600 text-white font-medium text-xs rounded transition">
@@ -36,7 +31,7 @@
         <div class="max-w-md w-full bg-white rounded-xl shadow-xl border border-gray-200 p-8 text-center space-y-6">
             <div>
                 <h1 class="text-2xl font-bold text-gray-900">Welcome to CLAT CBT</h1>
-                <p class="text-gray-600 text-sm mt-1">Select your role to access the portal</p>
+                <p class="text-gray-600 text-sm mt-1">Please select your role to proceed</p>
             </div>
 
             <div class="grid grid-cols-1 gap-4 pt-2">
@@ -57,13 +52,7 @@
         <div class="max-w-md w-full bg-white rounded-xl shadow-lg border border-gray-200 p-8">
             <div class="text-center mb-6">
                 <h2 class="text-2xl font-bold text-gray-900">Student Portal Login</h2>
-                <p class="text-gray-600 text-xs mt-1">Enter your assigned username & password</p>
-            </div>
-
-            <div class="bg-amber-50 border-l-4 border-amber-500 p-3 mb-6 rounded-r text-xs text-amber-800 space-y-1">
-                <p class="font-bold">Exam Regulations & Proctoring:</p>
-                <p>• <strong>Webcam Mandatory:</strong> Live camera access must be enabled.</p>
-                <p>• <strong>2-Strike Violation Rule:</strong> 1 warning allowed for tab switches. 2nd violation auto-submits exam.</p>
+                <p class="text-gray-600 text-xs mt-1">Enter your assigned student credentials</p>
             </div>
 
             <form id="student-login-form" class="space-y-4">
@@ -80,24 +69,24 @@
                 </div>
                 <p id="stu-auth-err" class="text-xs text-red-600 font-semibold hidden">Invalid student credentials!</p>
                 <button type="submit" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow transition">
-                    Access Exam Library
+                    Access Portal
                 </button>
             </form>
         </div>
     </div>
 
-    <!-- 3. STUDENT TEST DASHBOARD / LIBRARY -->
+    <!-- 3. STUDENT DASHBOARD -->
     <div id="student-dashboard-screen" class="hidden p-8 max-w-5xl mx-auto space-y-6">
         <div class="flex justify-between items-center bg-white p-6 rounded-xl border shadow-sm">
             <div>
                 <h1 class="text-2xl font-bold text-gray-900">Student Exam Portal</h1>
-                <p id="stu-logged-welcome" class="text-xs text-gray-500 mt-1">Select an active or scheduled test below</p>
+                <p id="stu-logged-welcome" class="text-xs text-gray-500 mt-1"></p>
             </div>
             <button id="stu-logout-btn" class="px-3 py-1.5 bg-gray-200 hover:bg-gray-300 text-xs font-semibold rounded">Log Out</button>
         </div>
 
         <div class="space-y-4">
-            <h3 class="text-lg font-bold text-gray-800">Available & Scheduled Exams</h3>
+            <h3 class="text-lg font-bold text-gray-800">Available Mock Tests</h3>
             <div id="student-tests-container" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
         </div>
     </div>
@@ -107,7 +96,7 @@
         <div class="max-w-md w-full bg-white rounded-xl shadow-lg border border-gray-200 p-8">
             <div class="text-center mb-6">
                 <h2 class="text-2xl font-bold text-gray-900">Teacher Dashboard Login</h2>
-                <p class="text-gray-600 text-xs mt-1">Restricted to Leo & Siddhi</p>
+                <p class="text-gray-600 text-xs mt-1">Access restricted to Leo & Siddhi</p>
             </div>
 
             <form id="teacher-login-form" class="space-y-4">
@@ -124,13 +113,13 @@
                 </div>
                 <p id="teacher-auth-err" class="text-xs text-red-600 font-semibold hidden">Invalid teacher credentials!</p>
                 <button type="submit" class="w-full py-3 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-lg shadow transition">
-                    Login to Instructor Portal
+                    Login to Dashboard
                 </button>
             </form>
         </div>
     </div>
 
-    <!-- 5. TEACHER DASHBOARD (Scoreboard + Test Creator) -->
+    <!-- 5. TEACHER DASHBOARD (CREATOR + RESET) -->
     <div id="teacher-screen" class="hidden p-8 max-w-6xl mx-auto space-y-8">
         <div class="flex justify-between items-center bg-white p-6 rounded-xl border shadow-sm">
             <div>
@@ -139,7 +128,7 @@
             </div>
             <div class="flex gap-2">
                 <button id="reset-student-sessions-btn" class="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white font-semibold text-xs rounded transition shadow">
-                    🔄 Reset All Student Sessions & Attempts
+                    🔄 Reset All Student Sessions
                 </button>
                 <button id="clear-btn-teacher" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-semibold text-xs rounded transition shadow">
                     🗑️ Clear Scoreboard
@@ -147,49 +136,33 @@
             </div>
         </div>
 
-        <!-- CREATE NEW TEST FORM SECTION -->
-        <div class="bg-white p-6 rounded-xl border shadow-sm space-y-6">
-            <h2 class="text-xl font-bold text-gray-900 border-b pb-3">Create & Schedule New Mock Exam (PDF Upload)</h2>
-            <form id="create-test-form" class="space-y-4">
+        <!-- AI JSON TEST IMPORT FORM -->
+        <div class="bg-white p-6 rounded-xl border shadow-sm space-y-4">
+            <h2 class="text-xl font-bold text-gray-900 border-b pb-3">Create & Publish Test via AI JSON Payload</h2>
+            <form id="json-import-form" class="space-y-4">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-xs font-semibold text-gray-700 mb-1">Test Title</label>
-                        <input type="text" id="new-test-title" required class="w-full px-3 py-2 border rounded text-sm" placeholder="e.g. CLAT Grand Mock Test 02">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-gray-700 mb-1">Section Name</label>
-                        <input type="text" id="new-test-section" required class="w-full px-3 py-2 border rounded text-sm" placeholder="e.g. Full Length Legal & GK Test">
+                        <input type="text" id="json-test-title" required class="w-full px-3 py-2 border rounded text-sm" placeholder="e.g. CLAT Legal Reasoning Mock 02">
                     </div>
                     <div>
                         <label class="block text-xs font-semibold text-gray-700 mb-1">Duration (Minutes)</label>
-                        <input type="number" id="new-test-duration" value="120" min="5" max="300" required class="w-full px-3 py-2 border rounded text-sm">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-gray-700 mb-1">Scheduled Date & Start Time</label>
-                        <input type="datetime-local" id="new-test-schedule" required class="w-full px-3 py-2 border rounded text-sm">
+                        <input type="number" id="json-test-duration" value="120" required class="w-full px-3 py-2 border rounded text-sm">
                     </div>
                 </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs font-semibold text-gray-700 mb-1">Upload PDF Question Paper</label>
-                        <input type="file" id="new-test-pdf" accept="application/pdf" required class="w-full text-xs text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100 border rounded p-1">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-gray-700 mb-1">Number of Questions</label>
-                        <input type="number" id="new-test-qcount" value="10" min="1" max="150" required class="w-full px-3 py-2 border rounded text-sm">
-                    </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-700 mb-1">Paste AI-Generated Test JSON Array</label>
+                    <textarea id="json-test-payload" rows="8" required class="w-full px-3 py-2 border rounded text-xs font-mono bg-gray-50" placeholder="Paste the JSON output here..."></textarea>
                 </div>
-
-                <button type="submit" class="px-6 py-2.5 bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs rounded transition shadow">
-                    Publish & Schedule Test
+                <button type="submit" class="px-6 py-2.5 bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs rounded shadow transition">
+                    🚀 Publish Exam to Student Portal
                 </button>
             </form>
         </div>
 
-        <!-- SCOREBOARD TABLE -->
+        <!-- SCOREBOARD -->
         <div class="bg-white rounded-xl shadow overflow-hidden border space-y-2">
-            <h2 class="text-lg font-bold text-gray-900 p-4 border-b">Student Submission Scoreboard</h2>
+            <h2 class="text-lg font-bold text-gray-900 p-4 border-b">Student Scoreboard</h2>
             <table class="w-full text-left text-sm text-gray-600">
                 <thead class="bg-gray-100 uppercase text-xs font-semibold">
                     <tr>
@@ -206,13 +179,12 @@
         </div>
     </div>
 
-    <!-- 6. EXAM ENGINE WORKSPACE -->
+    <!-- 6. EXAM ENGINE -->
     <div id="test-screen" class="hidden h-[calc(100vh-56px)] flex flex-col bg-gray-100">
         <!-- Status Bar -->
         <div class="bg-gray-800 text-white px-6 py-2 flex justify-between items-center text-xs">
             <span id="candidate-display" class="text-gray-300 font-semibold">Candidate: -</span>
             <div class="flex items-center gap-4">
-                <!-- Live Webcam Box -->
                 <div class="relative w-24 h-16 bg-black rounded border border-gray-600 overflow-hidden flex items-center justify-center">
                     <video id="proctor-cam" autoplay playsinline muted class="w-full h-full object-cover"></video>
                     <span id="cam-status" class="absolute bottom-0 left-0 right-0 bg-red-600 text-white text-[9px] text-center font-bold px-1 py-0.5 hidden">CAM OFF</span>
@@ -228,15 +200,13 @@
 
         <!-- Main Workspace -->
         <div class="flex-1 flex overflow-hidden">
-            <!-- Left: Passage Context OR PDF Viewer -->
-            <div class="w-1/2 p-6 border-r overflow-y-auto bg-white custom-scrollbar flex flex-col">
+            <!-- Left: Passage Container -->
+            <div class="w-1/2 p-6 border-r overflow-y-auto bg-white custom-scrollbar">
                 <h3 class="text-xs font-bold text-blue-600 uppercase mb-2" id="section-badge">READING PASSAGE</h3>
-                <div id="passage-text" class="text-gray-800 leading-relaxed font-serif whitespace-pre-line text-sm hidden"></div>
-                <!-- PDF Renderer Canvas Container -->
-                <div id="pdf-container" class="flex-1 overflow-y-auto hidden flex flex-col items-center gap-4 bg-gray-200 p-2 border rounded"></div>
+                <div id="passage-text" class="text-gray-800 leading-relaxed font-serif whitespace-pre-line text-sm"></div>
             </div>
 
-            <!-- Right: Question Palette / Options -->
+            <!-- Right: Question & Clickable Options -->
             <div class="w-1/2 p-6 overflow-y-auto flex flex-col justify-between bg-gray-50 custom-scrollbar">
                 <div>
                     <div class="flex justify-between items-center mb-4">
@@ -298,34 +268,31 @@
             studentDatabase[username] = { password: password, name: name, id: 'STU-2026-' + numStr };
         }
 
-        // TEACHER CREDENTIALS
+        // TEACHER ACCOUNTS
         var authorizedTeachers = {
             "leo": { password: "clat_teacher_leo_2026", name: "Leo / Gavin" },
             "siddhi": { password: "clat_teacher_siddhi_2026", name: "Siddhi" }
         };
 
-        // DEFAULT MOCK EXAM DATA
+        // DEFAULT BUILT-IN EXAM
         var defaultExam = {
             id: "default-clat-2023",
-            title: "CLAT UG 2023 Official Mock Exam",
+            title: "CLAT UG Official Mock Exam 01",
             durationMins: 120,
-            scheduledTime: null, // Always available
-            isPdf: false,
             data: [
                 {
                     section: "English Language",
-                    passage: "I grew up in a small town not far from Kalimpong. In pre-liberalization India, everything arrived late...",
+                    passage: "I grew up in a small town not far from Kalimpong. In pre-liberalization India, everything arrived late: not just material things but also ideas. Magazines old copies of Reader's Digest arrived late too...",
                     questions: [
-                        { id: 1, question: "What use was the kabadiwala (wastepicker) to the author?", options: ["(A) The kabadiwala bought up all her magazines.", "(B) The kabadiwala's stock of books and magazines were of interest to the author.", "(C) The kabadiwala was about to steal the author's magazines.", "(D) The author ordered books online which the kabadiwala delivered."], correct: 1, rationale: "The author rummaged through the kabadiwala's sacks of old magazines to find reading material." },
-                        { id: 2, question: "What according to the author is essential about the experience of being a 'provincial reader'?", options: ["(A) Belatedness in the sense of coming late for everything.", "(B) Over-eagerness.", "(C) Accepting a temporal gap between what was current in the wider world.", "(D) None of the above"], correct: 2, rationale: "The author explicitly identifies the acceptance of temporal delay as essential." }
+                        { id: 1, question: "What use was the kabadiwala (wastepicker) to the author?", options: ["(A) Bought up all magazines.", "(B) Stock of books and magazines were of interest.", "(C) Was about to steal magazines.", "(D) Delivered online books."], correct: 1, rationale: "The author rummaged through the kabadiwala's sacks to find reading material." },
+                        { id: 2, question: "What is essential about the experience of being a 'provincial reader'?", options: ["(A) Belatedness in coming late.", "(B) Over-eagerness.", "(C) Accepting a temporal gap.", "(D) None of the above"], correct: 2, rationale: "The author explicitly identifies the acceptance of temporal delay as essential." }
                     ]
                 },
                 {
-                    section: "Current Affairs & GK",
-                    passage: "Former Governor of a State and National Democratic Alliance (NDA) candidate Droupadi Murmu was elected the 15th President of India...",
+                    section: "Legal Reasoning",
+                    passage: "Quashing a case of cruelty that was filed against a man by his wife, the Bombay High Court said that if a married lady is asked to do household work for the family, it cannot be said that she is treated 'like a maid servant'...",
                     questions: [
-                        { id: 31, question: "Before Droupadi Murmu, India had only one other female president. When did Pratibha Patil serve?", options: ["(A) 2007-2012", "(B) 2005-2010", "(C) 2012-2017", "(D) 2006-2011"], correct: 0, rationale: "Pratibha Patil served as President from 2007 to 2012." },
-                        { id: 32, question: "President Murmu has earlier served as Governor of which State?", options: ["(A) Odisha", "(B) Bihar", "(C) Jharkhand", "(D) West Bengal"], correct: 2, rationale: "Droupadi Murmu served as Governor of Jharkhand from 2015 to 2021." }
+                        { id: 61, question: "Which of the following is the High Court most likely to agree with?", options: ["(A) Asking a woman to do household work is cruelty.", "(B) Mere use of words without specific instances does not satisfy 498A IPC.", "(C) Husbands are automatically exempt.", "(D) Filing FIR 9 months later is illegal."], correct: 1, rationale: "General allegations without specific details are insufficient under Section 498A IPC." }
                     ]
                 }
             ]
@@ -400,68 +367,44 @@
                 }
             };
 
-            // RESET ALL STUDENT SESSIONS FEATURE
+            // RESET ALL STUDENT SESSIONS BUTTON
             document.getElementById('reset-student-sessions-btn').onclick = function() {
-                if (confirm("Reset test attempts and session locks for all 40 students? Students will be able to re-take tests immediately.")) {
+                if (confirm("Reset test attempts for all 40 students? They will be able to attempt all tests again.")) {
                     for (var key in localStorage) {
                         if (key.indexOf('clat_session_') === 0) {
                             localStorage.removeItem(key);
                         }
                     }
-                    alert("All student test sessions have been reset successfully!");
+                    alert("All student test sessions reset successfully!");
                 }
             };
 
-            // CREATE NEW TEST SUBMISSION
-            document.getElementById('create-test-form').onsubmit = function(e) {
+            // JSON EXAM IMPORT FORM
+            document.getElementById('json-import-form').onsubmit = function(e) {
                 e.preventDefault();
-                var fileInput = document.getElementById('new-test-pdf');
-                if (!fileInput.files || !fileInput.files[0]) {
-                    alert("Please select a PDF file.");
-                    return;
-                }
+                try {
+                    var payloadText = document.getElementById('json-test-payload').value.trim();
+                    var parsedData = JSON.parse(payloadText);
 
-                var reader = new FileReader();
-                reader.onload = function(evt) {
-                    var pdfDataUrl = evt.target.result;
-                    var qCount = parseInt(document.getElementById('new-test-qcount').value) || 10;
-                    var title = document.getElementById('new-test-title').value.trim();
-                    var section = document.getElementById('new-test-section').value.trim();
-                    var duration = parseInt(document.getElementById('new-test-duration').value) || 120;
-                    var sched = document.getElementById('new-test-schedule').value;
-
-                    var pdfQuestions = [];
-                    for (var q = 1; q <= qCount; q++) {
-                        pdfQuestions.push({
-                            id: q,
-                            question: "Refer to PDF Question #" + q + " on the left pane and select your option below:",
-                            options: ["(A) Option A", "(B) Option B", "(C) Option C", "(D) Option D"],
-                            correct: 0,
-                            rationale: "Option A is marked as correct for Q" + q
-                        });
-                    }
-
-                    var newExamObj = {
+                    var newExam = {
                         id: 'custom-' + Date.now(),
-                        title: title,
-                        durationMins: duration,
-                        scheduledTime: sched ? new Date(sched).getTime() : null,
-                        isPdf: true,
-                        pdfDataUrl: pdfDataUrl,
-                        data: [{ section: section, questions: pdfQuestions }]
+                        title: document.getElementById('json-test-title').value.trim(),
+                        durationMins: parseInt(document.getElementById('json-test-duration').value) || 120,
+                        data: parsedData
                     };
 
                     var currentExams = JSON.parse(localStorage.getItem('clat_custom_exams') || '[]');
-                    currentExams.push(newExamObj);
+                    currentExams.push(newExam);
                     localStorage.setItem('clat_custom_exams', JSON.stringify(currentExams));
 
-                    alert("New PDF Mock Exam successfully published and scheduled!");
-                    document.getElementById('create-test-form').reset();
-                };
-                reader.readAsDataURL(fileInput.files[0]);
+                    alert("Exam successfully imported and published to student portals!");
+                    document.getElementById('json-import-form').reset();
+                } catch(err) {
+                    alert("Invalid JSON syntax! Please check that you copied the complete array block from the AI output.");
+                }
             };
 
-            // PROCTOR TAB SWITCH
+            // PROCTOR BLUR
             window.addEventListener('blur', function() {
                 if (isExamActive) {
                     handleProctorViolation("Tab Switch / Window Focus Lost");
@@ -473,7 +416,6 @@
             var container = document.getElementById('student-tests-container');
             container.innerHTML = '';
             var exams = getStoredExams();
-            var now = Date.now();
 
             for (var i = 0; i < exams.length; i++) {
                 (function(exam) {
@@ -481,33 +423,21 @@
                     var savedSession = JSON.parse(localStorage.getItem(sessionKey) || 'null');
                     var isSubmitted = savedSession && savedSession.submitted;
 
-                    var isLocked = exam.scheduledTime && now < exam.scheduledTime;
-                    var schedText = exam.scheduledTime ? new Date(exam.scheduledTime).toLocaleString() : 'Immediate Access';
-
                     var card = document.createElement('div');
                     card.className = "bg-white p-5 rounded-xl border shadow-sm flex flex-col justify-between space-y-4";
 
-                    var btnHtml = '';
-                    if (isSubmitted) {
-                        btnHtml = '<button disabled class="w-full py-2 bg-gray-300 text-gray-600 font-bold text-xs rounded">Already Submitted</button>';
-                    } else if (isLocked) {
-                        btnHtml = '<button disabled class="w-full py-2 bg-amber-200 text-amber-800 font-bold text-xs rounded">Locked (Starts at Scheduled Time)</button>';
-                    } else {
-                        btnHtml = '<button class="start-exam-btn w-full py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded shadow">Start / Resume Test</button>';
-                    }
+                    var btnHtml = isSubmitted ?
+                        '<button disabled class="w-full py-2 bg-gray-300 text-gray-600 font-bold text-xs rounded">Already Submitted</button>' :
+                        '<button class="start-exam-btn w-full py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded shadow">Start / Resume Test</button>';
 
                     card.innerHTML = '<div>' +
-                        '<div class="flex justify-between items-center mb-1"><span class="px-2 py-0.5 bg-blue-100 text-blue-800 font-bold text-[10px] rounded uppercase">' + (exam.isPdf ? 'PDF Paper' : 'Standard CBT') + '</span><span class="text-xs text-gray-500 font-medium">' + exam.durationMins + ' Mins</span></div>' +
+                        '<div class="flex justify-between items-center mb-1"><span class="px-2 py-0.5 bg-blue-100 text-blue-800 font-bold text-[10px] rounded uppercase">Interactive Mock</span><span class="text-xs text-gray-500 font-medium">' + exam.durationMins + ' Mins</span></div>' +
                         '<h4 class="font-bold text-base text-gray-900">' + exam.title + '</h4>' +
-                        '<p class="text-xs text-gray-500 mt-1">Scheduled: ' + schedText + '</p>' +
                         '</div>' + btnHtml;
 
-                    if (!isSubmitted && !isLocked) {
-                        card.querySelector('.start-exam-btn').onclick = function() {
-                            initiateExamStart(exam);
-                        };
+                    if (!isSubmitted) {
+                        card.querySelector('.start-exam-btn').onclick = function() { initiateExamStart(exam); };
                     }
-
                     container.appendChild(card);
                 })(exams[i]);
             }
@@ -548,43 +478,7 @@
             document.getElementById('candidate-display').innerText = "Candidate: " + activeUser.name + " (" + activeUser.id + ")";
             updateWarningUI();
             showScreen('test-screen');
-            
-            // Toggle view depending on PDF vs Standard Passage
-            if (exam.isPdf) {
-                document.getElementById('passage-text').classList.add('hidden');
-                document.getElementById('pdf-container').classList.remove('hidden');
-                renderPdfDocument(exam.pdfDataUrl);
-            } else {
-                document.getElementById('pdf-container').classList.add('hidden');
-                document.getElementById('passage-text').classList.remove('hidden');
-            }
-
             startExamEngine(sessionKey);
-        }
-
-        function renderPdfDocument(pdfUrl) {
-            var container = document.getElementById('pdf-container');
-            container.innerHTML = '<p class="text-xs text-gray-500 font-bold p-2">Loading PDF Document...</p>';
-            
-            pdfjsLib.getDocument(pdfUrl).promise.then(function(pdf) {
-                container.innerHTML = '';
-                for (var pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
-                    pdf.getPage(pageNum).then(function(page) {
-                        var scale = 1.2;
-                        var viewport = page.getViewport({ scale: scale });
-                        var canvas = document.createElement('canvas');
-                        var ctx = canvas.getContext('2d');
-                        canvas.height = viewport.height;
-                        canvas.width = viewport.width;
-                        canvas.className = "shadow bg-white rounded border my-2 max-w-full";
-                        container.appendChild(canvas);
-
-                        page.render({ canvasContext: ctx, viewport: viewport });
-                    });
-                }
-            }).catch(function(err) {
-                container.innerHTML = '<p class="text-xs text-red-600 font-bold p-2">Error rendering PDF document.</p>';
-            });
         }
 
         function handleProctorViolation(reason) {
@@ -615,13 +509,8 @@
             var btn = document.getElementById(toggleBtnId);
             if (!input || !btn) return;
             btn.onclick = function() {
-                if (input.type === 'password') {
-                    input.type = 'text';
-                    btn.innerText = 'Hide';
-                } else {
-                    input.type = 'password';
-                    btn.innerText = 'Show';
-                }
+                input.type = input.type === 'password' ? 'text' : 'password';
+                btn.innerText = input.type === 'password' ? 'Show' : 'Hide';
             };
         }
 
@@ -633,9 +522,7 @@
                 document.getElementById('cam-status').classList.add('hidden');
 
                 mediaStream.getVideoTracks()[0].onended = function() {
-                    if (isExamActive) {
-                        handleProctorViolation("Webcam Disconnected");
-                    }
+                    if (isExamActive) { handleProctorViolation("Webcam Disconnected"); }
                 };
                 return true;
             } catch (err) {
@@ -740,10 +627,8 @@
             var q = allQuestions[idx];
             if (userAnswers[idx].status === 'not-visited') userAnswers[idx].status = 'visited';
 
-            document.getElementById('section-badge').innerText = q.section + (activeExam.isPdf ? " (PDF MOCK)" : " PASSAGE");
-            if (!activeExam.isPdf) {
-                document.getElementById('passage-text').innerText = q.passage;
-            }
+            document.getElementById('section-badge').innerText = q.section;
+            document.getElementById('passage-text').innerText = q.passage;
             document.getElementById('q-badge').innerText = "Question " + (idx + 1) + " of " + allQuestions.length;
             document.getElementById('q-text').innerText = q.question;
 
