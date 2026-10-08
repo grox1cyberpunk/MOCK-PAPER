@@ -3,8 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CLAT UG 2023 Official CBT Mock Test</title>
+    <title>CLAT UG Official CBT Mock Engine</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Mozilla PDF.js Library for PDF Rendering -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+    <script>
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+    </script>
     <style>
         .custom-scrollbar::-webkit-scrollbar { width: 6px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: #f1f1f1; }
@@ -14,10 +19,10 @@
 </head>
 <body class="bg-gray-50 text-gray-800 font-sans no-select" oncontextmenu="return false;">
 
-    <!-- TOP BAR -->
+    <!-- TOP HEADER -->
     <header class="bg-gray-900 text-white px-6 py-3 flex justify-between items-center shadow-md">
         <div class="flex items-center gap-2">
-            <span class="font-bold text-lg text-blue-400">CLAT Proctored CBT Engine</span>
+            <span class="font-bold text-lg text-blue-400">CLAT Proctored CBT Portal</span>
         </div>
         <div class="flex items-center gap-3">
             <button id="header-switch-role-btn" class="px-3.5 py-1.5 bg-gray-700 hover:bg-gray-600 text-white font-medium text-xs rounded transition">
@@ -31,7 +36,7 @@
         <div class="max-w-md w-full bg-white rounded-xl shadow-xl border border-gray-200 p-8 text-center space-y-6">
             <div>
                 <h1 class="text-2xl font-bold text-gray-900">Welcome to CLAT CBT</h1>
-                <p class="text-gray-600 text-sm mt-1">Please select your role to proceed</p>
+                <p class="text-gray-600 text-sm mt-1">Select your role to access the portal</p>
             </div>
 
             <div class="grid grid-cols-1 gap-4 pt-2">
@@ -56,10 +61,9 @@
             </div>
 
             <div class="bg-amber-50 border-l-4 border-amber-500 p-3 mb-6 rounded-r text-xs text-amber-800 space-y-1">
-                <p class="font-bold">Exam Rules & Proctoring Requirement:</p>
-                <p>• Duration: 120 Mins | Marking: +1.0, -0.25</p>
-                <p>• <strong>Webcam Mandatory:</strong> Camera permission must be granted during the test.</p>
-                <p>• <strong>Strict Proctor:</strong> You are allowed <strong>1 warning</strong> for tab switches or camera issues. The <strong>2nd violation</strong> will auto-submit your test immediately.</p>
+                <p class="font-bold">Exam Regulations & Proctoring:</p>
+                <p>• <strong>Webcam Mandatory:</strong> Live camera access must be enabled.</p>
+                <p>• <strong>2-Strike Violation Rule:</strong> 1 warning allowed for tab switches. 2nd violation auto-submits exam.</p>
             </div>
 
             <form id="student-login-form" class="space-y-4">
@@ -76,18 +80,34 @@
                 </div>
                 <p id="stu-auth-err" class="text-xs text-red-600 font-semibold hidden">Invalid student credentials!</p>
                 <button type="submit" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow transition">
-                    Start / Resume Test
+                    Access Exam Library
                 </button>
             </form>
         </div>
     </div>
 
-    <!-- 3. TEACHER LOGIN SCREEN -->
+    <!-- 3. STUDENT TEST DASHBOARD / LIBRARY -->
+    <div id="student-dashboard-screen" class="hidden p-8 max-w-5xl mx-auto space-y-6">
+        <div class="flex justify-between items-center bg-white p-6 rounded-xl border shadow-sm">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-900">Student Exam Portal</h1>
+                <p id="stu-logged-welcome" class="text-xs text-gray-500 mt-1">Select an active or scheduled test below</p>
+            </div>
+            <button id="stu-logout-btn" class="px-3 py-1.5 bg-gray-200 hover:bg-gray-300 text-xs font-semibold rounded">Log Out</button>
+        </div>
+
+        <div class="space-y-4">
+            <h3 class="text-lg font-bold text-gray-800">Available & Scheduled Exams</h3>
+            <div id="student-tests-container" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+        </div>
+    </div>
+
+    <!-- 4. TEACHER LOGIN SCREEN -->
     <div id="teacher-login-screen" class="hidden min-h-[calc(100vh-56px)] flex items-center justify-center p-4">
         <div class="max-w-md w-full bg-white rounded-xl shadow-lg border border-gray-200 p-8">
             <div class="text-center mb-6">
                 <h2 class="text-2xl font-bold text-gray-900">Teacher Dashboard Login</h2>
-                <p class="text-gray-600 text-xs mt-1">Access restricted to Leo & Siddhi</p>
+                <p class="text-gray-600 text-xs mt-1">Restricted to Leo & Siddhi</p>
             </div>
 
             <form id="teacher-login-form" class="space-y-4">
@@ -104,19 +124,95 @@
                 </div>
                 <p id="teacher-auth-err" class="text-xs text-red-600 font-semibold hidden">Invalid teacher credentials!</p>
                 <button type="submit" class="w-full py-3 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-lg shadow transition">
-                    Login to Dashboard
+                    Login to Instructor Portal
                 </button>
             </form>
         </div>
     </div>
 
-    <!-- 4. EXAM ENGINE -->
+    <!-- 5. TEACHER DASHBOARD (Scoreboard + Test Creator) -->
+    <div id="teacher-screen" class="hidden p-8 max-w-6xl mx-auto space-y-8">
+        <div class="flex justify-between items-center bg-white p-6 rounded-xl border shadow-sm">
+            <div>
+                <h1 class="text-2xl font-bold">Teacher Control Panel</h1>
+                <p id="teacher-logged-user" class="text-xs text-purple-700 font-semibold mt-1">Instructor Logged In</p>
+            </div>
+            <div class="flex gap-2">
+                <button id="reset-student-sessions-btn" class="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white font-semibold text-xs rounded transition shadow">
+                    🔄 Reset All Student Sessions & Attempts
+                </button>
+                <button id="clear-btn-teacher" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-semibold text-xs rounded transition shadow">
+                    🗑️ Clear Scoreboard
+                </button>
+            </div>
+        </div>
+
+        <!-- CREATE NEW TEST FORM SECTION -->
+        <div class="bg-white p-6 rounded-xl border shadow-sm space-y-6">
+            <h2 class="text-xl font-bold text-gray-900 border-b pb-3">Create & Schedule New Mock Exam (PDF Upload)</h2>
+            <form id="create-test-form" class="space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-700 mb-1">Test Title</label>
+                        <input type="text" id="new-test-title" required class="w-full px-3 py-2 border rounded text-sm" placeholder="e.g. CLAT Grand Mock Test 02">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-700 mb-1">Section Name</label>
+                        <input type="text" id="new-test-section" required class="w-full px-3 py-2 border rounded text-sm" placeholder="e.g. Full Length Legal & GK Test">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-700 mb-1">Duration (Minutes)</label>
+                        <input type="number" id="new-test-duration" value="120" min="5" max="300" required class="w-full px-3 py-2 border rounded text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-700 mb-1">Scheduled Date & Start Time</label>
+                        <input type="datetime-local" id="new-test-schedule" required class="w-full px-3 py-2 border rounded text-sm">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-700 mb-1">Upload PDF Question Paper</label>
+                        <input type="file" id="new-test-pdf" accept="application/pdf" required class="w-full text-xs text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100 border rounded p-1">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-700 mb-1">Number of Questions</label>
+                        <input type="number" id="new-test-qcount" value="10" min="1" max="150" required class="w-full px-3 py-2 border rounded text-sm">
+                    </div>
+                </div>
+
+                <button type="submit" class="px-6 py-2.5 bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs rounded transition shadow">
+                    Publish & Schedule Test
+                </button>
+            </form>
+        </div>
+
+        <!-- SCOREBOARD TABLE -->
+        <div class="bg-white rounded-xl shadow overflow-hidden border space-y-2">
+            <h2 class="text-lg font-bold text-gray-900 p-4 border-b">Student Submission Scoreboard</h2>
+            <table class="w-full text-left text-sm text-gray-600">
+                <thead class="bg-gray-100 uppercase text-xs font-semibold">
+                    <tr>
+                        <th class="p-4">Student ID</th>
+                        <th class="p-4">Student Name</th>
+                        <th class="p-4">Exam Taken</th>
+                        <th class="p-4">Score</th>
+                        <th class="p-4">Submission Status</th>
+                        <th class="p-4">Timestamp</th>
+                    </tr>
+                </thead>
+                <tbody id="teacher-table" class="divide-y"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- 6. EXAM ENGINE WORKSPACE -->
     <div id="test-screen" class="hidden h-[calc(100vh-56px)] flex flex-col bg-gray-100">
         <!-- Status Bar -->
         <div class="bg-gray-800 text-white px-6 py-2 flex justify-between items-center text-xs">
             <span id="candidate-display" class="text-gray-300 font-semibold">Candidate: -</span>
             <div class="flex items-center gap-4">
-                <!-- Live Webcam Feed Box -->
+                <!-- Live Webcam Box -->
                 <div class="relative w-24 h-16 bg-black rounded border border-gray-600 overflow-hidden flex items-center justify-center">
                     <video id="proctor-cam" autoplay playsinline muted class="w-full h-full object-cover"></video>
                     <span id="cam-status" class="absolute bottom-0 left-0 right-0 bg-red-600 text-white text-[9px] text-center font-bold px-1 py-0.5 hidden">CAM OFF</span>
@@ -132,13 +228,15 @@
 
         <!-- Main Workspace -->
         <div class="flex-1 flex overflow-hidden">
-            <!-- Left: Passage Context -->
-            <div class="w-1/2 p-6 border-r overflow-y-auto bg-white custom-scrollbar">
+            <!-- Left: Passage Context OR PDF Viewer -->
+            <div class="w-1/2 p-6 border-r overflow-y-auto bg-white custom-scrollbar flex flex-col">
                 <h3 class="text-xs font-bold text-blue-600 uppercase mb-2" id="section-badge">READING PASSAGE</h3>
-                <div id="passage-text" class="text-gray-800 leading-relaxed font-serif whitespace-pre-line text-sm"></div>
+                <div id="passage-text" class="text-gray-800 leading-relaxed font-serif whitespace-pre-line text-sm hidden"></div>
+                <!-- PDF Renderer Canvas Container -->
+                <div id="pdf-container" class="flex-1 overflow-y-auto hidden flex flex-col items-center gap-4 bg-gray-200 p-2 border rounded"></div>
             </div>
 
-            <!-- Right: Question Options -->
+            <!-- Right: Question Palette / Options -->
             <div class="w-1/2 p-6 overflow-y-auto flex flex-col justify-between bg-gray-50 custom-scrollbar">
                 <div>
                     <div class="flex justify-between items-center mb-4">
@@ -170,7 +268,7 @@
         </div>
     </div>
 
-    <!-- 5. RESULT SCORECARD -->
+    <!-- 7. RESULT SCORECARD -->
     <div id="result-screen" class="hidden p-8 max-w-5xl mx-auto space-y-6">
         <div class="bg-white p-6 rounded-xl shadow border flex justify-between items-center">
             <div>
@@ -189,31 +287,6 @@
         </div>
     </div>
 
-    <!-- 6. TEACHER DASHBOARD -->
-    <div id="teacher-screen" class="hidden p-8 max-w-6xl mx-auto space-y-6">
-        <div class="flex justify-between items-center">
-            <h1 class="text-2xl font-bold">Teacher Scoreboard</h1>
-            <div class="flex gap-2">
-                <span id="teacher-logged-user" class="px-3 py-1.5 bg-purple-100 text-purple-800 font-semibold text-xs rounded">Instructor Logged In</span>
-                <button id="clear-btn-teacher" class="px-3 py-1.5 bg-red-100 text-red-700 font-semibold text-xs rounded hover:bg-red-200">Clear All Records</button>
-            </div>
-        </div>
-        <div class="bg-white rounded-xl shadow overflow-hidden border">
-            <table class="w-full text-left text-sm text-gray-600">
-                <thead class="bg-gray-100 uppercase text-xs font-semibold">
-                    <tr>
-                        <th class="p-4">Student ID</th>
-                        <th class="p-4">Student Name</th>
-                        <th class="p-4">Score</th>
-                        <th class="p-4">Submission Status</th>
-                        <th class="p-4">Timestamp</th>
-                    </tr>
-                </thead>
-                <tbody id="teacher-table" class="divide-y"></tbody>
-            </table>
-        </div>
-    </div>
-
     <script>
         // GENERATE 40 STUDENT CREDENTIALS
         var studentDatabase = {};
@@ -225,340 +298,93 @@
             studentDatabase[username] = { password: password, name: name, id: 'STU-2026-' + numStr };
         }
 
-        // TEACHER USERNAMES & PASSWORDS
+        // TEACHER CREDENTIALS
         var authorizedTeachers = {
             "leo": { password: "clat_teacher_leo_2026", name: "Leo / Gavin" },
             "siddhi": { password: "clat_teacher_siddhi_2026", name: "Siddhi" }
         };
 
-        var examData = [
-            {
-                section: "English Language",
-                passage: "I grew up in a small town not far from Kalimpong. In pre-liberalization India, everything arrived late: not just material things but also ideas. Magazines old copies of Reader's Digest and National Geographic arrived late too, after the news had become stale by months or, often, years. This temporal gap turned journalism into literature, news into legend, and historical events into something akin to plotless stories. But like those who knew no other life, we accepted this as the norm. The dearth of reading material in towns and villages in socialist India is hard to imagine, and it produced two categories of people: those who stopped reading after school or college, and those including children who read anything they could find. I read road signs with the enthusiasm that attaches to reading thrillers. When the iterant kabadiwala, collector of papers, magazines, and rejected things, visited our neighbourhood, I rushed to the house where he was doing business. He bought things at unimaginably low prices from those who'd stopped having any use for them, and I rummaged through his sacks of old magazines. Sometimes, on days when business was good, he allowed me a couple of copies of Sportsworld magazine for free. I'd run home and, ignoring my mother's scolding, plunge right in consuming news about India's victory in the Benson and Hedges Cup.\n\nTwo takeaways from these experiences have marked my understanding of the provincial reader's life: the sense of belatedness, of everything coming late, and the desire for pleasure in language. Speaking of belatedness, the awareness of having been born at the wrong time in history, of inventing things that had already been discovered elsewhere, far away, without our knowledge or cooperation, is a moment of epiphany and deep sadness. I remember a professor's choked voice, narrating to me how all the arguments he'd made in his doctoral dissertation, written over many, many years of hard work, had suddenly come to naught after he'd discovered the work of C.W.E. Bigsby. This, I realised as I grew older, was one of the characteristics of provincial life: that they were saying trite things with the confidence of someone declaring them for the first time. What rescues it is the unpredictability of these anachronistic discoveries.",
-                questions: [
-                    {
-                        id: 1,
-                        question: "What use was the kabadiwala (wastepicker) to the author?",
-                        options: [
-                            "(A) The kabadiwala bought up all her magazines.",
-                            "(B) The kabadiwala's stock of books and magazines were of interest to the author.",
-                            "(C) The kabadiwala was about to steal the author's magazines.",
-                            "(D) The author ordered books online which the kabadiwala delivered."
-                        ],
-                        correct: 1,
-                        rationale: "The author rummaged through the kabadiwala's sacks of old magazines to find reading material."
-                    },
-                    {
-                        id: 2,
-                        question: "What according to the author is essential about the experience of being a 'provincial reader'?",
-                        options: [
-                            "(A) Belatedness in the sense of coming late for everything.",
-                            "(B) Over-eagerness.",
-                            "(C) Accepting a temporal gap between what was current in the wider world and the time at which these arrived in the provincial location.",
-                            "(D) None of the above"
-                        ],
-                        correct: 2,
-                        rationale: "The author explicitly identifies the acceptance of temporal delay in provincial locations as essential."
-                    },
-                    {
-                        id: 3,
-                        question: "Why did the author feel a sense of epiphany and deep sadness?",
-                        options: [
-                            "(A) Because the things that felt special and unique to the author, were already established and accepted thought in the wider world.",
-                            "(B) Because the author was less well-read than others.",
-                            "(C) Because the author missed being in a big city.",
-                            "(D) All the above"
-                        ],
-                        correct: 0,
-                        rationale: "Discovering that one's hard-earned thoughts were already discovered elsewhere brings epiphany and sadness."
-                    },
-                    {
-                        id: 4,
-                        question: "What does the word 'anachronistic' as used in the passage, mean?",
-                        options: [
-                            "(A) Rooted in a non-urban setting",
-                            "(B) Related to a mofussil area",
-                            "(C) Connected with another time",
-                            "(D) Opposed to prevailing sensibilities"
-                        ],
-                        correct: 2,
-                        rationale: "Anachronistic refers to something belonging to a time period other than that in which it exists."
-                    },
-                    {
-                        id: 5,
-                        question: "Which of the following options captures the meaning of the last sentence best?",
-                        options: [
-                            "(A) Though the author feels provincial, she pretends to be from the metropolis.",
-                            "(B) Though the author feels dated in her access to intellectual ideas, her lack of metropolitan sophistication lets her engage with the ideas with some originality.",
-                            "(C) Though the author is aware of the limitedness of her knowledge, she is confident and can hold her own in a crowd.",
-                            "(D) All the above"
-                        ],
-                        correct: 1,
-                        rationale: "The last sentence emphasizes that unpredictable and non-professionalized mapping of thoughts rescues provincial belatedness."
-                    }
-                ]
-            },
-            {
-                section: "Current Affairs & GK",
-                passage: "Former Governor of a State and National Democratic Alliance (NDA) candidate Droupadi Murmu was elected the 15th President of India, the first tribal woman to be elected to the position and the youngest as well. She was declared elected on Thursday after four rounds of counting, although she had crossed the half-way mark after the third round of counting itself, posting an unassailable lead over her rival and the Opposition's candidate who conceded the election thereafter. Prime Minister Narendra Modi was the first to greet Ms. Murmu at her residence in New Delhi after the third round of counting showed that she had crossed the half-way mark.\n\nMs. Murmu hails from the Santhal tribe and was born in the district of Mayurbhanj, coming up the hard way in life, graduating and teaching in Odisha before entering electoral politics at the local body level and later being elected MLA and serving as a Minister in the Biju Janata Dal-BJP coalition government from 2000 to 2004. She remained an MLA till 2009, representing Rairangpur in Odisha, a town that burst into celebrations since her name was announced as a candidate for the post of President of India. She was known to intervene in stopping amendments to the Chota Nagpur Tenancy Act that was being brought in by the BJP government of Raghubar Das, which involved changing land use in tribal areas.",
-                questions: [
-                    {
-                        id: 31,
-                        question: "Before Droupadi Murmu, India had only one other female president, Pratibha Patil. When did Patil serve as the President of India?",
-                        options: ["(A) 2007-2012", "(B) 2005-2010", "(C) 2012-2017", "(D) 2006-2011"],
-                        correct: 0,
-                        rationale: "Pratibha Patil served as the 12th President of India from 2007 to 2012."
-                    },
-                    {
-                        id: 32,
-                        question: "President Murmu has earlier served as a Governor of which State?",
-                        options: ["(A) Odisha", "(B) Bihar", "(C) Jharkhand", "(D) West Bengal"],
-                        correct: 2,
-                        rationale: "Droupadi Murmu served as the Governor of Jharkhand from 2015 to 2021."
-                    },
-                    {
-                        id: 33,
-                        question: "The first presidential election was held by the Election Commission in which year?",
-                        options: ["(A) 1952", "(B) 1950", "(C) 1948", "(D) 1949"],
-                        correct: 0,
-                        rationale: "The first Indian presidential election was held in 1952."
-                    },
-                    {
-                        id: 36,
-                        question: "Voting in an Indian Presidential Election is through:",
-                        options: [
-                            "(A) A first-past-the-post system through a single transferable vote cast in a secret ballot",
-                            "(B) A proportional representation system through a single transferable vote cast in a secret ballot",
-                            "(C) A proportional representation system through a single transferable vote cast in an open ballot",
-                            "(D) A first-past-the-post system through a single transferable vote cast in an open ballot"
-                        ],
-                        correct: 1,
-                        rationale: "The President is elected by proportional representation by single transferable vote in a secret ballot."
-                    },
-                    {
-                        id: 37,
-                        question: "Who was the first Dalit to hold the office of the President of India?",
-                        options: ["(A) Ram Nath Kovind", "(B) V.V. Giri", "(C) Neelam Sanjiva Reddy", "(D) Kocheril Raman Narayanan"],
-                        correct: 3,
-                        rationale: "K. R. Narayanan was the first Dalit President of India (1997–2002)."
-                    }
-                ]
-            },
-            {
-                section: "Legal Reasoning",
-                passage: "Quashing a case of cruelty that was filed against a man by his wife, the Bombay High Court said that if a married lady is asked to do household work for the family, it cannot be said that she is treated 'like a maid servant'. The Court was hearing an application by the husband and his parents seeking that proceedings against them are quashed. A First Information Report ('FIR') was filed against the trio in September 2020, around nine months after the marriage, alleging that they hounded the woman for money to purchase a car, harassed her mentally and physically and treated her like a maid servant. Examining the evidence, the Court found that there was no merit to the woman's allegations. The Court said that though the FIR says that she was treated properly for about a month and then 'like a maid servant', there are no details of what this meant. The Court added: 'If a married lady is asked to do household work for the purpose of the family, it cannot be said that it is like a maid servant.' The Court held that the mere use of the word harassment 'mentally and physically' in the FIR is not sufficient to constitute an offence Section 498A of the Indian Penal Code ('IPC').",
-                questions: [
-                    {
-                        id: 61,
-                        question: "Which of the following is the High Court most likely to agree with?",
-                        options: [
-                            "(A) Asking a married woman to do household work amounts to cruelty under Section 498A IPC.",
-                            "(B) Mere use of the words 'harassment mentally and physically' without specific instances does not satisfy Section 498A IPC.",
-                            "(C) Husbands are automatically exempt from prosecution under Section 498A IPC.",
-                            "(D) Filing an FIR 9 months after marriage is strictly illegal."
-                        ],
-                        correct: 1,
-                        rationale: "The Bombay High Court explicitly held that general allegations of harassment without specific details are insufficient under Section 498A IPC."
-                    },
-                    {
-                        id: 66,
-                        question: "Ashwin and Ashima were married in February 2020. In March 2020, Ashwin asked Ashima to take care of all their household work. Ashima claims this amounts to treating her like a maid servant under 498A IPC. Is she likely to succeed?",
-                        options: [
-                            "(A) Yes, since Ashwin had only asked Ashima to do their household work, and not for others.",
-                            "(B) No, since Ashwin had only asked Ashima to do their household work, and not for others.",
-                            "(C) Yes, since Ashwin had asked Ashima to do household work for themselves as well as others.",
-                            "(D) No, since treating a married woman like a maid servant would not amount to an offence under that Section."
-                        ],
-                        correct: 1,
-                        rationale: "Asking a wife to perform household work for the family does not amount to cruelty under Section 498A IPC."
-                    },
-                    {
-                        id: 67,
-                        question: "In April 2020, Ashwin's friend Rakesh stays with them. He uses abusive language and throws a plate at Ashima. Ashima claims Rakesh committed an offence under Section 498A IPC. Is she likely to succeed?",
-                        options: [
-                            "(A) No, since Rakesh's actions were perfectly justifiable.",
-                            "(B) Yes, since Rakesh's actions clearly amount to cruelty.",
-                            "(C) No, since Rakesh is not her husband, nor is he related to Ashwin.",
-                            "(D) Yes, since Rakesh was staying at Ashwin and Ashima's home."
-                        ],
-                        correct: 2,
-                        rationale: "Section 498A IPC applies explicitly only to the husband or relatives of the husband. Rakesh is merely a friend."
-                    },
-                    {
-                        id: 68,
-                        question: "Ashima is granted a divorce from Ashwin in November 2020. Later, Ashwin treats Ashima cruelly. Ashima claims an offence under Section 498A IPC. Is she right?",
-                        options: [
-                            "(A) Yes, since Ashwin treated her cruelly.",
-                            "(B) Yes, since Ashwin has been her husband.",
-                            "(C) No, since Ashwin was upset.",
-                            "(D) No, since she is no longer married to Ashwin."
-                        ],
-                        correct: 3,
-                        rationale: "Section 498A IPC applies strictly during marriage. Once divorced, the marital relationship ceases to exist."
-                    }
-                ]
-            },
-            {
-                section: "Logical Reasoning",
-                passage: "The depreciation of an economy's currency is not a matter of concern in itself. The decline in value against major currencies has to be viewed within a set of macroeconomic factors. The recent depreciation of the Indian rupee is a case in point. The rupee has been depreciating for a long time. What are of concern now are the rate at which the depreciation is occurring and the underlying factors causing the change. The Russia-Ukraine war has disrupted supply chains causing commodity prices to rise, leading to a worldwide hardening of inflationary trends. This, in turn, has caused major central banks to raise interest rates, forcing investors back to the safe haven of the US dollar... The RBI has difficult choices: controlling inflation versus stimulating growth and stabilising the rupee without severely diminishing the economy's foreign exchange kitty.",
-                questions: [
-                    {
-                        id: 106,
-                        question: "Which of the following is the author most likely to agree with?",
-                        options: [
-                            "(A) It is a major cause for concern if an economy's currency is depreciating.",
-                            "(B) Currency depreciation is not a reason for worry in itself, but if macroeconomic factors are not good, there may be a cause for concern.",
-                            "(C) The fact that the Indian rupee is witnessing a decline in value against major currencies is very worrisome.",
-                            "(D) A central bank must always do everything in its power to stem the slightest depreciation of an economy's currency."
-                        ],
-                        correct: 1,
-                        rationale: "The passage opens stating currency depreciation is not a concern in itself, but must be evaluated within macroeconomic contexts."
-                    },
-                    {
-                        id: 107,
-                        question: "Based on the author's arguments, which of the following, if true, would reduce the decline in value of the rupee?",
-                        options: [
-                            "(A) Appointing a new Governor for the RBI who has a better sense of how to control inflationary trends.",
-                            "(B) A steep increase in commodity prices and the continued disruption of supply chains.",
-                            "(C) A reduction in worldwide inflationary trends and the reduction of interest rates in developed country markets.",
-                            "(D) The RBI buying as many dollars as possible from the market."
-                        ],
-                        correct: 2,
-                        rationale: "Reversing global inflationary trends and reducing foreign interest rates removes capital outflow pressures."
-                    }
-                ]
-            },
-            {
-                section: "Quantitative Techniques",
-                passage: "World fruit production went up 54 percent between 2000 and 2019, to 883 million tonnes. Five fruit species accounted for 57 percent of the total production in 2019, down from 63 percent in 2000.",
-                questions: [
-                    {
-                        id: 141,
-                        question: "What was the world fruit production in 2000?",
-                        options: [
-                            "(A) 474 million tonnes",
-                            "(B) 517 million tonnes",
-                            "(C) 573 million tonnes",
-                            "(D) 406 million tonnes"
-                        ],
-                        correct: 2,
-                        rationale: "Calculation: 883 / 1.54 = 573.37 million tonnes."
-                    },
-                    {
-                        id: 145,
-                        question: "Frutopia and Fruitfix both sold oranges at the same selling price. However, Frutopia gave customers a 15% discount on marked price whereas Fruitfix sold oranges for a discount of 20% on marked price. If marked price on Frutopia is Rs 75/kg, what is the marked price on Fruitfix?",
-                        options: [
-                            "(A) 78",
-                            "(B) 82",
-                            "(C) 90",
-                            "(D) 79.68 (approx 80)"
-                        ],
-                        correct: 3,
-                        rationale: "Selling Price = 75 * 0.85 = 63.75. For Fruitfix: Marked Price * 0.80 = 63.75 => Marked Price = 79.68 (~Rs 80)."
-                    },
-                    {
-                        id: 150,
-                        question: "If total fruit production increases by another 10% in 2020 relative to 2019, what will be the total fruit production in 2020?",
-                        options: [
-                            "(A) 971.3 million tonnes",
-                            "(B) 950.0 million tonnes",
-                            "(C) 980.5 million tonnes",
-                            "(D) 920.0 million tonnes"
-                        ],
-                        correct: 0,
-                        rationale: "Calculation: 883 * 1.10 = 971.3 million tonnes."
-                    }
-                ]
-            }
-        ];
+        // DEFAULT MOCK EXAM DATA
+        var defaultExam = {
+            id: "default-clat-2023",
+            title: "CLAT UG 2023 Official Mock Exam",
+            durationMins: 120,
+            scheduledTime: null, // Always available
+            isPdf: false,
+            data: [
+                {
+                    section: "English Language",
+                    passage: "I grew up in a small town not far from Kalimpong. In pre-liberalization India, everything arrived late...",
+                    questions: [
+                        { id: 1, question: "What use was the kabadiwala (wastepicker) to the author?", options: ["(A) The kabadiwala bought up all her magazines.", "(B) The kabadiwala's stock of books and magazines were of interest to the author.", "(C) The kabadiwala was about to steal the author's magazines.", "(D) The author ordered books online which the kabadiwala delivered."], correct: 1, rationale: "The author rummaged through the kabadiwala's sacks of old magazines to find reading material." },
+                        { id: 2, question: "What according to the author is essential about the experience of being a 'provincial reader'?", options: ["(A) Belatedness in the sense of coming late for everything.", "(B) Over-eagerness.", "(C) Accepting a temporal gap between what was current in the wider world.", "(D) None of the above"], correct: 2, rationale: "The author explicitly identifies the acceptance of temporal delay as essential." }
+                    ]
+                },
+                {
+                    section: "Current Affairs & GK",
+                    passage: "Former Governor of a State and National Democratic Alliance (NDA) candidate Droupadi Murmu was elected the 15th President of India...",
+                    questions: [
+                        { id: 31, question: "Before Droupadi Murmu, India had only one other female president. When did Pratibha Patil serve?", options: ["(A) 2007-2012", "(B) 2005-2010", "(C) 2012-2017", "(D) 2006-2011"], correct: 0, rationale: "Pratibha Patil served as President from 2007 to 2012." },
+                        { id: 32, question: "President Murmu has earlier served as Governor of which State?", options: ["(A) Odisha", "(B) Bihar", "(C) Jharkhand", "(D) West Bengal"], correct: 2, rationale: "Droupadi Murmu served as Governor of Jharkhand from 2015 to 2021." }
+                    ]
+                }
+            ]
+        };
 
         var allQuestions = [];
         var userAnswers = {};
         var currentQIndex = 0;
         var timer = 120 * 60;
         var activeUser = null;
+        var activeExam = null;
         var timerInterval = null;
         var isExamActive = false;
         var mediaStream = null;
         var warningCount = 0;
 
-        function initApp() {
-            for (var i = 0; i < examData.length; i++) {
-                var sec = examData[i];
-                for (var j = 0; j < sec.questions.length; j++) {
-                    var q = sec.questions[j];
-                    q.section = sec.section;
-                    q.passage = sec.passage;
-                    allQuestions.push(q);
-                }
-            }
+        function getStoredExams() {
+            var custom = JSON.parse(localStorage.getItem('clat_custom_exams') || '[]');
+            return [defaultExam].concat(custom);
+        }
 
+        function initApp() {
             setupPasswordToggle('stu-pass-input', 'toggle-stu-pass');
             setupPasswordToggle('teacher-pass-input', 'toggle-teacher-pass');
 
             document.getElementById('header-switch-role-btn').onclick = function() {
-                if (isExamActive && !confirm("Leaving this page during an active test will submit your attempt. Continue?")) return;
+                if (isExamActive && !confirm("Leaving this page will submit your exam attempt. Continue?")) return;
                 stopWebcam();
                 isExamActive = false;
                 if (timerInterval) clearInterval(timerInterval);
                 showScreen('role-selection-screen');
             };
 
-            document.getElementById('select-student-btn').onclick = function() {
-                showScreen('student-login-screen');
-            };
+            document.getElementById('select-student-btn').onclick = function() { showScreen('student-login-screen'); };
+            document.getElementById('select-teacher-btn').onclick = function() { showScreen('teacher-login-screen'); };
 
-            document.getElementById('select-teacher-btn').onclick = function() {
-                showScreen('teacher-login-screen');
-            };
-
-            // STUDENT LOGIN FORM HANDLER
-            document.getElementById('student-login-form').onsubmit = async function(e) {
+            // STUDENT LOGIN
+            document.getElementById('student-login-form').onsubmit = function(e) {
                 e.preventDefault();
                 var u = document.getElementById('stu-user-input').value.trim().toLowerCase();
                 var p = document.getElementById('stu-pass-input').value.trim();
 
                 if (studentDatabase[u] && studentDatabase[u].password === p) {
                     document.getElementById('stu-auth-err').classList.add('hidden');
-                    activeUser = {
-                        username: u,
-                        name: studentDatabase[u].name,
-                        id: studentDatabase[u].id
-                    };
-                    
-                    var sessionKey = 'clat_session_' + u;
-                    var savedSession = localStorage.getItem(sessionKey);
-                    
-                    if (savedSession) {
-                        var sessionData = JSON.parse(savedSession);
-                        if (sessionData.submitted) {
-                            alert("This student account (" + activeUser.name + ") has already completed and submitted the test.");
-                            return;
-                        }
-                        timer = sessionData.timer;
-                        userAnswers = sessionData.userAnswers;
-                        warningCount = sessionData.warningCount || 0;
-                    } else {
-                        for (var i = 0; i < allQuestions.length; i++) {
-                            userAnswers[i] = { selected: null, status: 'not-visited' };
-                        }
-                        timer = 120 * 60;
-                        warningCount = 0;
-                    }
-
-                    var camSuccess = await startWebcam();
-                    if (!camSuccess) return;
-
-                    document.getElementById('candidate-display').innerText = "Candidate: " + activeUser.name + " (" + activeUser.id + ")";
-                    updateWarningUI();
-                    showScreen('test-screen');
-                    startExamEngine(sessionKey);
+                    activeUser = { username: u, name: studentDatabase[u].name, id: studentDatabase[u].id };
+                    document.getElementById('stu-logged-welcome').innerText = "Logged in as: " + activeUser.name + " (" + activeUser.id + ")";
+                    showScreen('student-dashboard-screen');
+                    renderStudentTests();
                 } else {
                     document.getElementById('stu-auth-err').classList.remove('hidden');
                 }
             };
 
-            // TEACHER LOGIN FORM HANDLER
+            document.getElementById('stu-logout-btn').onclick = function() {
+                activeUser = null;
+                showScreen('student-login-screen');
+            };
+
+            // TEACHER LOGIN
             document.getElementById('teacher-login-form').onsubmit = function(e) {
                 e.preventDefault();
                 var u = document.getElementById('teacher-user-input').value.trim().toLowerCase();
@@ -566,7 +392,7 @@
 
                 if (authorizedTeachers[u] && authorizedTeachers[u].password === p) {
                     document.getElementById('teacher-auth-err').classList.add('hidden');
-                    document.getElementById('teacher-logged-user').innerText = "Instructor: " + authorizedTeachers[u].name;
+                    document.getElementById('teacher-logged-user').innerText = "Instructor Logged In: " + authorizedTeachers[u].name;
                     showScreen('teacher-screen');
                     renderTeacherTable();
                 } else {
@@ -574,7 +400,68 @@
                 }
             };
 
-            // PROCTOR: 2-STRIKE WARNING / AUTO SUBMIT ON TAB SWITCH
+            // RESET ALL STUDENT SESSIONS FEATURE
+            document.getElementById('reset-student-sessions-btn').onclick = function() {
+                if (confirm("Reset test attempts and session locks for all 40 students? Students will be able to re-take tests immediately.")) {
+                    for (var key in localStorage) {
+                        if (key.indexOf('clat_session_') === 0) {
+                            localStorage.removeItem(key);
+                        }
+                    }
+                    alert("All student test sessions have been reset successfully!");
+                }
+            };
+
+            // CREATE NEW TEST SUBMISSION
+            document.getElementById('create-test-form').onsubmit = function(e) {
+                e.preventDefault();
+                var fileInput = document.getElementById('new-test-pdf');
+                if (!fileInput.files || !fileInput.files[0]) {
+                    alert("Please select a PDF file.");
+                    return;
+                }
+
+                var reader = new FileReader();
+                reader.onload = function(evt) {
+                    var pdfDataUrl = evt.target.result;
+                    var qCount = parseInt(document.getElementById('new-test-qcount').value) || 10;
+                    var title = document.getElementById('new-test-title').value.trim();
+                    var section = document.getElementById('new-test-section').value.trim();
+                    var duration = parseInt(document.getElementById('new-test-duration').value) || 120;
+                    var sched = document.getElementById('new-test-schedule').value;
+
+                    var pdfQuestions = [];
+                    for (var q = 1; q <= qCount; q++) {
+                        pdfQuestions.push({
+                            id: q,
+                            question: "Refer to PDF Question #" + q + " on the left pane and select your option below:",
+                            options: ["(A) Option A", "(B) Option B", "(C) Option C", "(D) Option D"],
+                            correct: 0,
+                            rationale: "Option A is marked as correct for Q" + q
+                        });
+                    }
+
+                    var newExamObj = {
+                        id: 'custom-' + Date.now(),
+                        title: title,
+                        durationMins: duration,
+                        scheduledTime: sched ? new Date(sched).getTime() : null,
+                        isPdf: true,
+                        pdfDataUrl: pdfDataUrl,
+                        data: [{ section: section, questions: pdfQuestions }]
+                    };
+
+                    var currentExams = JSON.parse(localStorage.getItem('clat_custom_exams') || '[]');
+                    currentExams.push(newExamObj);
+                    localStorage.setItem('clat_custom_exams', JSON.stringify(currentExams));
+
+                    alert("New PDF Mock Exam successfully published and scheduled!");
+                    document.getElementById('create-test-form').reset();
+                };
+                reader.readAsDataURL(fileInput.files[0]);
+            };
+
+            // PROCTOR TAB SWITCH
             window.addEventListener('blur', function() {
                 if (isExamActive) {
                     handleProctorViolation("Tab Switch / Window Focus Lost");
@@ -582,9 +469,127 @@
             });
         }
 
+        function renderStudentTests() {
+            var container = document.getElementById('student-tests-container');
+            container.innerHTML = '';
+            var exams = getStoredExams();
+            var now = Date.now();
+
+            for (var i = 0; i < exams.length; i++) {
+                (function(exam) {
+                    var sessionKey = 'clat_session_' + activeUser.username + '_' + exam.id;
+                    var savedSession = JSON.parse(localStorage.getItem(sessionKey) || 'null');
+                    var isSubmitted = savedSession && savedSession.submitted;
+
+                    var isLocked = exam.scheduledTime && now < exam.scheduledTime;
+                    var schedText = exam.scheduledTime ? new Date(exam.scheduledTime).toLocaleString() : 'Immediate Access';
+
+                    var card = document.createElement('div');
+                    card.className = "bg-white p-5 rounded-xl border shadow-sm flex flex-col justify-between space-y-4";
+
+                    var btnHtml = '';
+                    if (isSubmitted) {
+                        btnHtml = '<button disabled class="w-full py-2 bg-gray-300 text-gray-600 font-bold text-xs rounded">Already Submitted</button>';
+                    } else if (isLocked) {
+                        btnHtml = '<button disabled class="w-full py-2 bg-amber-200 text-amber-800 font-bold text-xs rounded">Locked (Starts at Scheduled Time)</button>';
+                    } else {
+                        btnHtml = '<button class="start-exam-btn w-full py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded shadow">Start / Resume Test</button>';
+                    }
+
+                    card.innerHTML = '<div>' +
+                        '<div class="flex justify-between items-center mb-1"><span class="px-2 py-0.5 bg-blue-100 text-blue-800 font-bold text-[10px] rounded uppercase">' + (exam.isPdf ? 'PDF Paper' : 'Standard CBT') + '</span><span class="text-xs text-gray-500 font-medium">' + exam.durationMins + ' Mins</span></div>' +
+                        '<h4 class="font-bold text-base text-gray-900">' + exam.title + '</h4>' +
+                        '<p class="text-xs text-gray-500 mt-1">Scheduled: ' + schedText + '</p>' +
+                        '</div>' + btnHtml;
+
+                    if (!isSubmitted && !isLocked) {
+                        card.querySelector('.start-exam-btn').onclick = function() {
+                            initiateExamStart(exam);
+                        };
+                    }
+
+                    container.appendChild(card);
+                })(exams[i]);
+            }
+        }
+
+        async function initiateExamStart(exam) {
+            activeExam = exam;
+            var sessionKey = 'clat_session_' + activeUser.username + '_' + activeExam.id;
+            var savedSession = JSON.parse(localStorage.getItem(sessionKey) || 'null');
+
+            allQuestions = [];
+            for (var i = 0; i < exam.data.length; i++) {
+                var sec = exam.data[i];
+                for (var j = 0; j < sec.questions.length; j++) {
+                    var q = sec.questions[j];
+                    q.section = sec.section;
+                    q.passage = sec.passage || "";
+                    allQuestions.push(q);
+                }
+            }
+
+            if (savedSession) {
+                timer = savedSession.timer;
+                userAnswers = savedSession.userAnswers;
+                warningCount = savedSession.warningCount || 0;
+            } else {
+                userAnswers = {};
+                for (var k = 0; k < allQuestions.length; k++) {
+                    userAnswers[k] = { selected: null, status: 'not-visited' };
+                }
+                timer = exam.durationMins * 60;
+                warningCount = 0;
+            }
+
+            var camSuccess = await startWebcam();
+            if (!camSuccess) return;
+
+            document.getElementById('candidate-display').innerText = "Candidate: " + activeUser.name + " (" + activeUser.id + ")";
+            updateWarningUI();
+            showScreen('test-screen');
+            
+            // Toggle view depending on PDF vs Standard Passage
+            if (exam.isPdf) {
+                document.getElementById('passage-text').classList.add('hidden');
+                document.getElementById('pdf-container').classList.remove('hidden');
+                renderPdfDocument(exam.pdfDataUrl);
+            } else {
+                document.getElementById('pdf-container').classList.add('hidden');
+                document.getElementById('passage-text').classList.remove('hidden');
+            }
+
+            startExamEngine(sessionKey);
+        }
+
+        function renderPdfDocument(pdfUrl) {
+            var container = document.getElementById('pdf-container');
+            container.innerHTML = '<p class="text-xs text-gray-500 font-bold p-2">Loading PDF Document...</p>';
+            
+            pdfjsLib.getDocument(pdfUrl).promise.then(function(pdf) {
+                container.innerHTML = '';
+                for (var pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+                    pdf.getPage(pageNum).then(function(page) {
+                        var scale = 1.2;
+                        var viewport = page.getViewport({ scale: scale });
+                        var canvas = document.createElement('canvas');
+                        var ctx = canvas.getContext('2d');
+                        canvas.height = viewport.height;
+                        canvas.width = viewport.width;
+                        canvas.className = "shadow bg-white rounded border my-2 max-w-full";
+                        container.appendChild(canvas);
+
+                        page.render({ canvasContext: ctx, viewport: viewport });
+                    });
+                }
+            }).catch(function(err) {
+                container.innerHTML = '<p class="text-xs text-red-600 font-bold p-2">Error rendering PDF document.</p>';
+            });
+        }
+
         function handleProctorViolation(reason) {
             warningCount++;
-            var sessionKey = 'clat_session_' + activeUser.username;
+            var sessionKey = 'clat_session_' + activeUser.username + '_' + activeExam.id;
             saveSessionState(sessionKey, false);
             updateWarningUI();
 
@@ -601,11 +606,7 @@
             var elem = document.getElementById('violation-display');
             if (elem) {
                 elem.innerText = warningCount + " / 1";
-                if (warningCount >= 1) {
-                    elem.className = "text-red-400 font-bold";
-                } else {
-                    elem.className = "text-green-400 font-bold";
-                }
+                elem.className = warningCount >= 1 ? "text-red-400 font-bold" : "text-green-400 font-bold";
             }
         }
 
@@ -638,7 +639,7 @@
                 };
                 return true;
             } catch (err) {
-                alert("PROCTOR MANDATE: Camera access is required to take this exam. Please enable webcam permissions and try again.");
+                alert("PROCTOR MANDATE: Camera access is required to take this exam. Enable webcam permissions and try again.");
                 return false;
             }
         }
@@ -653,7 +654,7 @@
         }
 
         function showScreen(id) {
-            var screens = ['role-selection-screen', 'student-login-screen', 'teacher-login-screen', 'test-screen', 'result-screen', 'teacher-screen'];
+            var screens = ['role-selection-screen', 'student-login-screen', 'student-dashboard-screen', 'teacher-login-screen', 'teacher-screen', 'test-screen', 'result-screen'];
             for (var i = 0; i < screens.length; i++) {
                 document.getElementById(screens[i]).classList.add('hidden');
             }
@@ -715,7 +716,7 @@
         function renderSectionTabs() {
             var tabs = document.getElementById('section-tabs');
             tabs.innerHTML = '';
-            for (var i = 0; i < examData.length; i++) {
+            for (var i = 0; i < activeExam.data.length; i++) {
                 (function(sec) {
                     var btn = document.createElement('button');
                     var isCurrent = allQuestions[currentQIndex].section === sec.section;
@@ -730,7 +731,7 @@
                         }
                     };
                     tabs.appendChild(btn);
-                })(examData[i]);
+                })(activeExam.data[i]);
             }
         }
 
@@ -739,8 +740,10 @@
             var q = allQuestions[idx];
             if (userAnswers[idx].status === 'not-visited') userAnswers[idx].status = 'visited';
 
-            document.getElementById('section-badge').innerText = q.section + " PASSAGE";
-            document.getElementById('passage-text').innerText = q.passage;
+            document.getElementById('section-badge').innerText = q.section + (activeExam.isPdf ? " (PDF MOCK)" : " PASSAGE");
+            if (!activeExam.isPdf) {
+                document.getElementById('passage-text').innerText = q.passage;
+            }
             document.getElementById('q-badge').innerText = "Question " + (idx + 1) + " of " + allQuestions.length;
             document.getElementById('q-text').innerText = q.question;
 
@@ -805,7 +808,7 @@
         function submitExam(reason) {
             stopWebcam();
             if (timerInterval) clearInterval(timerInterval);
-            var sessionKey = 'clat_session_' + activeUser.username;
+            var sessionKey = 'clat_session_' + activeUser.username + '_' + activeExam.id;
             saveSessionState(sessionKey, true);
 
             showScreen('result-screen');
@@ -843,7 +846,7 @@
                     '</div>';
             }
 
-            document.getElementById('res-student').innerText = activeUser.name + " (" + activeUser.id + ")";
+            document.getElementById('res-student').innerText = activeUser.name + " (" + activeUser.id + ") - " + activeExam.title;
             document.getElementById('res-reason').innerText = "Status: " + reason;
             document.getElementById('res-score').innerText = score.toFixed(2);
 
@@ -853,6 +856,7 @@
             records.push({
                 id: activeUser.id,
                 name: activeUser.name,
+                examTitle: activeExam.title,
                 score: score.toFixed(2),
                 status: reason,
                 timestamp: timestamp
@@ -868,7 +872,7 @@
             for (var i = 0; i < records.length; i++) {
                 var r = records[i];
                 var statusColor = r.status.includes('Proctor') ? 'text-red-600 font-bold' : 'text-green-600 font-medium';
-                tbody.innerHTML += '<tr><td class="p-4 font-mono">' + r.id + '</td><td class="p-4 font-medium">' + r.name + '</td><td class="p-4 font-bold text-blue-600">' + r.score + '</td><td class="p-4 ' + statusColor + '">' + r.status + '</td><td class="p-4 text-xs text-gray-500">' + r.timestamp + '</td></tr>';
+                tbody.innerHTML += '<tr><td class="p-4 font-mono">' + r.id + '</td><td class="p-4 font-medium">' + r.name + '</td><td class="p-4 font-semibold text-gray-700">' + (r.examTitle || 'CLAT Mock') + '</td><td class="p-4 font-bold text-blue-600">' + r.score + '</td><td class="p-4 ' + statusColor + '">' + r.status + '</td><td class="p-4 text-xs text-gray-500">' + r.timestamp + '</td></tr>';
             }
             document.getElementById('clear-btn-teacher').onclick = function() {
                 if (confirm("Clear all student score records from the teacher dashboard?")) {
