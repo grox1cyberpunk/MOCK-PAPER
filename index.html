@@ -42,7 +42,8 @@
                 <p class="font-bold">Instructions & Rules:</p>
                 <p>• Marking: <strong>+1.0</strong> for correct answer, <strong>-0.25</strong> for wrong answer.</p>
                 <p>• Duration: 120 Minutes.</p>
-                <p>• Window focus loss or switching tabs will flag a violation to your instructor.</p>
+                <p>• Switching tabs or closing the window will flag a violation to your instructor.</p>
+                <p>• Your progress and timer automatically save if you refresh or reopen the page.</p>
             </div>
 
             <form id="student-form" class="space-y-4">
@@ -55,7 +56,7 @@
                     <input type="text" id="student-roll" required class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="e.g. CLAT2023-1092">
                 </div>
                 <button type="submit" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow transition">
-                    Start Test
+                    Start / Resume Test
                 </button>
             </form>
         </div>
@@ -138,7 +139,10 @@
     <div id="teacher-screen" class="hidden p-8 max-w-6xl mx-auto space-y-6">
         <div class="flex justify-between items-center">
             <h1 class="text-2xl font-bold">Teacher Scoreboard</h1>
-            <button id="clear-btn-teacher" class="px-3 py-1.5 bg-red-100 text-red-700 font-semibold text-xs rounded hover:bg-red-200">Clear All Records</button>
+            <div class="flex gap-2">
+                <span id="teacher-logged-user" class="px-3 py-1.5 bg-purple-100 text-purple-800 font-semibold text-xs rounded">Instructor Logged In</span>
+                <button id="clear-btn-teacher" class="px-3 py-1.5 bg-red-100 text-red-700 font-semibold text-xs rounded hover:bg-red-200">Clear All Records</button>
+            </div>
         </div>
         <div class="bg-white rounded-xl shadow overflow-hidden border">
             <table class="w-full text-left text-sm text-gray-600">
@@ -155,7 +159,29 @@
         </div>
     </div>
 
-    <!-- SINGLE MERGED ENGINE & QUESTION DATA -->
+    <!-- TEACHER AUTH MODAL -->
+    <div id="teacher-auth-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-xl shadow-xl p-6 max-w-md w-full space-y-4">
+            <h2 class="text-xl font-bold text-gray-900">Teacher Dashboard Login</h2>
+            <div class="space-y-3">
+                <div>
+                    <label class="block text-xs font-semibold text-gray-600 mb-1">Username</label>
+                    <input type="text" id="teacher-user-input" class="w-full px-3 py-2 border rounded text-sm focus:outline-none focus:ring-2 focus:ring-purple-600">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-600 mb-1">Password</label>
+                    <input type="password" id="teacher-pass-input" class="w-full px-3 py-2 border rounded text-sm focus:outline-none focus:ring-2 focus:ring-purple-600">
+                </div>
+                <p id="teacher-auth-err" class="text-xs text-red-600 hidden">Invalid Username or Password.</p>
+            </div>
+            <div class="flex justify-end gap-2 pt-2">
+                <button id="teacher-cancel-btn" class="px-3 py-1.5 border text-xs rounded hover:bg-gray-100">Cancel</button>
+                <button id="teacher-login-btn" class="px-4 py-1.5 bg-purple-600 text-white font-semibold text-xs rounded hover:bg-purple-700">Login</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPT & QUESTION DATA -->
     <script>
         var examData = [
             {
@@ -398,12 +424,19 @@
             }
         ];
 
+        // TEACHER USERNAMES & PASSWORDS (LEO & SIDDHI)
+        var authorizedTeachers = {
+            "leo": "clat_teacher_leo_2026",
+            "siddhi": "clat_teacher_siddhi_2026"
+        };
+
         var allQuestions = [];
         var userAnswers = {};
         var currentQIndex = 0;
         var tabSwitches = 0;
         var timer = 120 * 60;
         var student = {};
+        var timerInterval = null;
 
         function initApp() {
             for (var i = 0; i < examData.length; i++) {
@@ -416,11 +449,43 @@
                 }
             }
 
+            var savedSession = localStorage.getItem('clat_active_session');
+            if (savedSession) {
+                var sessionData = JSON.parse(savedSession);
+                student = sessionData.student;
+                timer = sessionData.timer;
+                userAnswers = sessionData.userAnswers;
+                tabSwitches = sessionData.tabSwitches || 0;
+                
+                document.getElementById('candidate-display').innerText = "Candidate: " + student.name + " (" + student.roll + ")";
+                document.getElementById('violation-count').innerText = tabSwitches;
+                showScreen('test-screen');
+                resumeExam();
+            }
+
             document.getElementById('nav-student-btn').onclick = function() { showScreen('start-screen'); };
+            
             document.getElementById('nav-teacher-btn').onclick = function() {
-                if (prompt("Enter Teacher Passcode:", "teacher123") === "teacher123") {
+                document.getElementById('teacher-auth-modal').classList.remove('hidden');
+            };
+
+            document.getElementById('teacher-cancel-btn').onclick = function() {
+                document.getElementById('teacher-auth-modal').classList.add('hidden');
+                document.getElementById('teacher-auth-err').classList.add('hidden');
+            };
+
+            document.getElementById('teacher-login-btn').onclick = function() {
+                var u = document.getElementById('teacher-user-input').value.trim().toLowerCase();
+                var p = document.getElementById('teacher-pass-input').value.trim();
+
+                if (authorizedTeachers[u] && authorizedTeachers[u] === p) {
+                    document.getElementById('teacher-auth-modal').classList.add('hidden');
+                    document.getElementById('teacher-auth-err').classList.add('hidden');
+                    document.getElementById('teacher-logged-user').innerText = "Instructor: " + (u === "leo" ? "Leo / Gavin" : "Siddhi");
                     showScreen('teacher-screen');
                     renderTeacherTable();
+                } else {
+                    document.getElementById('teacher-auth-err').classList.remove('hidden');
                 }
             };
 
@@ -439,6 +504,7 @@
                 if (!document.getElementById('test-screen').classList.contains('hidden')) {
                     tabSwitches++;
                     document.getElementById('violation-count').innerText = tabSwitches;
+                    saveSessionState();
                 }
             };
         }
@@ -455,13 +521,29 @@
             for (var i = 0; i < allQuestions.length; i++) {
                 userAnswers[i] = { selected: null, status: 'not-visited' };
             }
+            timer = 120 * 60;
+            tabSwitches = 0;
+            saveSessionState();
+            resumeExam();
+        }
+
+        function resumeExam() {
             renderSectionTabs();
-            loadQuestion(0);
-            setInterval(function() {
+            loadQuestion(currentQIndex);
+
+            if (timerInterval) clearInterval(timerInterval);
+            timerInterval = setInterval(function() {
                 timer--;
+                saveSessionState();
                 var m = Math.floor(timer / 60);
                 var s = timer % 60;
                 document.getElementById('timer').innerText = (m < 10 ? '0' + m : m) + ":" + (s < 10 ? '0' + s : s);
+
+                if (timer <= 0) {
+                    clearInterval(timerInterval);
+                    alert("Time's up! Submitting exam automatically.");
+                    submitExam();
+                }
             }, 1000);
 
             document.getElementById('next-btn').onclick = function() { navigate(1); };
@@ -470,6 +552,16 @@
             document.getElementById('finish-btn').onclick = submitExam;
             document.getElementById('sidebar-submit-btn').onclick = submitExam;
             document.getElementById('mark-review-btn').onclick = toggleMarkReview;
+        }
+
+        function saveSessionState() {
+            var state = {
+                student: student,
+                timer: timer,
+                userAnswers: userAnswers,
+                tabSwitches: tabSwitches
+            };
+            localStorage.setItem('clat_active_session', JSON.stringify(state));
         }
 
         function renderSectionTabs() {
@@ -516,6 +608,7 @@
                     div.onclick = function() {
                         userAnswers[idx].selected = optIdx;
                         userAnswers[idx].status = 'answered';
+                        saveSessionState();
                         loadQuestion(currentQIndex);
                     };
                     box.appendChild(div);
@@ -529,11 +622,13 @@
         function clearAns() {
             userAnswers[currentQIndex].selected = null;
             userAnswers[currentQIndex].status = 'visited';
+            saveSessionState();
             loadQuestion(currentQIndex);
         }
 
         function toggleMarkReview() {
             userAnswers[currentQIndex].status = userAnswers[currentQIndex].status === 'marked' ? 'visited' : 'marked';
+            saveSessionState();
             renderPalette();
         }
 
@@ -563,7 +658,11 @@
         }
 
         function submitExam() {
-            if (!confirm("Are you sure you want to submit your exam?")) return;
+            if (timer > 0 && !confirm("Are you sure you want to finalize and submit your exam?")) return;
+            
+            if (timerInterval) clearInterval(timerInterval);
+            localStorage.removeItem('clat_active_session');
+
             showScreen('result-screen');
             
             var score = 0;
