@@ -621,34 +621,46 @@
                 })(activeExam.data[i]);
             }
         }
+function loadQuestion(idx) {
+    if (!allQuestions || allQuestions.length === 0) return;
+    currentQIndex = idx;
+    var q = allQuestions[idx];
+    if (!q) return;
 
-        function loadQuestion(idx) {
-            currentQIndex = idx;
-            var q = allQuestions[idx];
-            if (userAnswers[idx].status === 'not-visited') userAnswers[idx].status = 'visited';
+    if (userAnswers[idx] && userAnswers[idx].status === 'not-visited') {
+        userAnswers[idx].status = 'visited';
+    }
 
-            document.getElementById('section-badge').innerText = q.section;
-            document.getElementById('passage-text').innerText = q.passage;
-            document.getElementById('q-badge').innerText = "Question " + (idx + 1) + " of " + allQuestions.length;
-            document.getElementById('q-text').innerText = q.question;
+    document.getElementById('section-badge').innerText = q.section || "General Section";
+    document.getElementById('passage-text').innerText = q.passage || "No passage provided for this section.";
+    document.getElementById('q-badge').innerText = "Question " + (idx + 1) + " of " + allQuestions.length;
+    document.getElementById('q-text').innerText = q.question || "Question text unavailable.";
 
-            var box = document.getElementById('options-box');
-            box.innerHTML = '';
-            for (var i = 0; i < q.options.length; i++) {
-                (function(optIdx) {
-                    var opt = q.options[optIdx];
-                    var isSel = userAnswers[idx].selected === optIdx;
-                    var div = document.createElement('div');
-                    div.className = "p-3 border rounded-lg cursor-pointer text-sm " + (isSel ? 'border-blue-600 bg-blue-50 font-semibold text-blue-900' : 'hover:bg-gray-100');
-                    div.innerText = opt;
-                    div.onclick = function() {
-                        userAnswers[idx].selected = optIdx;
-                        userAnswers[idx].status = 'answered';
-                        loadQuestion(currentQIndex);
-                    };
-                    box.appendChild(div);
-                })(i);
-            }
+    var box = document.getElementById('options-box');
+    box.innerHTML = '';
+    
+    var opts = q.options || ["(A) Option A", "(B) Option B", "(C) Option C", "(D) Option D"];
+    for (var i = 0; i < opts.length; i++) {
+        (function(optIdx) {
+            var opt = opts[optIdx];
+            var isSel = userAnswers[idx] ? userAnswers[idx].selected === optIdx : false;
+            var div = document.createElement('div');
+            div.className = "p-3 border rounded-lg cursor-pointer text-sm " + (isSel ? 'border-blue-600 bg-blue-50 font-semibold text-blue-900' : 'hover:bg-gray-100');
+            div.innerText = opt;
+            div.onclick = function() {
+                if (userAnswers[idx]) {
+                    userAnswers[idx].selected = optIdx;
+                    userAnswers[idx].status = 'answered';
+                }
+                loadQuestion(currentQIndex);
+            };
+            box.appendChild(div);
+        })(i);
+    }
+
+    renderSectionTabs();
+    renderPalette();
+}
 
             renderSectionTabs();
             renderPalette();
