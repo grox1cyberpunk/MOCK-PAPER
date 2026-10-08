@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,8 +12,16 @@
             theme: {
                 extend: {
                     colors: {
-                        brand: { 50: '#f0f9ff', 500: '#0284c7', 600: '#0284c7', 700: '#0369a1' },
-                        slateDark: '#0b0f19'
+                        obsidian: {
+                            DEFAULT: '#090d16',
+                            card: '#111827',
+                            border: '#1f2937'
+                        },
+                        cyanGlow: {
+                            DEFAULT: '#06b6d4',
+                            hover: '#0891b2',
+                            soft: 'rgba(6, 182, 212, 0.15)'
+                        }
                     }
                 }
             }
@@ -22,95 +30,80 @@
     <style>
         .custom-scrollbar::-webkit-scrollbar { width: 5px; height: 5px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
-        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #1f2937; border-radius: 4px; }
         .no-select { -webkit-user-select: none; user-select: none; }
         
-        .resizer { width: 6px; cursor: col-resize; background: #e2e8f0; transition: background 0.2s; }
-        .dark .resizer { background: #1e293b; }
-        .resizer:hover, .resizer:active { background: #3b82f6; }
+        .resizer { width: 6px; cursor: col-resize; background: #1f2937; transition: background 0.2s; }
+        .resizer:hover, .resizer:active { background: #06b6d4; }
 
-        /* Glassmorphism Styling */
-        .glass-panel {
-            background: rgba(255, 255, 255, 0.75);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(226, 232, 240, 0.8);
+        .cyan-glow-card {
+            background: #111827;
+            border: 1px solid #1f2937;
+            transition: all 0.25s ease;
         }
-        .dark .glass-panel {
-            background: rgba(15, 23, 42, 0.75);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(51, 65, 85, 0.5);
-        }
-
-        /* Glowing Border Animation */
-        .glow-card {
-            position: relative;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-        .glow-card:hover {
+        .cyan-glow-card:hover {
+            border-color: #06b6d4;
+            box-shadow: 0 0 20px -5px rgba(6, 182, 212, 0.3);
             transform: translateY(-2px);
-            box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.15);
         }
 
-        /* Pulsing Status Dot */
-        .pulse-dot {
-            width: 8px;
-            height: 8px;
-            background-color: #10b981;
+        .pulse-cyan {
+            width: 8px; height: 8px;
+            background-color: #06b6d4;
             border-radius: 50%;
-            box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
-            animation: pulse-green 2s infinite;
+            box-shadow: 0 0 0 0 rgba(6, 182, 212, 0.7);
+            animation: pulse-cyan-anim 2s infinite;
         }
-        @keyframes pulse-green {
-            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
-            70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
-            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        @keyframes pulse-cyan-anim {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(6, 182, 212, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(6, 182, 212, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(6, 182, 212, 0); }
         }
 
-        /* Custom Highlighted Text in Passage */
-        .hl-yellow { background-color: #fef08a; color: #854d0e; border-radius: 2px; padding: 0 2px; }
-        .dark .hl-yellow { background-color: #713f12; color: #fef08a; }
-        .hl-cyan { background-color: #a5f3fc; color: #155e75; border-radius: 2px; padding: 0 2px; }
-        .dark .hl-cyan { background-color: #164e63; color: #a5f3fc; }
+        .hl-yellow { background-color: #854d0e; color: #fef08a; border-radius: 2px; padding: 0 2px; }
+        .hl-cyan { background-color: #164e63; color: #a5f3fc; border-radius: 2px; padding: 0 2px; }
     </style>
 </head>
-<body class="bg-gray-50 dark:bg-[#0b0f19] text-gray-800 dark:text-gray-100 font-sans no-select transition-colors duration-200 min-h-screen flex flex-col" oncontextmenu="return false;">
+<body class="bg-[#090d16] text-gray-100 font-sans no-select transition-colors duration-200 min-h-screen flex flex-col" oncontextmenu="return false;">
 
     <!-- TOP HEADER -->
-    <header class="sticky top-0 z-40 glass-panel px-6 py-3 flex justify-between items-center shadow-sm">
+    <header class="sticky top-0 z-40 bg-[#090d16]/90 backdrop-blur-md px-6 py-3 flex justify-between items-center border-b border-gray-800 shadow-lg">
         <div class="flex items-center gap-3">
-            <span class="font-black text-xl tracking-tight bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 bg-clip-text text-transparent">CLAT PROCTOR CBT</span>
-            <div id="text-size-controls" class="hidden md:flex items-center bg-gray-100 dark:bg-gray-800 border dark:border-gray-700 rounded-lg px-2 py-0.5 gap-2 text-xs">
+            <span class="font-black text-xl tracking-wider bg-gradient-to-r from-cyan-400 via-teal-300 to-indigo-400 bg-clip-text text-transparent">CLAT CYBER CBT</span>
+            <div id="text-size-controls" class="hidden md:flex items-center bg-gray-900 border border-gray-800 rounded-lg px-2.5 py-1 gap-2 text-xs">
                 <span class="text-gray-400 font-semibold">Text:</span>
-                <button id="font-dec-btn" class="hover:text-blue-500 font-bold px-1">A-</button>
-                <button id="font-reset-btn" class="hover:text-blue-500 px-1">100%</button>
-                <button id="font-inc-btn" class="hover:text-blue-500 font-bold px-1">A+</button>
+                <button id="font-dec-btn" class="hover:text-cyan-400 font-bold px-1">A-</button>
+                <button id="font-reset-btn" class="hover:text-cyan-400 px-1">100%</button>
+                <button id="font-inc-btn" class="hover:text-cyan-400 font-bold px-1">A+</button>
             </div>
         </div>
         <div class="flex items-center gap-3">
-            <button id="dark-mode-toggle" class="px-3 py-1.5 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-yellow-400 border dark:border-gray-700 font-semibold text-xs rounded-lg transition flex items-center gap-1.5">
-                <span>🌙</span> <span class="hidden sm:inline">Theme</span>
-            </button>
-            <button id="header-switch-role-btn" class="px-3.5 py-1.5 bg-gray-900 dark:bg-gray-700 hover:bg-gray-800 dark:hover:bg-gray-600 text-white font-semibold text-xs rounded-lg transition shadow-sm">
+            <button id="header-switch-role-btn" class="px-4 py-1.5 bg-gray-800 hover:bg-gray-700 border border-gray-700 text-cyan-400 font-semibold text-xs rounded-lg transition shadow-sm">
                 Switch Role / Home
             </button>
         </div>
     </header>
 
+    <!-- BROADCAST BANNER -->
+    <div id="broadcast-banner" class="hidden bg-cyan-950/80 border-b border-cyan-800/50 px-6 py-2 text-center text-xs text-cyan-300 font-medium flex items-center justify-center gap-2">
+        <span class="pulse-cyan"></span>
+        <span id="broadcast-text">Faculty Notice: Mock Exam 02 is now live! Ensure camera permissions are active.</span>
+    </div>
+
     <!-- 1. INITIAL ROLE SELECTION SCREEN -->
     <div id="role-selection-screen" class="flex-1 flex items-center justify-center p-4">
-        <div class="max-w-md w-full bg-white dark:bg-gray-800/90 rounded-2xl shadow-2xl border border-gray-100 dark:border-gray-700/60 p-8 text-center space-y-6">
+        <div class="max-w-md w-full bg-[#111827] rounded-2xl shadow-2xl border border-gray-800 p-8 text-center space-y-6">
             <div>
-                <h1 class="text-3xl font-black text-gray-900 dark:text-white tracking-tight">Welcome to CLAT CBT</h1>
-                <p class="text-gray-500 dark:text-gray-400 text-sm mt-1.5">Select your portal to continue</p>
+                <h1 class="text-3xl font-black text-white tracking-tight">Welcome to CLAT CBT</h1>
+                <p class="text-gray-400 text-sm mt-1.5">Select your portal to continue</p>
             </div>
 
             <div class="grid grid-cols-1 gap-4 pt-2">
-                <button id="select-student-btn" class="py-4 px-6 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-lg shadow-blue-500/20 transition-all transform active:scale-95 flex items-center justify-center gap-3">
+                <button id="select-student-btn" class="py-4 px-6 bg-cyan-600 hover:bg-cyan-500 text-white font-bold rounded-xl shadow-lg shadow-cyan-500/20 transition-all transform active:scale-95 flex items-center justify-center gap-3">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0112 20.055a11.952 11.952 0 01-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"/></svg>
                     <span>I am a Student</span>
                 </button>
-                <button id="select-teacher-btn" class="py-4 px-6 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-xl shadow-lg shadow-purple-500/20 transition-all transform active:scale-95 flex items-center justify-center gap-3">
+                <button id="select-teacher-btn" class="py-4 px-6 bg-purple-600 hover:bg-purple-500 text-white font-bold rounded-xl shadow-lg shadow-purple-500/20 transition-all transform active:scale-95 flex items-center justify-center gap-3">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/></svg>
                     <span>I am a Teacher</span>
                 </button>
@@ -120,45 +113,45 @@
 
     <!-- 2. STUDENT LOGIN SCREEN -->
     <div id="student-login-screen" class="hidden flex-1 flex items-center justify-center p-4">
-        <div class="max-w-md w-full bg-white dark:bg-gray-800/90 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 p-8">
+        <div class="max-w-md w-full bg-[#111827] rounded-2xl shadow-xl border border-gray-800 p-8">
             <div class="text-center mb-6">
-                <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Student Portal Login</h2>
-                <p class="text-gray-500 dark:text-gray-400 text-xs mt-1">Enter your candidate credentials</p>
+                <h2 class="text-2xl font-bold text-white">Student Portal Login</h2>
+                <p class="text-gray-400 text-xs mt-1">Enter your candidate credentials</p>
             </div>
 
             <form id="student-login-form" class="space-y-4">
                 <div>
-                    <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">Student Username</label>
-                    <input type="text" id="stu-user-input" required class="w-full px-4 py-2.5 border rounded-xl text-sm dark:bg-gray-900 dark:border-gray-700 focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="e.g. student01">
+                    <label class="block text-xs font-semibold text-gray-300 mb-1">Student Username</label>
+                    <input type="text" id="stu-user-input" required class="w-full px-4 py-2.5 border border-gray-700 bg-gray-900 rounded-xl text-sm focus:ring-2 focus:ring-cyan-500 focus:outline-none" placeholder="e.g. student01">
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">Password</label>
+                    <label class="block text-xs font-semibold text-gray-300 mb-1">Password</label>
                     <div class="relative">
-                        <input type="password" id="stu-pass-input" required class="w-full px-4 py-2.5 border rounded-xl text-sm dark:bg-gray-900 dark:border-gray-700 focus:ring-2 focus:ring-blue-500 focus:outline-none pr-16" placeholder="e.g. clat_stu_101">
-                        <button type="button" id="toggle-stu-pass" class="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-semibold text-blue-600 dark:text-blue-400">Show</button>
+                        <input type="password" id="stu-pass-input" required class="w-full px-4 py-2.5 border border-gray-700 bg-gray-900 rounded-xl text-sm focus:ring-2 focus:ring-cyan-500 focus:outline-none pr-16" placeholder="e.g. clat_stu_101">
+                        <button type="button" id="toggle-stu-pass" class="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-semibold text-cyan-400">Show</button>
                     </div>
                 </div>
-                <p id="stu-auth-err" class="text-xs text-red-500 font-semibold hidden">Invalid student credentials!</p>
-                <button type="submit" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-md transition">
+                <p id="stu-auth-err" class="text-xs text-red-400 font-semibold hidden">Invalid student credentials!</p>
+                <button type="submit" class="w-full py-3 bg-cyan-600 hover:bg-cyan-500 text-white font-bold rounded-xl shadow-md shadow-cyan-500/10 transition">
                     Access Portal
                 </button>
             </form>
         </div>
     </div>
 
-    <!-- 3. STUDENT DASHBOARD (ANALYTICS & CHARTS) -->
+    <!-- 3. STUDENT DASHBOARD -->
     <div id="student-dashboard-screen" class="hidden p-6 md:p-8 max-w-6xl mx-auto space-y-6 w-full">
-        <div class="flex justify-between items-center bg-white dark:bg-gray-800/80 p-6 rounded-2xl border dark:border-gray-700 shadow-sm">
+        <div class="flex justify-between items-center bg-[#111827] p-6 rounded-2xl border border-gray-800 shadow-sm">
             <div>
-                <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Student Command Center</h1>
-                <p id="stu-logged-welcome" class="text-xs text-gray-500 dark:text-gray-400 mt-1"></p>
+                <h1 class="text-2xl font-bold text-white">Student Command Center</h1>
+                <p id="stu-logged-welcome" class="text-xs text-gray-400 mt-1"></p>
             </div>
-            <button id="stu-logout-btn" class="px-3.5 py-1.5 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 text-xs font-bold rounded-lg">Log Out</button>
+            <button id="stu-logout-btn" class="px-3.5 py-1.5 bg-gray-800 hover:bg-gray-700 border border-gray-700 text-xs font-bold rounded-lg">Log Out</button>
         </div>
 
-        <div class="flex border-b border-gray-200 dark:border-gray-700 gap-4">
-            <button id="stu-tab-exams-btn" class="py-2.5 px-4 border-b-2 border-blue-600 text-blue-600 font-bold text-sm">Available Mock Tests</button>
-            <button id="stu-tab-perf-btn" class="py-2.5 px-4 border-b-2 border-transparent text-gray-500 dark:text-gray-400 font-bold text-sm">Performance Analytics</button>
+        <div class="flex border-b border-gray-800 gap-4">
+            <button id="stu-tab-exams-btn" class="py-2.5 px-4 border-b-2 border-cyan-400 text-cyan-400 font-bold text-sm">Available Mock Tests</button>
+            <button id="stu-tab-perf-btn" class="py-2.5 px-4 border-b-2 border-transparent text-gray-400 font-bold text-sm">Performance Analytics</button>
         </div>
 
         <div id="stu-tab-exams" class="space-y-4">
@@ -167,33 +160,32 @@
 
         <div id="stu-tab-perf" class="hidden space-y-6">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div class="bg-white dark:bg-gray-800 p-5 border dark:border-gray-700 rounded-2xl shadow-sm text-center">
+                <div class="bg-[#111827] p-5 border border-gray-800 rounded-2xl shadow-sm text-center">
                     <span class="text-xs text-gray-400 uppercase font-bold tracking-wider">Mocks Attempted</span>
-                    <h3 id="stat-total-tests" class="text-3xl font-black text-blue-600 dark:text-blue-400 mt-1">0</h3>
+                    <h3 id="stat-total-tests" class="text-3xl font-black text-cyan-400 mt-1">0</h3>
                 </div>
-                <div class="bg-white dark:bg-gray-800 p-5 border dark:border-gray-700 rounded-2xl shadow-sm text-center">
+                <div class="bg-[#111827] p-5 border border-gray-800 rounded-2xl shadow-sm text-center">
                     <span class="text-xs text-gray-400 uppercase font-bold tracking-wider">Average Score</span>
-                    <h3 id="stat-avg-score" class="text-3xl font-black text-emerald-500 mt-1">0.00</h3>
+                    <h3 id="stat-avg-score" class="text-3xl font-black text-teal-400 mt-1">0.00</h3>
                 </div>
-                <div class="bg-white dark:bg-gray-800 p-5 border dark:border-gray-700 rounded-2xl shadow-sm text-center">
+                <div class="bg-[#111827] p-5 border border-gray-800 rounded-2xl shadow-sm text-center">
                     <span class="text-xs text-gray-400 uppercase font-bold tracking-wider">Highest Score</span>
-                    <h3 id="stat-high-score" class="text-3xl font-black text-purple-500 mt-1">0.00</h3>
+                    <h3 id="stat-high-score" class="text-3xl font-black text-purple-400 mt-1">0.00</h3>
                 </div>
             </div>
 
-            <!-- Chart Section -->
-            <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl border dark:border-gray-700 shadow-sm space-y-4">
-                <h3 class="text-base font-bold text-gray-900 dark:text-white">Score Progress Over Time</h3>
+            <div class="bg-[#111827] p-6 rounded-2xl border border-gray-800 shadow-sm space-y-4">
+                <h3 class="text-base font-bold text-white">Score Progress Over Time</h3>
                 <div class="h-64">
                     <canvas id="scoreChart"></canvas>
                 </div>
             </div>
 
-            <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl border dark:border-gray-700 shadow-sm space-y-4">
-                <h3 class="text-base font-bold text-gray-900 dark:text-white">Past Test Logs</h3>
+            <div class="bg-[#111827] p-6 rounded-2xl border border-gray-800 shadow-sm space-y-4">
+                <h3 class="text-base font-bold text-white">Past Test Logs</h3>
                 <div class="overflow-x-auto">
-                    <table class="w-full text-left text-sm text-gray-600 dark:text-gray-300">
-                        <thead class="bg-gray-50 dark:bg-gray-900/50 uppercase text-xs font-semibold">
+                    <table class="w-full text-left text-sm text-gray-300">
+                        <thead class="bg-gray-900 uppercase text-xs font-semibold">
                             <tr>
                                 <th class="p-3">Test Title</th>
                                 <th class="p-3">Score</th>
@@ -201,7 +193,7 @@
                                 <th class="p-3">Date Completed</th>
                             </tr>
                         </thead>
-                        <tbody id="student-performance-table" class="divide-y dark:divide-gray-700"></tbody>
+                        <tbody id="student-performance-table" class="divide-y divide-gray-800"></tbody>
                     </table>
                 </div>
             </div>
@@ -210,104 +202,111 @@
 
     <!-- 4. TEACHER LOGIN SCREEN -->
     <div id="teacher-login-screen" class="hidden flex-1 flex items-center justify-center p-4">
-        <div class="max-w-md w-full bg-white dark:bg-gray-800/90 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 p-8">
+        <div class="max-w-md w-full bg-[#111827] rounded-2xl shadow-xl border border-gray-800 p-8">
             <div class="text-center mb-6">
-                <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Teacher Dashboard Login</h2>
-                <p class="text-gray-500 dark:text-gray-400 text-xs mt-1">Restricted to Authorized Faculty</p>
+                <h2 class="text-2xl font-bold text-white">Teacher Dashboard Login</h2>
+                <p class="text-gray-400 text-xs mt-1">Restricted to Authorized Faculty</p>
             </div>
 
             <form id="teacher-login-form" class="space-y-4">
                 <div>
-                    <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">Teacher Username</label>
-                    <input type="text" id="teacher-user-input" required class="w-full px-4 py-2.5 border rounded-xl text-sm dark:bg-gray-900 dark:border-gray-700 focus:ring-2 focus:ring-purple-500 focus:outline-none">
+                    <label class="block text-xs font-semibold text-gray-300 mb-1">Teacher Username</label>
+                    <input type="text" id="teacher-user-input" required class="w-full px-4 py-2.5 border border-gray-700 bg-gray-900 rounded-xl text-sm focus:ring-2 focus:ring-purple-500 focus:outline-none">
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">Password</label>
+                    <label class="block text-xs font-semibold text-gray-300 mb-1">Password</label>
                     <div class="relative">
-                        <input type="password" id="teacher-pass-input" required class="w-full px-4 py-2.5 border rounded-xl text-sm dark:bg-gray-900 dark:border-gray-700 focus:ring-2 focus:ring-purple-500 focus:outline-none pr-16">
-                        <button type="button" id="toggle-teacher-pass" class="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-semibold text-purple-600 dark:text-purple-400">Show</button>
+                        <input type="password" id="teacher-pass-input" required class="w-full px-4 py-2.5 border border-gray-700 bg-gray-900 rounded-xl text-sm focus:ring-2 focus:ring-purple-500 focus:outline-none pr-16">
+                        <button type="button" id="toggle-teacher-pass" class="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-semibold text-purple-400">Show</button>
                     </div>
                 </div>
-                <p id="teacher-auth-err" class="text-xs text-red-500 font-semibold hidden">Invalid teacher credentials!</p>
-                <button type="submit" class="w-full py-3 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-xl shadow-md transition">
+                <p id="teacher-auth-err" class="text-xs text-red-400 font-semibold hidden">Invalid teacher credentials!</p>
+                <button type="submit" class="w-full py-3 bg-purple-600 hover:bg-purple-500 text-white font-bold rounded-xl shadow-md transition">
                     Login to Control Panel
                 </button>
             </form>
         </div>
     </div>
 
-    <!-- 5. TEACHER DASHBOARD (MONACO-STYLE EDITOR & CSV EXPORT) -->
+    <!-- 5. TEACHER DASHBOARD -->
     <div id="teacher-screen" class="hidden p-6 md:p-8 max-w-6xl mx-auto space-y-6 w-full">
-        <div class="flex justify-between items-center bg-white dark:bg-gray-800 p-6 rounded-2xl border dark:border-gray-700 shadow-sm">
+        <div class="flex justify-between items-center bg-[#111827] p-6 rounded-2xl border border-gray-800 shadow-sm">
             <div>
                 <h1 class="text-2xl font-bold">Teacher Control Panel</h1>
-                <p id="teacher-logged-user" class="text-xs text-purple-600 dark:text-purple-400 font-bold mt-1"></p>
+                <p id="teacher-logged-user" class="text-xs text-cyan-400 font-bold mt-1"></p>
             </div>
-            <button id="teacher-logout-btn" class="px-3.5 py-1.5 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 text-xs font-bold rounded-lg">Log Out</button>
+            <button id="teacher-logout-btn" class="px-3.5 py-1.5 bg-gray-800 hover:bg-gray-700 text-xs font-bold rounded-lg">Log Out</button>
         </div>
 
-        <div class="flex border-b border-gray-200 dark:border-gray-700 gap-4">
-            <button id="teacher-tab-create-btn" class="py-2.5 px-4 border-b-2 border-purple-600 text-purple-600 font-bold text-sm">Create & Schedule Test</button>
-            <button id="teacher-tab-score-btn" class="py-2.5 px-4 border-b-2 border-transparent text-gray-500 font-bold text-sm">Scoreboard & Resets</button>
+        <div class="flex border-b border-gray-800 gap-4">
+            <button id="teacher-tab-create-btn" class="py-2.5 px-4 border-b-2 border-purple-500 text-purple-400 font-bold text-sm">Create & Schedule Test</button>
+            <button id="teacher-tab-score-btn" class="py-2.5 px-4 border-b-2 border-transparent text-gray-400 font-bold text-sm">Scoreboard & Live Grid</button>
+            <button id="teacher-tab-notice-btn" class="py-2.5 px-4 border-b-2 border-transparent text-gray-400 font-bold text-sm">Broadcast Notice</button>
         </div>
 
         <!-- TAB 1: CREATE TEST -->
-        <div id="teacher-tab-create" class="bg-white dark:bg-gray-800 p-6 rounded-2xl border dark:border-gray-700 shadow-sm space-y-4">
-            <h2 class="text-xl font-bold text-gray-900 dark:text-white border-b dark:border-gray-700 pb-3">Publish New Test Paper</h2>
+        <div id="teacher-tab-create" class="bg-[#111827] p-6 rounded-2xl border border-gray-800 shadow-sm space-y-4">
+            <h2 class="text-xl font-bold text-white border-b border-gray-800 pb-3">Publish New Test Paper</h2>
             <form id="json-import-form" class="space-y-4">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div>
-                        <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">Test Title</label>
-                        <input type="text" id="json-test-title" required class="w-full px-3 py-2 border dark:border-gray-700 dark:bg-gray-900 rounded-xl text-sm" placeholder="e.g. CLAT Legal Mock 02">
+                        <label class="block text-xs font-semibold text-gray-300 mb-1">Test Title</label>
+                        <input type="text" id="json-test-title" required class="w-full px-3 py-2 border border-gray-700 bg-gray-900 rounded-xl text-sm" placeholder="e.g. CLAT Legal Mock 02">
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">Duration (Minutes)</label>
-                        <input type="number" id="json-test-duration" value="120" required class="w-full px-3 py-2 border dark:border-gray-700 dark:bg-gray-900 rounded-xl text-sm">
+                        <label class="block text-xs font-semibold text-gray-300 mb-1">Duration (Minutes)</label>
+                        <input type="number" id="json-test-duration" value="120" required class="w-full px-3 py-2 border border-gray-700 bg-gray-900 rounded-xl text-sm">
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">Schedule Start Date & Time (Optional)</label>
-                        <input type="datetime-local" id="json-test-schedule" class="w-full px-3 py-2 border dark:border-gray-700 dark:bg-gray-900 rounded-xl text-sm">
+                        <label class="block text-xs font-semibold text-gray-300 mb-1">Schedule Start Date & Time (Optional)</label>
+                        <input type="datetime-local" id="json-test-schedule" class="w-full px-3 py-2 border border-gray-700 bg-gray-900 rounded-xl text-sm">
                     </div>
                 </div>
 
                 <div>
                     <div class="flex justify-between items-center mb-1">
-                        <label class="text-xs font-semibold text-gray-700 dark:text-gray-300">Paste AI-Generated Test JSON Array</label>
-                        <button type="button" id="prettify-json-btn" class="text-xs text-purple-600 dark:text-purple-400 font-bold hover:underline">✨ Format / Prettify JSON</button>
+                        <label class="text-xs font-semibold text-gray-300">Paste AI-Generated Test JSON Array</label>
+                        <button type="button" id="prettify-json-btn" class="text-xs text-cyan-400 font-bold hover:underline">✨ Prettify JSON</button>
                     </div>
-                    <textarea id="json-test-payload" rows="10" required class="w-full px-4 py-3 border dark:border-gray-700 rounded-xl text-xs font-mono bg-gray-900 text-emerald-400 leading-relaxed" placeholder="Paste generated JSON here..."></textarea>
+                    <textarea id="json-test-payload" rows="10" required class="w-full px-4 py-3 border border-gray-800 rounded-xl text-xs font-mono bg-[#090d16] text-cyan-400 leading-relaxed" placeholder="Paste generated JSON here..."></textarea>
                 </div>
-                <button type="submit" class="px-6 py-2.5 bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs rounded-xl shadow-md transition">
-                    🚀 Publish Exam to Student Portal
+                <button type="submit" class="px-6 py-2.5 bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs rounded-xl shadow-md transition">
+                    🚀 Publish Exam
                 </button>
             </form>
         </div>
 
-        <!-- TAB 2: SCOREBOARD -->
+        <!-- TAB 2: SCOREBOARD & LIVE ROOM -->
         <div id="teacher-tab-score" class="hidden space-y-6">
-            <div class="bg-amber-50 dark:bg-amber-950/40 p-6 rounded-2xl border border-amber-200 dark:border-amber-800 space-y-4">
-                <h3 class="text-base font-bold text-amber-900 dark:text-amber-200">Session Reset Tools</h3>
+            <div class="bg-amber-950/30 p-6 rounded-2xl border border-amber-800/60 space-y-4">
+                <h3 class="text-base font-bold text-amber-200">Session Reset Tools</h3>
                 <div class="flex flex-col md:flex-row gap-4 items-end">
                     <div class="flex-1">
-                        <label class="block text-xs font-semibold text-amber-800 dark:text-amber-300 mb-1">Reset Specific Student Attempt (Username or ID)</label>
-                        <input type="text" id="reset-single-id" class="w-full px-3 py-2 border dark:border-gray-700 rounded-xl text-sm bg-white dark:bg-gray-900" placeholder="e.g. student01 or STU-2026-01">
+                        <label class="block text-xs font-semibold text-amber-300 mb-1">Reset Specific Student Attempt (Username or ID)</label>
+                        <input type="text" id="reset-single-id" class="w-full px-3 py-2 border border-gray-700 rounded-xl text-sm bg-gray-900" placeholder="e.g. student01 or STU-2026-01">
                     </div>
-                    <button id="reset-single-btn" class="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs rounded-xl shadow transition">Reset Single Student</button>
-                    <button id="reset-student-sessions-btn" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-bold text-xs rounded-xl shadow transition">⚠️ Reset ALL Students</button>
+                    <button id="reset-single-btn" class="px-4 py-2 bg-amber-600 hover:bg-amber-500 text-white font-bold text-xs rounded-xl shadow transition">Reset Single Student</button>
+                    <button id="reset-student-sessions-btn" class="px-4 py-2 bg-red-600 hover:bg-red-500 text-white font-bold text-xs rounded-xl shadow transition">⚠️ Reset ALL Students</button>
                 </div>
             </div>
 
-            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow overflow-hidden border dark:border-gray-700 space-y-2">
-                <div class="flex justify-between items-center p-4 border-b dark:border-gray-700">
+            <!-- Live Exam Status Room -->
+            <div class="bg-[#111827] p-6 rounded-2xl border border-gray-800 space-y-3">
+                <h3 class="text-sm font-bold text-white uppercase tracking-wider">Live Student Room Monitor</h3>
+                <div id="live-room-grid" class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-8 gap-2"></div>
+            </div>
+
+            <div class="bg-[#111827] rounded-2xl shadow overflow-hidden border border-gray-800 space-y-2">
+                <div class="flex justify-between items-center p-4 border-b border-gray-800">
                     <h2 class="text-lg font-bold">Student Scoreboard</h2>
                     <div class="flex gap-2">
-                        <button id="export-csv-btn" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-lg shadow">📥 Export CSV</button>
-                        <button id="clear-btn-teacher" class="px-3 py-1.5 bg-gray-100 dark:bg-gray-700 text-xs font-semibold rounded-lg">Clear Table</button>
+                        <button id="export-csv-btn" class="px-3 py-1.5 bg-teal-600 hover:bg-teal-500 text-white font-bold text-xs rounded-lg shadow">📥 Export CSV</button>
+                        <button id="clear-btn-teacher" class="px-3 py-1.5 bg-gray-800 text-xs font-semibold rounded-lg">Clear Table</button>
                     </div>
                 </div>
                 <div class="overflow-x-auto">
-                    <table class="w-full text-left text-sm text-gray-600 dark:text-gray-300">
-                        <thead class="bg-gray-50 dark:bg-gray-900 uppercase text-xs font-semibold">
+                    <table class="w-full text-left text-sm text-gray-300">
+                        <thead class="bg-gray-900 uppercase text-xs font-semibold">
                             <tr>
                                 <th class="p-4">Student ID</th>
                                 <th class="p-4">Student Name</th>
@@ -317,120 +316,151 @@
                                 <th class="p-4">Timestamp</th>
                             </tr>
                         </thead>
-                        <tbody id="teacher-table" class="divide-y dark:divide-gray-700"></tbody>
+                        <tbody id="teacher-table" class="divide-y divide-gray-800"></tbody>
                     </table>
                 </div>
             </div>
         </div>
+
+        <!-- TAB 3: BROADCAST NOTICE -->
+        <div id="teacher-tab-notice" class="hidden bg-[#111827] p-6 rounded-2xl border border-gray-800 space-y-4">
+            <h2 class="text-lg font-bold text-white">Broadcast Faculty Banner Message</h2>
+            <div>
+                <label class="block text-xs font-semibold text-gray-300 mb-1">Banner Announcement Text</label>
+                <input type="text" id="broadcast-input-text" class="w-full px-4 py-2.5 border border-gray-700 bg-gray-900 rounded-xl text-sm" placeholder="e.g. CLAT Mock 02 deadline extended to 6:00 PM today.">
+            </div>
+            <div class="flex gap-2">
+                <button id="set-broadcast-btn" class="px-5 py-2 bg-cyan-600 hover:bg-cyan-500 text-white font-bold text-xs rounded-xl shadow">Update Banner</button>
+                <button id="clear-broadcast-btn" class="px-5 py-2 bg-gray-800 hover:bg-gray-700 text-gray-300 font-bold text-xs rounded-xl">Clear Banner</button>
+            </div>
+        </div>
     </div>
 
-    <!-- 6. EXAM ENGINE WITH CIRCULAR TIMER & HIGHLIGHTER -->
-    <div id="test-screen" class="hidden h-[calc(100vh-56px)] flex flex-col bg-gray-100 dark:bg-[#0b0f19]">
-        <!-- Exam Top Bar -->
-        <div class="bg-gray-900 text-white px-6 py-2.5 flex justify-between items-center text-xs shadow-md z-10">
+    <!-- 6. EXAM ENGINE WITH SCRATCHPAD & CONFIDENCE TAGS -->
+    <div id="test-screen" class="hidden h-[calc(100vh-56px)] flex flex-col bg-[#090d16]">
+        <div class="bg-gray-900 text-white px-6 py-2.5 flex justify-between items-center text-xs shadow-md z-10 border-b border-gray-800">
             <span id="candidate-display" class="text-gray-300 font-semibold">Candidate: -</span>
             <div class="flex items-center gap-5">
-                <!-- Live PIP Webcam Feed -->
-                <div class="relative w-28 h-16 bg-black rounded-lg border border-gray-700 overflow-hidden flex items-center justify-center shadow-inner">
+                <div class="relative w-28 h-16 bg-black rounded-lg border border-gray-800 overflow-hidden flex items-center justify-center shadow-inner">
                     <video id="proctor-cam" autoplay playsinline muted class="w-full h-full object-cover"></video>
                     <div class="absolute top-1 left-1 flex items-center gap-1 bg-black/60 px-1.5 py-0.5 rounded backdrop-blur">
-                        <div class="pulse-dot"></div>
-                        <span class="text-[8px] font-bold text-emerald-400">AI PROCTOR</span>
+                        <div class="pulse-cyan"></div>
+                        <span class="text-[8px] font-bold text-cyan-400">AI PROCTOR</span>
                     </div>
                 </div>
 
-                <span class="text-amber-400 font-semibold">Warnings: <span id="violation-display" class="text-emerald-400 font-bold">0 / 1</span></span>
+                <span class="text-amber-400 font-semibold">Warnings: <span id="violation-display" class="text-teal-400 font-bold">0 / 1</span></span>
 
-                <!-- Animated SVG Countdown Timer Ring -->
-                <div class="flex items-center gap-2 bg-gray-800 px-3 py-1.5 rounded-xl border border-gray-700">
+                <div class="flex items-center gap-2 bg-gray-800/80 px-3 py-1.5 rounded-xl border border-gray-700">
                     <svg class="w-6 h-6 transform -rotate-90">
                         <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2.5" class="text-gray-700" fill="transparent" />
-                        <circle id="timer-ring" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2.5" class="text-emerald-400 transition-all duration-1000" fill="transparent" stroke-dasharray="62.8" stroke-dashoffset="0" />
+                        <circle id="timer-ring" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2.5" class="text-cyan-400 transition-all duration-1000" fill="transparent" stroke-dasharray="62.8" stroke-dashoffset="0" />
                     </svg>
                     <span id="timer" class="font-mono text-base font-black text-yellow-400">120:00</span>
                 </div>
 
-                <button id="finish-btn" class="bg-red-600 hover:bg-red-700 text-white font-bold px-3.5 py-1.5 rounded-lg shadow transition">Submit Exam</button>
+                <button id="toggle-scratchpad-btn" class="bg-gray-800 hover:bg-gray-700 text-cyan-400 font-bold px-3 py-1.5 rounded-lg border border-gray-700">📝 Scratchpad</button>
+                <button id="finish-btn" class="bg-red-600 hover:bg-red-500 text-white font-bold px-3.5 py-1.5 rounded-lg shadow transition">Submit Exam</button>
             </div>
         </div>
 
-        <nav class="bg-white dark:bg-gray-800 border-b dark:border-gray-700 px-6 py-2 flex gap-2 overflow-x-auto" id="section-tabs"></nav>
+        <nav class="bg-[#111827] border-b border-gray-800 px-6 py-2 flex gap-2 overflow-x-auto" id="section-tabs"></nav>
 
         <div class="flex-1 flex overflow-hidden relative" id="workspace-container">
             <!-- Left Pane: Passage -->
-            <div id="left-passage-pane" class="w-1/2 p-6 border-r dark:border-gray-700 overflow-y-auto bg-white dark:bg-gray-800 custom-scrollbar relative">
+            <div id="left-passage-pane" class="w-1/2 p-6 border-r border-gray-800 overflow-y-auto bg-[#111827] custom-scrollbar relative">
                 <div class="flex justify-between items-center mb-3">
-                    <h3 class="text-xs font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider" id="section-badge">READING PASSAGE</h3>
+                    <h3 class="text-xs font-bold text-cyan-400 uppercase tracking-wider" id="section-badge">READING PASSAGE</h3>
                     <div class="flex gap-1.5 text-xs">
-                        <button id="hl-yellow-btn" class="px-2 py-0.5 bg-yellow-200 text-yellow-800 font-bold rounded">Highlight Yellow</button>
-                        <button id="hl-cyan-btn" class="px-2 py-0.5 bg-cyan-200 text-cyan-800 font-bold rounded">Highlight Cyan</button>
+                        <button id="hl-yellow-btn" class="px-2 py-0.5 bg-yellow-900/60 text-yellow-300 font-bold rounded">Highlight Yellow</button>
+                        <button id="hl-cyan-btn" class="px-2 py-0.5 bg-cyan-900/60 text-cyan-300 font-bold rounded">Highlight Cyan</button>
                     </div>
                 </div>
-                <div id="passage-text" class="text-gray-800 dark:text-gray-200 leading-relaxed font-serif text-sm"></div>
+                <div id="passage-text" class="text-gray-200 leading-relaxed font-serif text-sm"></div>
             </div>
 
             <!-- Resizer Handle -->
             <div id="drag-resizer" class="resizer flex items-center justify-center"></div>
 
-            <!-- Right Pane: Questions & Options -->
-            <div id="right-question-pane" class="flex-1 p-6 overflow-y-auto flex flex-col justify-between bg-gray-50 dark:bg-[#0b0f19] custom-scrollbar">
+            <!-- Right Pane: Questions & Confidence -->
+            <div id="right-question-pane" class="flex-1 p-6 overflow-y-auto flex flex-col justify-between bg-[#090d16] custom-scrollbar">
                 <div>
                     <div class="flex justify-between items-center mb-4">
-                        <span id="q-badge" class="px-3 py-1 bg-blue-100 text-blue-800 dark:bg-blue-900/60 dark:text-blue-200 font-bold text-xs rounded-full">Question 1</span>
-                        <span class="text-xs text-gray-500 dark:text-gray-400">Marks: +1.0, -0.25</span>
+                        <span id="q-badge" class="px-3 py-1 bg-cyan-950 text-cyan-300 border border-cyan-800/50 font-bold text-xs rounded-full">Question 1</span>
+                        <span class="text-xs text-gray-400">Marks: +1.0, -0.25</span>
                     </div>
-                    <div id="q-text" class="text-gray-900 dark:text-white font-medium mb-6 text-base leading-relaxed"></div>
+                    <div id="q-text" class="text-white font-medium mb-6 text-base leading-relaxed"></div>
                     <div id="options-box" class="space-y-3"></div>
+
+                    <!-- Confidence Tag Selector -->
+                    <div class="mt-6 pt-4 border-t border-gray-800 flex items-center justify-between text-xs">
+                        <span class="text-gray-400 font-semibold">Answer Confidence Tag:</span>
+                        <div class="flex gap-2">
+                            <button id="tag-certain" class="px-2.5 py-1 bg-gray-800 hover:bg-emerald-950 hover:text-emerald-300 rounded border border-gray-700 text-gray-300 font-medium">Certain</button>
+                            <button id="tag-guess" class="px-2.5 py-1 bg-gray-800 hover:bg-amber-950 hover:text-amber-300 rounded border border-gray-700 text-gray-300 font-medium">Educated Guess</button>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="pt-4 border-t dark:border-gray-700 flex justify-between items-center">
-                    <button id="mark-review-btn" class="px-3.5 py-1.5 bg-purple-100 dark:bg-purple-900/60 text-purple-700 dark:text-purple-300 text-xs font-bold rounded-lg hover:bg-purple-200">Mark for Review</button>
+                <div class="pt-4 border-t border-gray-800 flex justify-between items-center">
+                    <button id="mark-review-btn" class="px-3.5 py-1.5 bg-purple-950/80 text-purple-300 border border-purple-800/60 text-xs font-bold rounded-lg hover:bg-purple-900">Mark for Review</button>
                     <div class="flex gap-2 text-xs">
-                        <button id="clear-btn" class="px-3 py-1.5 border dark:border-gray-700 text-gray-600 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800">Clear</button>
-                        <button id="prev-btn" class="px-3.5 py-1.5 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 font-bold rounded-lg">Previous</button>
-                        <button id="next-btn" class="px-4 py-1.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg shadow">Save & Next</button>
+                        <button id="clear-btn" class="px-3 py-1.5 border border-gray-700 text-gray-300 rounded-lg hover:bg-gray-800">Clear</button>
+                        <button id="prev-btn" class="px-3.5 py-1.5 bg-gray-800 text-gray-200 font-bold rounded-lg">Previous</button>
+                        <button id="next-btn" class="px-4 py-1.5 bg-cyan-600 hover:bg-cyan-500 text-white font-bold rounded-lg shadow">Save & Next</button>
                     </div>
                 </div>
             </div>
 
-            <!-- Sidebar Question Palette -->
-            <div class="w-72 bg-white dark:bg-gray-800 border-l dark:border-gray-700 p-4 flex flex-col justify-between">
+            <!-- Scratchpad Drawer Panel -->
+            <div id="scratchpad-drawer" class="hidden absolute top-0 right-0 w-80 h-full bg-[#111827] border-l border-gray-800 p-4 z-20 flex flex-col justify-between shadow-2xl">
                 <div>
-                    <h3 class="font-bold text-xs text-gray-700 dark:text-gray-300 mb-2 uppercase tracking-wider">Question Palette</h3>
-                    <div class="flex gap-1 mb-3 text-[10px] border-b dark:border-gray-700 pb-2">
-                        <button id="filter-all" class="px-2 py-0.5 bg-gray-200 dark:bg-gray-700 font-bold rounded">All</button>
-                        <button id="filter-ans" class="px-2 py-0.5 bg-emerald-100 text-emerald-800 font-bold rounded">Ans</button>
-                        <button id="filter-not-ans" class="px-2 py-0.5 bg-red-100 text-red-800 font-bold rounded">Unans</button>
-                        <button id="filter-marked" class="px-2 py-0.5 bg-purple-100 text-purple-800 font-bold rounded">Marked</button>
+                    <div class="flex justify-between items-center mb-3">
+                        <h3 class="font-bold text-xs text-cyan-400 uppercase tracking-wider">Scratchpad / Rough Sheet</h3>
+                        <button id="close-scratchpad-btn" class="text-xs text-gray-400 hover:text-white">✕ Close</button>
+                    </div>
+                    <textarea id="scratchpad-text" rows="18" class="w-full bg-gray-900 text-gray-200 p-3 rounded-xl border border-gray-800 text-xs font-mono leading-relaxed focus:outline-none focus:border-cyan-500" placeholder="Type quick math steps or rough notes here..."></textarea>
+                </div>
+            </div>
+
+            <!-- Sidebar Question Palette -->
+            <div class="w-72 bg-[#111827] border-l border-gray-800 p-4 flex flex-col justify-between">
+                <div>
+                    <h3 class="font-bold text-xs text-gray-300 mb-2 uppercase tracking-wider">Question Palette</h3>
+                    <div class="flex gap-1 mb-3 text-[10px] border-b border-gray-800 pb-2">
+                        <button id="filter-all" class="px-2 py-0.5 bg-gray-800 font-bold rounded">All</button>
+                        <button id="filter-ans" class="px-2 py-0.5 bg-teal-950 text-teal-300 font-bold rounded">Ans</button>
+                        <button id="filter-not-ans" class="px-2 py-0.5 bg-red-950 text-red-300 font-bold rounded">Unans</button>
+                        <button id="filter-marked" class="px-2 py-0.5 bg-purple-950 text-purple-300 font-bold rounded">Marked</button>
                     </div>
                     <div id="palette-grid" class="grid grid-cols-5 gap-2 max-h-[50vh] overflow-y-auto custom-scrollbar p-1"></div>
                 </div>
-                <button id="sidebar-submit-btn" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow">Final Submit</button>
+                <button id="sidebar-submit-btn" class="w-full py-2.5 bg-teal-600 hover:bg-teal-500 text-white font-bold text-xs rounded-xl shadow">Final Submit</button>
             </div>
         </div>
     </div>
 
     <!-- 7. RESULT SCORECARD -->
     <div id="result-screen" class="hidden p-6 md:p-8 max-w-5xl mx-auto space-y-6 w-full">
-        <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border dark:border-gray-700 flex justify-between items-center">
+        <div class="bg-[#111827] p-6 rounded-2xl shadow-sm border border-gray-800 flex justify-between items-center">
             <div>
                 <h1 class="text-2xl font-bold">Exam Performance Report</h1>
-                <p id="res-student" class="text-gray-500 text-sm mt-0.5"></p>
-                <p id="res-reason" class="text-xs text-red-500 mt-1 font-bold"></p>
+                <p id="res-student" class="text-gray-400 text-sm mt-0.5"></p>
+                <p id="res-reason" class="text-xs text-red-400 mt-1 font-bold"></p>
             </div>
             <div class="text-right">
-                <span class="text-4xl font-black text-blue-600 dark:text-blue-400" id="res-score">0.00</span>
+                <span class="text-4xl font-black text-cyan-400" id="res-score">0.00</span>
                 <p class="text-xs text-gray-400 uppercase font-bold tracking-wider mt-1">Final Score</p>
             </div>
         </div>
 
-        <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border dark:border-gray-700 space-y-4">
-            <div class="flex justify-between items-center border-b dark:border-gray-700 pb-3">
+        <div class="bg-[#111827] p-6 rounded-2xl shadow-sm border border-gray-800 space-y-4">
+            <div class="flex justify-between items-center border-b border-gray-800 pb-3">
                 <h3 class="font-bold text-lg">Solution Breakdown</h3>
                 <div class="flex gap-2 text-xs">
-                    <button id="sol-filter-all" class="px-3 py-1 bg-blue-600 text-white rounded-lg font-bold">All</button>
-                    <button id="sol-filter-correct" class="px-3 py-1 bg-gray-100 dark:bg-gray-700 rounded-lg font-bold">Correct</button>
-                    <button id="sol-filter-incorrect" class="px-3 py-1 bg-gray-100 dark:bg-gray-700 rounded-lg font-bold">Incorrect</button>
+                    <button id="sol-filter-all" class="px-3 py-1 bg-cyan-600 text-white rounded-lg font-bold">All</button>
+                    <button id="sol-filter-correct" class="px-3 py-1 bg-gray-800 text-gray-300 rounded-lg font-bold">Correct</button>
+                    <button id="sol-filter-incorrect" class="px-3 py-1 bg-gray-800 text-gray-300 rounded-lg font-bold">Incorrect</button>
                 </div>
             </div>
             <div id="solution-list" class="space-y-4 max-h-[60vh] overflow-y-auto custom-scrollbar"></div>
@@ -501,10 +531,8 @@
             setupPasswordToggle('teacher-pass-input', 'toggle-teacher-pass');
             setupResizablePanes();
             setupHighlighters();
-
-            document.getElementById('dark-mode-toggle').onclick = function() {
-                document.documentElement.classList.toggle('dark');
-            };
+            setupScratchpad();
+            checkBroadcastBanner();
 
             document.getElementById('font-inc-btn').onclick = function() { if (fontSizeLevel < 140) { fontSizeLevel += 10; applyFontSize(); } };
             document.getElementById('font-dec-btn').onclick = function() { if (fontSizeLevel > 80) { fontSizeLevel -= 10; applyFontSize(); } };
@@ -522,31 +550,44 @@
             document.getElementById('select-teacher-btn').onclick = function() { showScreen('teacher-login-screen'); };
 
             document.getElementById('stu-tab-exams-btn').onclick = function() {
-                this.className = "py-2.5 px-4 border-b-2 border-blue-600 text-blue-600 font-bold text-sm";
-                document.getElementById('stu-tab-perf-btn').className = "py-2.5 px-4 border-b-2 border-transparent text-gray-500 font-bold text-sm";
+                this.className = "py-2.5 px-4 border-b-2 border-cyan-400 text-cyan-400 font-bold text-sm";
+                document.getElementById('stu-tab-perf-btn').className = "py-2.5 px-4 border-b-2 border-transparent text-gray-400 font-bold text-sm";
                 document.getElementById('stu-tab-exams').classList.remove('hidden');
                 document.getElementById('stu-tab-perf').classList.add('hidden');
             };
             document.getElementById('stu-tab-perf-btn').onclick = function() {
-                this.className = "py-2.5 px-4 border-b-2 border-blue-600 text-blue-600 font-bold text-sm";
-                document.getElementById('stu-tab-exams-btn').className = "py-2.5 px-4 border-b-2 border-transparent text-gray-500 font-bold text-sm";
+                this.className = "py-2.5 px-4 border-b-2 border-cyan-400 text-cyan-400 font-bold text-sm";
+                document.getElementById('stu-tab-exams-btn').className = "py-2.5 px-4 border-b-2 border-transparent text-gray-400 font-bold text-sm";
                 document.getElementById('stu-tab-perf').classList.remove('hidden');
                 document.getElementById('stu-tab-exams').classList.add('hidden');
                 renderStudentPerformance();
             };
 
             document.getElementById('teacher-tab-create-btn').onclick = function() {
-                this.className = "py-2.5 px-4 border-b-2 border-purple-600 text-purple-600 font-bold text-sm";
-                document.getElementById('teacher-tab-score-btn').className = "py-2.5 px-4 border-b-2 border-transparent text-gray-500 font-bold text-sm";
+                this.className = "py-2.5 px-4 border-b-2 border-purple-500 text-purple-400 font-bold text-sm";
+                document.getElementById('teacher-tab-score-btn').className = "py-2.5 px-4 border-b-2 border-transparent text-gray-400 font-bold text-sm";
+                document.getElementById('teacher-tab-notice-btn').className = "py-2.5 px-4 border-b-2 border-transparent text-gray-400 font-bold text-sm";
                 document.getElementById('teacher-tab-create').classList.remove('hidden');
                 document.getElementById('teacher-tab-score').classList.add('hidden');
+                document.getElementById('teacher-tab-notice').classList.add('hidden');
             };
             document.getElementById('teacher-tab-score-btn').onclick = function() {
-                this.className = "py-2.5 px-4 border-b-2 border-purple-600 text-purple-600 font-bold text-sm";
-                document.getElementById('teacher-tab-create-btn').className = "py-2.5 px-4 border-b-2 border-transparent text-gray-500 font-bold text-sm";
+                this.className = "py-2.5 px-4 border-b-2 border-purple-500 text-purple-400 font-bold text-sm";
+                document.getElementById('teacher-tab-create-btn').className = "py-2.5 px-4 border-b-2 border-transparent text-gray-400 font-bold text-sm";
+                document.getElementById('teacher-tab-notice-btn').className = "py-2.5 px-4 border-b-2 border-transparent text-gray-400 font-bold text-sm";
                 document.getElementById('teacher-tab-score').classList.remove('hidden');
                 document.getElementById('teacher-tab-create').classList.add('hidden');
+                document.getElementById('teacher-tab-notice').classList.add('hidden');
                 renderTeacherTable();
+                renderLiveRoomGrid();
+            };
+            document.getElementById('teacher-tab-notice-btn').onclick = function() {
+                this.className = "py-2.5 px-4 border-b-2 border-purple-500 text-purple-400 font-bold text-sm";
+                document.getElementById('teacher-tab-create-btn').className = "py-2.5 px-4 border-b-2 border-transparent text-gray-400 font-bold text-sm";
+                document.getElementById('teacher-tab-score-btn').className = "py-2.5 px-4 border-b-2 border-transparent text-gray-400 font-bold text-sm";
+                document.getElementById('teacher-tab-notice').classList.remove('hidden');
+                document.getElementById('teacher-tab-create').classList.add('hidden');
+                document.getElementById('teacher-tab-score').classList.add('hidden');
             };
 
             document.getElementById('filter-all').onclick = function() { paletteFilter = 'all'; renderPalette(); };
@@ -554,12 +595,29 @@
             document.getElementById('filter-not-ans').onclick = function() { paletteFilter = 'visited'; renderPalette(); };
             document.getElementById('filter-marked').onclick = function() { paletteFilter = 'marked'; renderPalette(); };
 
+            document.getElementById('tag-certain').onclick = function() { setConfidence('Certain'); };
+            document.getElementById('tag-guess').onclick = function() { setConfidence('Educated Guess'); };
+
             document.getElementById('prettify-json-btn').onclick = function() {
                 var area = document.getElementById('json-test-payload');
                 try {
                     var parsed = JSON.parse(area.value);
                     area.value = JSON.stringify(parsed, null, 2);
                 } catch (e) { alert("Invalid JSON syntax! Fix syntax before formatting."); }
+            };
+
+            document.getElementById('set-broadcast-btn').onclick = function() {
+                var txt = document.getElementById('broadcast-input-text').value.trim();
+                if (!txt) return alert("Enter banner text.");
+                localStorage.setItem('clat_broadcast_msg', txt);
+                checkBroadcastBanner();
+                alert("Broadcast banner updated for all students!");
+            };
+
+            document.getElementById('clear-broadcast-btn').onclick = function() {
+                localStorage.removeItem('clat_broadcast_msg');
+                checkBroadcastBanner();
+                alert("Broadcast banner cleared!");
             };
 
             document.getElementById('student-login-form').onsubmit = function(e) {
@@ -590,6 +648,7 @@
                     document.getElementById('teacher-logged-user').innerText = "Logged in: " + authorizedTeachers[u].name;
                     showScreen('teacher-screen');
                     renderTeacherTable();
+                    renderLiveRoomGrid();
                 } else {
                     document.getElementById('teacher-auth-err').classList.remove('hidden');
                 }
@@ -659,6 +718,24 @@
             });
         }
 
+        function checkBroadcastBanner() {
+            var msg = localStorage.getItem('clat_broadcast_msg');
+            var banner = document.getElementById('broadcast-banner');
+            if (msg) {
+                document.getElementById('broadcast-text').innerText = msg;
+                banner.classList.remove('hidden');
+            } else {
+                banner.classList.add('hidden');
+            }
+        }
+
+        function setConfidence(tag) {
+            if (userAnswers[currentQIndex]) {
+                userAnswers[currentQIndex].confidence = tag;
+                alert("Confidence tagged as: " + tag);
+            }
+        }
+
         function applyFontSize() {
             document.getElementById('passage-text').style.fontSize = fontSizeLevel + "%";
             document.getElementById('q-text').style.fontSize = fontSizeLevel + "%";
@@ -682,6 +759,15 @@
         function setupHighlighters() {
             document.getElementById('hl-yellow-btn').onclick = function() { applySelectionHighlight('hl-yellow'); };
             document.getElementById('hl-cyan-btn').onclick = function() { applySelectionHighlight('hl-cyan'); };
+        }
+
+        function setupScratchpad() {
+            document.getElementById('toggle-scratchpad-btn').onclick = function() {
+                document.getElementById('scratchpad-drawer').classList.toggle('hidden');
+            };
+            document.getElementById('close-scratchpad-btn').onclick = function() {
+                document.getElementById('scratchpad-drawer').classList.add('hidden');
+            };
         }
 
         function applySelectionHighlight(className) {
@@ -709,20 +795,20 @@
                     var schedText = exam.scheduledTime ? new Date(exam.scheduledTime).toLocaleString() : 'Immediate Access';
 
                     var card = document.createElement('div');
-                    card.className = "glow-card bg-white dark:bg-gray-800 p-6 rounded-2xl border dark:border-gray-700 shadow-sm flex flex-col justify-between space-y-4";
+                    card.className = "cyan-glow-card p-6 rounded-2xl shadow-sm flex flex-col justify-between space-y-4";
 
                     var btnHtml = '';
                     if (isSubmitted) {
-                        btnHtml = '<button disabled class="w-full py-2.5 bg-gray-100 dark:bg-gray-700 text-gray-500 font-bold text-xs rounded-xl">Already Submitted</button>';
+                        btnHtml = '<button disabled class="w-full py-2.5 bg-gray-800 text-gray-500 font-bold text-xs rounded-xl">Already Submitted</button>';
                     } else if (isLocked) {
-                        btnHtml = '<button disabled class="w-full py-2.5 bg-amber-100 text-amber-800 font-bold text-xs rounded-xl">Scheduled: ' + schedText + '</button>';
+                        btnHtml = '<button disabled class="w-full py-2.5 bg-amber-950/80 text-amber-300 font-bold text-xs rounded-xl">Scheduled: ' + schedText + '</button>';
                     } else {
-                        btnHtml = '<button class="start-exam-btn w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow-md shadow-blue-500/10 transition">Start Test (Fullscreen)</button>';
+                        btnHtml = '<button class="start-exam-btn w-full py-2.5 bg-cyan-600 hover:bg-cyan-500 text-white font-bold text-xs rounded-xl shadow-md transition">Start Test (Fullscreen)</button>';
                     }
 
                     card.innerHTML = '<div>' +
-                        '<div class="flex justify-between items-center mb-2"><span class="px-2.5 py-0.5 bg-blue-50 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300 font-bold text-[10px] rounded-full uppercase tracking-wider">Official Mock</span><span class="text-xs text-gray-400 font-semibold">' + exam.durationMins + ' Mins</span></div>' +
-                        '<h4 class="font-bold text-lg text-gray-900 dark:text-white tracking-tight">' + exam.title + '</h4>' +
+                        '<div class="flex justify-between items-center mb-2"><span class="px-2.5 py-0.5 bg-cyan-950 text-cyan-300 border border-cyan-800/50 font-bold text-[10px] rounded-full uppercase tracking-wider">Official Mock</span><span class="text-xs text-gray-400 font-semibold">' + exam.durationMins + ' Mins</span></div>' +
+                        '<h4 class="font-bold text-lg text-white tracking-tight">' + exam.title + '</h4>' +
                         '<p class="text-xs text-gray-400 mt-1">Available: ' + schedText + '</p>' +
                         '</div>' + btnHtml;
 
@@ -768,11 +854,44 @@
             for (var j = 0; j < myRecords.length; j++) {
                 var r = myRecords[j];
                 tbody.innerHTML += '<tr>' +
-                    '<td class="p-3 font-semibold text-gray-800 dark:text-gray-200">' + r.examTitle + '</td>' +
-                    '<td class="p-3 font-bold text-blue-600 dark:text-blue-400">' + r.score + '</td>' +
-                    '<td class="p-3 text-xs"><span class="px-2 py-0.5 bg-emerald-100 text-emerald-800 rounded font-semibold">' + r.status + '</span></td>' +
+                    '<td class="p-3 font-semibold text-gray-200">' + r.examTitle + '</td>' +
+                    '<td class="p-3 font-bold text-cyan-400">' + r.score + '</td>' +
+                    '<td class="p-3 text-xs"><span class="px-2 py-0.5 bg-teal-950 text-teal-300 border border-teal-800/50 rounded font-semibold">' + r.status + '</span></td>' +
                     '<td class="p-3 text-xs text-gray-400">' + r.timestamp + '</td>' +
                     '</tr>';
+            }
+        }
+
+        function renderLiveRoomGrid() {
+            var grid = document.getElementById('live-room-grid');
+            grid.innerHTML = '';
+            for (var i = 1; i <= 40; i++) {
+                var numStr = i < 10 ? '0' + i : '' + i;
+                var u = 'student' + numStr;
+                var sessionKeyPrefix = 'clat_session_' + u + '_';
+                var statusBg = 'bg-gray-800 text-gray-400 border-gray-700';
+                var statusText = 'Offline';
+
+                for (var key in localStorage) {
+                    if (key.indexOf(sessionKeyPrefix) === 0) {
+                        var state = JSON.parse(localStorage.getItem(key) || '{}');
+                        if (state.submitted) {
+                            statusBg = 'bg-purple-950/80 text-purple-300 border-purple-800';
+                            statusText = 'Done';
+                        } else if (state.warningCount > 0) {
+                            statusBg = 'bg-amber-950/80 text-amber-300 border-amber-800';
+                            statusText = 'Warn 1';
+                        } else {
+                            statusBg = 'bg-emerald-950/80 text-emerald-300 border-emerald-800';
+                            statusText = 'Active';
+                        }
+                    }
+                }
+
+                grid.innerHTML += '<div class="p-2 border text-center rounded-lg text-[10px] font-bold ' + statusBg + '">' +
+                    '<div>STU-' + numStr + '</div>' +
+                    '<div class="text-[8px] opacity-80 mt-0.5">' + statusText + '</div>' +
+                    '</div>';
             }
         }
 
@@ -787,8 +906,8 @@
                     datasets: [{
                         label: 'Score',
                         data: data,
-                        borderColor: '#3b82f6',
-                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        borderColor: '#06b6d4',
+                        backgroundColor: 'rgba(6, 182, 212, 0.1)',
                         fill: true,
                         tension: 0.3
                     }]
@@ -797,9 +916,7 @@
                     responsive: true,
                     maintainAspectRatio: false,
                     plugins: { legend: { display: false } },
-                    scales: {
-                        y: { beginAtZero: true }
-                    }
+                    scales: { y: { beginAtZero: true } }
                 }
             });
         }
@@ -827,7 +944,7 @@
             } else {
                 userAnswers = {};
                 for (var k = 0; k < allQuestions.length; k++) {
-                    userAnswers[k] = { selected: null, status: 'not-visited' };
+                    userAnswers[k] = { selected: null, status: 'not-visited', confidence: 'Unspecified' };
                 }
                 timer = exam.durationMins * 60;
                 totalExamDuration = timer;
@@ -869,7 +986,7 @@
             var elem = document.getElementById('violation-display');
             if (elem) {
                 elem.innerText = warningCount + " / 1";
-                elem.className = warningCount >= 1 ? "text-red-400 font-bold" : "text-emerald-400 font-bold";
+                elem.className = warningCount >= 1 ? "text-red-400 font-bold" : "text-teal-400 font-bold";
             }
         }
 
@@ -931,7 +1048,6 @@
                 var s = timer % 60;
                 document.getElementById('timer').innerText = (m < 10 ? '0' + m : m) + ":" + (s < 10 ? '0' + s : s);
 
-                // Update Timer Ring Animation
                 var ring = document.getElementById('timer-ring');
                 var offset = 62.8 - (timer / totalExamDuration) * 62.8;
                 ring.style.strokeDashoffset = offset;
@@ -974,7 +1090,7 @@
                 (function(sec) {
                     var btn = document.createElement('button');
                     var isCurrent = allQuestions[currentQIndex] && allQuestions[currentQIndex].section === sec.section;
-                    btn.className = "px-3.5 py-1.5 text-xs font-bold rounded-lg transition " + (isCurrent ? 'bg-blue-600 text-white shadow-sm' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300');
+                    btn.className = "px-3.5 py-1.5 text-xs font-bold rounded-lg transition " + (isCurrent ? 'bg-cyan-600 text-white shadow-sm' : 'bg-gray-800 text-gray-300');
                     btn.innerText = sec.section;
                     btn.onclick = function() {
                         for (var k = 0; k < allQuestions.length; k++) {
@@ -1010,7 +1126,7 @@
                     var opt = opts[optIdx];
                     var isSel = userAnswers[idx] ? userAnswers[idx].selected === optIdx : false;
                     var div = document.createElement('div');
-                    div.className = "p-3.5 border dark:border-gray-700 rounded-xl cursor-pointer text-sm font-medium transition " + (isSel ? 'border-blue-600 bg-blue-50 dark:bg-blue-950/60 font-bold text-blue-900 dark:text-blue-200' : 'hover:bg-gray-100 dark:hover:bg-gray-800');
+                    div.className = "p-3.5 border border-gray-800 rounded-xl cursor-pointer text-sm font-medium transition " + (isSel ? 'border-cyan-500 bg-cyan-950/60 font-bold text-cyan-200' : 'hover:bg-gray-800');
                     div.innerText = opt;
                     div.onclick = function() {
                         if (userAnswers[idx]) {
@@ -1060,13 +1176,13 @@
                         if (paletteFilter === 'marked' && st !== 'marked') return;
                     }
 
-                    var bg = 'bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200';
-                    if (st === 'answered') bg = 'bg-emerald-500 text-white';
+                    var bg = 'bg-gray-800 text-gray-200';
+                    if (st === 'answered') bg = 'bg-teal-600 text-white';
                     if (st === 'marked') bg = 'bg-purple-600 text-white';
-                    if (st === 'visited') bg = 'bg-red-500 text-white';
+                    if (st === 'visited') bg = 'bg-red-600 text-white';
 
                     var btn = document.createElement('button');
-                    btn.className = "w-8 h-8 rounded-lg text-xs font-bold transition " + bg + (idx === currentQIndex ? ' ring-2 ring-blue-500' : '');
+                    btn.className = "w-8 h-8 rounded-lg text-xs font-bold transition " + bg + (idx === currentQIndex ? ' ring-2 ring-cyan-400' : '');
                     btn.innerText = idx + 1;
                     btn.onclick = function() { loadQuestion(idx); };
                     grid.appendChild(btn);
@@ -1115,31 +1231,33 @@
                 var sel = userAnswers[i] ? userAnswers[i].selected : null;
                 var isCorrect = sel === q.correct;
                 var statusText = "Unattempted";
-                var statusClass = "bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300";
+                var statusClass = "bg-gray-800 text-gray-300";
 
                 if (sel !== null) {
                     if (isCorrect) {
                         score += 1;
                         statusText = "Correct (+1.0)";
-                        statusClass = "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/60 dark:text-emerald-200";
+                        statusClass = "bg-teal-950 text-teal-200 border border-teal-800/50";
                     } else {
                         score -= 0.25;
                         statusText = "Incorrect (-0.25)";
-                        statusClass = "bg-red-100 text-red-800 dark:bg-red-900/60 dark:text-red-200";
+                        statusClass = "bg-red-950 text-red-200 border border-red-800/50";
                     }
                 }
 
                 if (filter === 'correct' && !isCorrect) continue;
                 if (filter === 'incorrect' && (isCorrect || sel === null)) continue;
 
-                solutionList.innerHTML += '<div class="p-4 border dark:border-gray-700 rounded-xl bg-gray-50 dark:bg-gray-900/50 text-xs space-y-2">' +
+                var confTag = (userAnswers[i] && userAnswers[i].confidence) ? userAnswers[i].confidence : "Unspecified";
+
+                solutionList.innerHTML += '<div class="p-4 border border-gray-800 rounded-xl bg-gray-900/50 text-xs space-y-2">' +
                     '<div class="flex justify-between font-bold text-sm">' +
                     '<span>Q' + (i + 1) + '. ' + q.question + '</span>' +
-                    '<span class="px-2 py-0.5 rounded-full ' + statusClass + '">' + statusText + '</span>' +
+                    '<span class="px-2.5 py-0.5 rounded-full ' + statusClass + '">' + statusText + '</span>' +
                     '</div>' +
-                    '<div><strong>Your Selection:</strong> ' + (sel !== null ? q.options[sel] : 'None') + '</div>' +
+                    '<div><strong>Your Selection:</strong> ' + (sel !== null ? q.options[sel] : 'None') + ' <span class="text-gray-400">(' + confTag + ')</span></div>' +
                     '<div><strong>Correct Answer:</strong> ' + q.options[q.correct] + '</div>' +
-                    '<div class="bg-white dark:bg-gray-800 p-3 rounded-lg border dark:border-gray-700"><strong>Rationale:</strong> ' + q.rationale + '</div>' +
+                    '<div class="bg-[#111827] p-3 rounded-lg border border-gray-800"><strong>Rationale:</strong> ' + q.rationale + '</div>' +
                     '</div>';
             }
 
@@ -1152,8 +1270,8 @@
             tbody.innerHTML = '';
             for (var i = 0; i < records.length; i++) {
                 var r = records[i];
-                var statusColor = r.status.includes('Proctor') ? 'text-red-500 font-bold' : 'text-emerald-500 font-semibold';
-                tbody.innerHTML += '<tr><td class="p-4 font-mono">' + r.id + '</td><td class="p-4 font-medium">' + r.name + '</td><td class="p-4 font-semibold text-gray-700 dark:text-gray-300">' + (r.examTitle || 'CLAT Mock') + '</td><td class="p-4 font-bold text-blue-600 dark:text-blue-400">' + r.score + '</td><td class="p-4 ' + statusColor + '">' + r.status + '</td><td class="p-4 text-xs text-gray-400">' + r.timestamp + '</td></tr>';
+                var statusColor = r.status.includes('Proctor') ? 'text-red-400 font-bold' : 'text-teal-400 font-semibold';
+                tbody.innerHTML += '<tr><td class="p-4 font-mono">' + r.id + '</td><td class="p-4 font-medium">' + r.name + '</td><td class="p-4 font-semibold text-gray-300">' + (r.examTitle || 'CLAT Mock') + '</td><td class="p-4 font-bold text-cyan-400">' + r.score + '</td><td class="p-4 ' + statusColor + '">' + r.status + '</td><td class="p-4 text-xs text-gray-400">' + r.timestamp + '</td></tr>';
             }
             document.getElementById('clear-btn-teacher').onclick = function() {
                 if (confirm("Clear all student score records?")) {
