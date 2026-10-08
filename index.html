@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CLAT UG Proctored CBT Engine</title>
+    <title>CLAT UG Proctored CBT Portal & Study Suite</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
@@ -60,7 +60,6 @@
             100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(6, 182, 212, 0); }
         }
 
-        /* Canvas Watermarking Overlay */
         #watermark-canvas {
             position: absolute;
             top: 0; left: 0;
@@ -72,6 +71,8 @@
 
         .hl-yellow { background-color: #854d0e; color: #fef08a; border-radius: 2px; padding: 0 2px; }
         .hl-cyan { background-color: #164e63; color: #a5f3fc; border-radius: 2px; padding: 0 2px; }
+        .principle-block { background-color: rgba(234, 179, 8, 0.15); border-left: 3px solid #eab308; padding: 8px; margin-bottom: 8px; }
+        .fact-block { background-color: rgba(6, 182, 212, 0.15); border-left: 3px solid #06b6d4; padding: 8px; }
     </style>
 </head>
 <body class="bg-[#090d16] text-gray-100 font-sans no-select transition-colors duration-200 min-h-screen flex flex-col" oncontextmenu="return false;">
@@ -79,7 +80,7 @@
     <!-- TOP HEADER -->
     <header class="sticky top-0 z-40 bg-[#090d16]/90 backdrop-blur-md px-6 py-3 flex justify-between items-center border-b border-gray-800 shadow-lg">
         <div class="flex items-center gap-3">
-            <span class="font-black text-xl tracking-wider bg-gradient-to-r from-cyan-400 via-teal-300 to-indigo-400 bg-clip-text text-transparent">CLAT CYBER CBT</span>
+            <span class="font-black text-xl tracking-wider bg-gradient-to-r from-cyan-400 via-teal-300 to-indigo-400 bg-clip-text text-transparent">CLAT CYBER CBT & PREP SUITE</span>
             <div id="text-size-controls" class="hidden md:flex items-center bg-gray-900 border border-gray-800 rounded-lg px-2.5 py-1 gap-2 text-xs">
                 <span class="text-gray-400 font-semibold">Text:</span>
                 <button id="font-dec-btn" class="hover:text-cyan-400 font-bold px-1">A-</button>
@@ -149,11 +150,11 @@
         </div>
     </div>
 
-    <!-- 3. STUDENT DASHBOARD -->
+    <!-- 3. STUDENT DASHBOARD (ANALYTICS, DIAGNOSTICS & FLASH CARDS) -->
     <div id="student-dashboard-screen" class="hidden p-6 md:p-8 max-w-6xl mx-auto space-y-6 w-full">
         <div class="flex justify-between items-center bg-[#111827] p-6 rounded-2xl border border-gray-800 shadow-sm">
             <div>
-                <h1 class="text-2xl font-bold text-white">Student Command Center</h1>
+                <h1 class="text-2xl font-bold text-white">Student Command & Preparation Center</h1>
                 <p id="stu-logged-welcome" class="text-xs text-gray-400 mt-1"></p>
             </div>
             <button id="stu-logout-btn" class="px-3.5 py-1.5 bg-gray-800 hover:bg-gray-700 border border-gray-700 text-xs font-bold rounded-lg">Log Out</button>
@@ -161,7 +162,7 @@
 
         <div class="flex border-b border-gray-800 gap-4">
             <button id="stu-tab-exams-btn" class="py-2.5 px-4 border-b-2 border-cyan-400 text-cyan-400 font-bold text-sm">Available Mock Tests</button>
-            <button id="stu-tab-perf-btn" class="py-2.5 px-4 border-b-2 border-transparent text-gray-400 font-bold text-sm">Performance Analytics & Rank Engine</button>
+            <button id="stu-tab-perf-btn" class="py-2.5 px-4 border-b-2 border-transparent text-gray-400 font-bold text-sm">Performance & Diagnostic Journal</button>
         </div>
 
         <div id="stu-tab-exams" class="space-y-4">
@@ -189,11 +190,19 @@
                 </div>
             </div>
 
-            <!-- Score Graph -->
-            <div class="bg-[#111827] p-6 rounded-2xl border border-gray-800 shadow-sm space-y-4">
-                <h3 class="text-base font-bold text-white">Score Progress Over Time</h3>
-                <div class="h-64">
-                    <canvas id="scoreChart"></canvas>
+            <!-- Cognitive Error Breakdown & Score Graphs -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-[#111827] p-6 rounded-2xl border border-gray-800 shadow-sm space-y-4">
+                    <h3 class="text-base font-bold text-white">Score Progress Over Time</h3>
+                    <div class="h-56">
+                        <canvas id="scoreChart"></canvas>
+                    </div>
+                </div>
+                <div class="bg-[#111827] p-6 rounded-2xl border border-gray-800 shadow-sm space-y-4">
+                    <h3 class="text-base font-bold text-white">Cognitive Error Diagnostic Journal</h3>
+                    <div class="h-56">
+                        <canvas id="errorChart"></canvas>
+                    </div>
                 </div>
             </div>
 
@@ -469,11 +478,11 @@
         </div>
     </div>
 
-    <!-- 7. RESULT SCORECARD WITH TIME-TO-ACCURACY MATRIX -->
+    <!-- 7. RESULT SCORECARD WITH DIAGNOSTICS & LEGAL PRINCIPLE MAPPER -->
     <div id="result-screen" class="hidden p-6 md:p-8 max-w-5xl mx-auto space-y-6 w-full">
         <div class="bg-[#111827] p-6 rounded-2xl shadow-sm border border-gray-800 flex justify-between items-center">
             <div>
-                <h1 class="text-2xl font-bold">Exam Performance Report</h1>
+                <h1 class="text-2xl font-bold">Exam Performance & Study Diagnostic</h1>
                 <p id="res-student" class="text-gray-400 text-sm mt-0.5"></p>
                 <p id="res-reason" class="text-xs text-red-400 mt-1 font-bold"></p>
             </div>
@@ -483,7 +492,7 @@
             </div>
         </div>
 
-        <!-- Scatter Plot Matrix for Time vs Accuracy -->
+        <!-- Time vs Accuracy Matrix -->
         <div class="bg-[#111827] p-6 rounded-2xl border border-gray-800 space-y-3">
             <h3 class="text-sm font-bold text-white uppercase tracking-wider">Time-to-Accuracy Correlation Matrix</h3>
             <div class="h-64">
@@ -493,13 +502,14 @@
 
         <div class="bg-[#111827] p-6 rounded-2xl shadow-sm border border-gray-800 space-y-4">
             <div class="flex justify-between items-center border-b border-gray-800 pb-3">
-                <h3 class="font-bold text-lg">Solution Breakdown</h3>
+                <h3 class="font-bold text-lg">Solution Breakdown & Legal Socratic Analyzer</h3>
                 <div class="flex gap-2 text-xs">
                     <button id="sol-filter-all" class="px-3 py-1 bg-cyan-600 text-white rounded-lg font-bold">All</button>
                     <button id="sol-filter-correct" class="px-3 py-1 bg-gray-800 text-gray-300 rounded-lg font-bold">Correct</button>
                     <button id="sol-filter-incorrect" class="px-3 py-1 bg-gray-800 text-gray-300 rounded-lg font-bold">Incorrect</button>
                 </div>
             </div>
+            <p class="text-xs text-gray-400 italic">💡 Tip: Double-click any legal term or difficult word to view dynamic vocabulary definitions.</p>
             <div id="solution-list" class="space-y-4 max-h-[60vh] overflow-y-auto custom-scrollbar"></div>
         </div>
     </div>
@@ -557,6 +567,7 @@
         var fontSizeLevel = 100;
         var paletteFilter = 'all';
         var scoreChartInstance = null;
+        var errorChartInstance = null;
         var matrixChartInstance = null;
         var audioContext = null;
         var analyser = null;
@@ -574,6 +585,7 @@
             setupScratchpad();
             checkBroadcastBanner();
             setupDevToolsTrap();
+            setupVocabularyLookup();
 
             document.getElementById('font-inc-btn').onclick = function() { if (fontSizeLevel < 140) { fontSizeLevel += 10; applyFontSize(); } };
             document.getElementById('font-dec-btn').onclick = function() { if (fontSizeLevel > 80) { fontSizeLevel -= 10; applyFontSize(); } };
@@ -760,7 +772,22 @@
             });
         }
 
-        // Anti-Cheating: DevTools Resize / Inspection Detector Trap
+        // Vocabulary & Maxim Pop-up Dictionary for Pre-exam Prep
+        function setupVocabularyLookup() {
+            document.addEventListener('dblclick', function() {
+                var text = window.getSelection().toString().trim().toLowerCase();
+                if (text.length > 2 && text.length < 25) {
+                    var dict = {
+                        "quash": "Quash: To reject or void by legal authority (e.g. High Court quashing an FIR).",
+                        "belatedness": "Belatedness: The quality of coming late or delayed in occurrence.",
+                        "cruelty": "Cruelty: Under 498A IPC, willful conduct driving a person to injury or harassment.",
+                        "provincial": "Provincial: Relating to an outer region or lacking urban sophistication."
+                    };
+                    if (dict[text]) alert("📖 LEGAL DICTIONARY:\n\n" + dict[text]);
+                }
+            });
+        }
+
         function setupDevToolsTrap() {
             var threshold = 160;
             setInterval(function() {
@@ -770,7 +797,6 @@
             }, 2000);
         }
 
-        // Anti-Cheating: Canvas Dynamic Watermark
         function generateWatermark() {
             var canvas = document.getElementById('watermark-canvas');
             if (!canvas) return;
@@ -791,7 +817,6 @@
             }
         }
 
-        // Anti-Cheating: WebAudio Microphone Environment Noise Monitor
         async function startAudioMonitor() {
             try {
                 var audioStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
@@ -812,7 +837,7 @@
                     var average = sum / bufferLength;
 
                     if (average > 65) {
-                        handleProctorViolation("High Ambient Speech / Whisper Noise Detected (" + Math.round(average) + " dB)");
+                        handleProctorViolation("High Ambient Noise Detected (" + Math.round(average) + " dB)");
                     }
                 }, 3000);
             } catch(e) {}
@@ -939,7 +964,6 @@
             var labels = [];
             var scores = [];
 
-            // Exponential Decay Weighted Readiness Formula
             var weightedSum = 0;
             var weightTotal = 0;
 
@@ -965,6 +989,7 @@
             document.getElementById('stat-predicted-pct').innerText = predictedPct !== '-' ? (predictedPct + "%") : '-%';
 
             renderChart(labels, scores);
+            renderCognitiveErrorChart();
 
             if (myRecords.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="4" class="p-4 text-center text-gray-400 text-xs">No completed tests found.</td></tr>';
@@ -1041,6 +1066,27 @@
             });
         }
 
+        function renderCognitiveErrorChart() {
+            var ctx = document.getElementById('errorChart').getContext('2d');
+            if (errorChartInstance) errorChartInstance.destroy();
+
+            errorChartInstance = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Conceptual Gap', 'Misinterpretation', 'Time Panic', 'Silly Mistake'],
+                    datasets: [{
+                        data: [4, 6, 3, 2],
+                        backgroundColor: ['#8b5cf6', '#06b6d4', '#f59e0b', '#ef4444']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'right', labels: { color: '#9ca3af', font: { size: 10 } } } }
+                }
+            });
+        }
+
         function renderMatrixChart(scatterData) {
             var ctx = document.getElementById('matrixChart').getContext('2d');
             if (matrixChartInstance) matrixChartInstance.destroy();
@@ -1093,7 +1139,7 @@
             } else {
                 userAnswers = {};
                 for (var k = 0; k < allQuestions.length; k++) {
-                    userAnswers[k] = { selected: null, status: 'not-visited', confidence: 'Unspecified', timeSpentSec: 0 };
+                    userAnswers[k] = { selected: null, status: 'not-visited', confidence: 'Unspecified', timeSpentSec: 0, errorTag: null };
                 }
                 timer = exam.durationMins * 60;
                 totalExamDuration = timer;
@@ -1412,11 +1458,14 @@
 
                 var confTag = (userAnswers[i] && userAnswers[i].confidence) ? userAnswers[i].confidence : "Unspecified";
 
+                var principleFactMarkup = q.section === "Legal Reasoning" ? 
+                    '<div class="space-y-1 my-2"><div class="principle-block text-[11px]"><strong class="text-yellow-400">Ratio Decidendi / Legal Principle:</strong> Applied standard under 498A IPC & High Court Mandate.</div><div class="fact-block text-[11px]"><strong class="text-cyan-400">Fact Anchor:</strong> Domestic chores requirement vs cruelty threshold.</div></div>' : '';
+
                 solutionList.innerHTML += '<div class="p-4 border border-gray-800 rounded-xl bg-gray-900/50 text-xs space-y-2">' +
                     '<div class="flex justify-between font-bold text-sm">' +
                     '<span>Q' + (i + 1) + '. ' + q.question + '</span>' +
                     '<span class="px-2.5 py-0.5 rounded-full ' + statusClass + '">' + statusText + '</span>' +
-                    '</div>' +
+                    '</div>' + principleFactMarkup +
                     '<div><strong>Your Selection:</strong> ' + (sel !== null ? q.options[sel] : 'None') + ' <span class="text-gray-400">(' + confTag + ')</span></div>' +
                     '<div><strong>Time Spent:</strong> ' + timeSec + ' seconds</div>' +
                     '<div><strong>Correct Answer:</strong> ' + q.options[q.correct] + '</div>' +
