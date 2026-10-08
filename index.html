@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CLAT UG 2023 Official CBT Mock Test</title>
-    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         .custom-scrollbar::-webkit-scrollbar { width: 6px; }
@@ -39,11 +38,11 @@
             </div>
 
             <div class="bg-amber-50 border-l-4 border-amber-500 p-4 mb-6 rounded-r text-xs text-amber-800 space-y-1">
-                <p class="font-bold">Instructions & Rules:</p>
+                <p class="font-bold">Instructions & Strict Rules:</p>
                 <p>• Marking: <strong>+1.0</strong> for correct answer, <strong>-0.25</strong> for wrong answer.</p>
                 <p>• Duration: 120 Minutes.</p>
-                <p>• Switching tabs or closing the window will flag a violation to your instructor.</p>
-                <p>• Your progress and timer automatically save if you refresh or reopen the page.</p>
+                <p>• <strong>STRICT PROCTORING:</strong> Switching tabs or opening another window will immediately <strong>AUTO-SUBMIT</strong> your exam.</p>
+                <p>• Your progress and remaining time automatically save if you refresh or lose connectivity.</p>
             </div>
 
             <form id="student-form" class="space-y-4">
@@ -56,7 +55,7 @@
                     <input type="text" id="student-roll" required class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="e.g. CLAT2023-1092">
                 </div>
                 <button type="submit" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow transition">
-                    Start / Resume Test
+                    Start Test
                 </button>
             </form>
         </div>
@@ -68,9 +67,9 @@
         <div class="bg-gray-800 text-white px-6 py-2 flex justify-between items-center text-xs">
             <span id="candidate-display" class="text-gray-300 font-semibold">Candidate: -</span>
             <div class="flex items-center gap-6">
-                <span class="text-amber-400 font-semibold">Tab Switches: <span id="violation-count">0</span></span>
+                <span class="text-amber-400 font-semibold">Proctor Mode: <span id="violation-count" class="text-green-400">ACTIVE</span></span>
                 <div class="bg-gray-900 px-3 py-1 rounded font-mono text-base font-bold text-yellow-400" id="timer">120:00</div>
-                <button id="finish-btn" class="bg-red-600 hover:bg-red-700 text-white font-semibold px-3 py-1 rounded transition">Submit</button>
+                <button id="finish-btn" class="bg-red-600 hover:bg-red-700 text-white font-semibold px-3 py-1 rounded transition">Submit Exam</button>
             </div>
         </div>
 
@@ -123,6 +122,7 @@
             <div>
                 <h1 class="text-2xl font-bold">Exam Result Scorecard</h1>
                 <p id="res-student" class="text-gray-500 text-sm"></p>
+                <p id="res-reason" class="text-xs text-red-600 mt-1 font-semibold"></p>
             </div>
             <div class="text-right">
                 <span class="text-3xl font-bold text-blue-600" id="res-score">0.00</span>
@@ -149,9 +149,10 @@
                 <thead class="bg-gray-100 uppercase text-xs font-semibold">
                     <tr>
                         <th class="p-4">Roll</th>
-                        <th class="p-4">Student</th>
+                        <th class="p-4">Student Name</th>
                         <th class="p-4">Score</th>
-                        <th class="p-4">Tab Flags</th>
+                        <th class="p-4">Submission Status</th>
+                        <th class="p-4">Timestamp</th>
                     </tr>
                 </thead>
                 <tbody id="teacher-table" class="divide-y"></tbody>
@@ -181,7 +182,6 @@
         </div>
     </div>
 
-    <!-- SCRIPT & QUESTION DATA -->
     <script>
         var examData = [
             {
@@ -424,7 +424,6 @@
             }
         ];
 
-        // TEACHER USERNAMES & PASSWORDS (LEO & SIDDHI)
         var authorizedTeachers = {
             "leo": "clat_teacher_leo_2026",
             "siddhi": "clat_teacher_siddhi_2026"
@@ -433,10 +432,10 @@
         var allQuestions = [];
         var userAnswers = {};
         var currentQIndex = 0;
-        var tabSwitches = 0;
         var timer = 120 * 60;
         var student = {};
         var timerInterval = null;
+        var isExamActive = false;
 
         function initApp() {
             for (var i = 0; i < examData.length; i++) {
@@ -447,20 +446,6 @@
                     q.passage = sec.passage;
                     allQuestions.push(q);
                 }
-            }
-
-            var savedSession = localStorage.getItem('clat_active_session');
-            if (savedSession) {
-                var sessionData = JSON.parse(savedSession);
-                student = sessionData.student;
-                timer = sessionData.timer;
-                userAnswers = sessionData.userAnswers;
-                tabSwitches = sessionData.tabSwitches || 0;
-                
-                document.getElementById('candidate-display').innerText = "Candidate: " + student.name + " (" + student.roll + ")";
-                document.getElementById('violation-count').innerText = tabSwitches;
-                showScreen('test-screen');
-                resumeExam();
             }
 
             document.getElementById('nav-student-btn').onclick = function() { showScreen('start-screen'); };
@@ -491,22 +476,42 @@
 
             document.getElementById('student-form').onsubmit = function(e) {
                 e.preventDefault();
-                student = {
-                    name: document.getElementById('student-name').value,
-                    roll: document.getElementById('student-roll').value
-                };
+                var nameInput = document.getElementById('student-name').value.trim();
+                var rollInput = document.getElementById('student-roll').value.trim();
+
+                student = { name: nameInput, roll: rollInput };
+                var sessionKey = 'clat_session_' + rollInput.toLowerCase().replace(/[^a-z0-9]/g, '');
+
+                var savedSession = localStorage.getItem(sessionKey);
+                if (savedSession) {
+                    var sessionData = JSON.parse(savedSession);
+                    if (sessionData.submitted) {
+                        alert("An exam attempt with this Roll Number has already been submitted.");
+                        return;
+                    }
+                    student = sessionData.student;
+                    timer = sessionData.timer;
+                    userAnswers = sessionData.userAnswers;
+                } else {
+                    for (var i = 0; i < allQuestions.length; i++) {
+                        userAnswers[i] = { selected: null, status: 'not-visited' };
+                    }
+                    timer = 120 * 60;
+                }
+
                 document.getElementById('candidate-display').innerText = "Candidate: " + student.name + " (" + student.roll + ")";
                 showScreen('test-screen');
-                startExam();
+                startExamEngine(sessionKey);
             };
 
-            window.onblur = function() {
-                if (!document.getElementById('test-screen').classList.contains('hidden')) {
-                    tabSwitches++;
-                    document.getElementById('violation-count').innerText = tabSwitches;
-                    saveSessionState();
+            // STRICT AUTO-SUBMIT ON TAB SWITCH
+            window.addEventListener('blur', function() {
+                if (isExamActive) {
+                    isExamActive = false;
+                    alert("PROCTOR VIOLATION DETECTED: Tab switch or window minimization detected. Your exam will now be auto-submitted.");
+                    submitExam("AUTO-SUBMITTED (Proctor Violation: Tab Switch)");
                 }
-            };
+            });
         }
 
         function showScreen(id) {
@@ -517,51 +522,55 @@
             document.getElementById(id).classList.remove('hidden');
         }
 
-        function startExam() {
-            for (var i = 0; i < allQuestions.length; i++) {
-                userAnswers[i] = { selected: null, status: 'not-visited' };
-            }
-            timer = 120 * 60;
-            tabSwitches = 0;
-            saveSessionState();
-            resumeExam();
-        }
-
-        function resumeExam() {
+        function startExamEngine(sessionKey) {
+            isExamActive = true;
             renderSectionTabs();
             loadQuestion(currentQIndex);
 
             if (timerInterval) clearInterval(timerInterval);
             timerInterval = setInterval(function() {
+                if (!isExamActive) return;
                 timer--;
-                saveSessionState();
+                saveSessionState(sessionKey, false);
+
                 var m = Math.floor(timer / 60);
                 var s = timer % 60;
                 document.getElementById('timer').innerText = (m < 10 ? '0' + m : m) + ":" + (s < 10 ? '0' + s : s);
 
                 if (timer <= 0) {
+                    isExamActive = false;
                     clearInterval(timerInterval);
-                    alert("Time's up! Submitting exam automatically.");
-                    submitExam();
+                    alert("TIME EXPIRED: Submitting exam automatically.");
+                    submitExam("AUTO-SUBMITTED (Time Expired)");
                 }
             }, 1000);
 
             document.getElementById('next-btn').onclick = function() { navigate(1); };
             document.getElementById('prev-btn').onclick = function() { navigate(-1); };
             document.getElementById('clear-btn').onclick = clearAns;
-            document.getElementById('finish-btn').onclick = submitExam;
-            document.getElementById('sidebar-submit-btn').onclick = submitExam;
+            document.getElementById('finish-btn').onclick = function() {
+                if (confirm("Are you sure you want to finalize and submit your exam?")) {
+                    isExamActive = false;
+                    submitExam("MANUAL SUBMISSION");
+                }
+            };
+            document.getElementById('sidebar-submit-btn').onclick = function() {
+                if (confirm("Are you sure you want to finalize and submit your exam?")) {
+                    isExamActive = false;
+                    submitExam("MANUAL SUBMISSION");
+                }
+            };
             document.getElementById('mark-review-btn').onclick = toggleMarkReview;
         }
 
-        function saveSessionState() {
+        function saveSessionState(sessionKey, submitted) {
             var state = {
                 student: student,
                 timer: timer,
                 userAnswers: userAnswers,
-                tabSwitches: tabSwitches
+                submitted: submitted
             };
-            localStorage.setItem('clat_active_session', JSON.stringify(state));
+            localStorage.setItem(sessionKey, JSON.stringify(state));
         }
 
         function renderSectionTabs() {
@@ -608,7 +617,6 @@
                     div.onclick = function() {
                         userAnswers[idx].selected = optIdx;
                         userAnswers[idx].status = 'answered';
-                        saveSessionState();
                         loadQuestion(currentQIndex);
                     };
                     box.appendChild(div);
@@ -622,13 +630,11 @@
         function clearAns() {
             userAnswers[currentQIndex].selected = null;
             userAnswers[currentQIndex].status = 'visited';
-            saveSessionState();
             loadQuestion(currentQIndex);
         }
 
         function toggleMarkReview() {
             userAnswers[currentQIndex].status = userAnswers[currentQIndex].status === 'marked' ? 'visited' : 'marked';
-            saveSessionState();
             renderPalette();
         }
 
@@ -657,11 +663,10 @@
             }
         }
 
-        function submitExam() {
-            if (timer > 0 && !confirm("Are you sure you want to finalize and submit your exam?")) return;
-            
+        function submitExam(reason) {
             if (timerInterval) clearInterval(timerInterval);
-            localStorage.removeItem('clat_active_session');
+            var sessionKey = 'clat_session_' + student.roll.toLowerCase().replace(/[^a-z0-9]/g, '');
+            saveSessionState(sessionKey, true);
 
             showScreen('result-screen');
             
@@ -699,10 +704,20 @@
             }
 
             document.getElementById('res-student').innerText = student.name + " (" + student.roll + ")";
+            document.getElementById('res-reason').innerText = "Status: " + reason;
             document.getElementById('res-score').innerText = score.toFixed(2);
 
+            var timestamp = new Date().toLocaleString();
             var records = JSON.parse(localStorage.getItem('clat_records') || '[]');
-            records.push({ name: student.name, roll: student.roll, score: score.toFixed(2), flags: tabSwitches });
+            
+            records.push({
+                roll: student.roll,
+                name: student.name,
+                score: score.toFixed(2),
+                status: reason,
+                timestamp: timestamp
+            });
+            
             localStorage.setItem('clat_records', JSON.stringify(records));
         }
 
@@ -712,11 +727,14 @@
             tbody.innerHTML = '';
             for (var i = 0; i < records.length; i++) {
                 var r = records[i];
-                tbody.innerHTML += '<tr><td class="p-4 font-mono">' + r.roll + '</td><td class="p-4 font-medium">' + r.name + '</td><td class="p-4 font-bold text-blue-600">' + r.score + '</td><td class="p-4">' + r.flags + ' Flags</td></tr>';
+                var statusColor = r.status.includes('Proctor') ? 'text-red-600 font-bold' : 'text-green-600 font-medium';
+                tbody.innerHTML += '<tr><td class="p-4 font-mono">' + r.roll + '</td><td class="p-4 font-medium">' + r.name + '</td><td class="p-4 font-bold text-blue-600">' + r.score + '</td><td class="p-4 ' + statusColor + '">' + r.status + '</td><td class="p-4 text-xs text-gray-500">' + r.timestamp + '</td></tr>';
             }
             document.getElementById('clear-btn-teacher').onclick = function() {
-                localStorage.removeItem('clat_records');
-                renderTeacherTable();
+                if (confirm("Clear all recorded student results from the dashboard?")) {
+                    localStorage.removeItem('clat_records');
+                    renderTeacherTable();
+                }
             };
         }
 
