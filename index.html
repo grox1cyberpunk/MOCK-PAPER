@@ -5,21 +5,39 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CLAT UG Proctored CBT Portal</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+        }
+    </script>
     <style>
         .custom-scrollbar::-webkit-scrollbar { width: 6px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f1f1; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background: #475569; }
         .no-select { -webkit-user-select: none; user-select: none; }
+        .resizer { width: 8px; cursor: col-resize; background: #e2e8f0; transition: background 0.2s; }
+        .dark .resizer { background: #334155; }
+        .resizer:hover, .resizer:active { background: #3b82f6; }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-800 font-sans no-select" oncontextmenu="return false;">
+<body class="bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100 font-sans no-select transition-colors duration-200" oncontextmenu="return false;">
 
     <!-- TOP HEADER -->
     <header class="bg-gray-900 text-white px-6 py-3 flex justify-between items-center shadow-md">
-        <div class="flex items-center gap-2">
+        <div class="flex items-center gap-3">
             <span class="font-bold text-lg text-blue-400">CLAT Proctored CBT Engine</span>
+            <div id="text-size-controls" class="hidden md:flex items-center bg-gray-800 border border-gray-700 rounded px-2 py-0.5 gap-2 text-xs">
+                <span class="text-gray-400 font-semibold">Text:</span>
+                <button id="font-dec-btn" class="hover:text-blue-400 font-bold px-1">A-</button>
+                <button id="font-reset-btn" class="hover:text-blue-400 px-1">100%</button>
+                <button id="font-inc-btn" class="hover:text-blue-400 font-bold px-1">A+</button>
+            </div>
         </div>
         <div class="flex items-center gap-3">
+            <button id="dark-mode-toggle" class="px-3 py-1.5 bg-gray-800 hover:bg-gray-700 text-yellow-400 border border-gray-700 font-medium text-xs rounded transition flex items-center gap-1">
+                🌙 <span>Dark Mode</span>
+            </button>
             <button id="header-switch-role-btn" class="px-3.5 py-1.5 bg-gray-700 hover:bg-gray-600 text-white font-medium text-xs rounded transition">
                 Switch Role / Home
             </button>
@@ -27,11 +45,11 @@
     </header>
 
     <!-- 1. INITIAL ROLE SELECTION SCREEN -->
-    <div id="role-selection-screen" class="min-h-[calc(100vh-56px)] flex items-center justify-center p-4 bg-gray-100">
-        <div class="max-w-md w-full bg-white rounded-xl shadow-xl border border-gray-200 p-8 text-center space-y-6">
+    <div id="role-selection-screen" class="min-h-[calc(100vh-56px)] flex items-center justify-center p-4 bg-gray-100 dark:bg-gray-900">
+        <div class="max-w-md w-full bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 p-8 text-center space-y-6">
             <div>
-                <h1 class="text-2xl font-bold text-gray-900">Welcome to CLAT CBT</h1>
-                <p class="text-gray-600 text-sm mt-1">Please select your role to proceed</p>
+                <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Welcome to CLAT CBT</h1>
+                <p class="text-gray-600 dark:text-gray-400 text-sm mt-1">Please select your role to proceed</p>
             </div>
 
             <div class="grid grid-cols-1 gap-4 pt-2">
@@ -49,22 +67,22 @@
 
     <!-- 2. STUDENT LOGIN SCREEN -->
     <div id="student-login-screen" class="hidden min-h-[calc(100vh-56px)] flex items-center justify-center p-4">
-        <div class="max-w-md w-full bg-white rounded-xl shadow-lg border border-gray-200 p-8">
+        <div class="max-w-md w-full bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 p-8">
             <div class="text-center mb-6">
-                <h2 class="text-2xl font-bold text-gray-900">Student Portal Login</h2>
-                <p class="text-gray-600 text-xs mt-1">Enter your assigned student credentials</p>
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Student Portal Login</h2>
+                <p class="text-gray-600 dark:text-gray-400 text-xs mt-1">Enter your assigned student credentials</p>
             </div>
 
             <form id="student-login-form" class="space-y-4">
                 <div>
-                    <label class="block text-xs font-semibold text-gray-700 mb-1">Student Username</label>
-                    <input type="text" id="stu-user-input" required class="w-full px-4 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="e.g. student01">
+                    <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">Student Username</label>
+                    <input type="text" id="stu-user-input" required class="w-full px-4 py-2 border rounded-lg text-sm dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="e.g. student01">
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-gray-700 mb-1">Password</label>
+                    <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">Password</label>
                     <div class="relative">
-                        <input type="password" id="stu-pass-input" required class="w-full px-4 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none pr-16" placeholder="e.g. clat_stu_101">
-                        <button type="button" id="toggle-stu-pass" class="absolute right-2 top-1/2 -translate-y-1/2 px-2 py-1 text-xs font-semibold text-blue-600 hover:text-blue-800">Show</button>
+                        <input type="password" id="stu-pass-input" required class="w-full px-4 py-2 border rounded-lg text-sm dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:outline-none pr-16" placeholder="e.g. clat_stu_101">
+                        <button type="button" id="toggle-stu-pass" class="absolute right-2 top-1/2 -translate-y-1/2 px-2 py-1 text-xs font-semibold text-blue-600 dark:text-blue-400">Show</button>
                     </div>
                 </div>
                 <p id="stu-auth-err" class="text-xs text-red-600 font-semibold hidden">Invalid student credentials!</p>
@@ -75,34 +93,46 @@
         </div>
     </div>
 
-    <!-- 3. STUDENT DASHBOARD (WITH PERFORMANCE ANALYTICS TAB) -->
+    <!-- 3. STUDENT DASHBOARD -->
     <div id="student-dashboard-screen" class="hidden p-8 max-w-5xl mx-auto space-y-6">
-        <div class="flex justify-between items-center bg-white p-6 rounded-xl border shadow-sm">
+        <div class="flex justify-between items-center bg-white dark:bg-gray-800 p-6 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm">
             <div>
-                <h1 class="text-2xl font-bold text-gray-900">Student Portal</h1>
-                <p id="stu-logged-welcome" class="text-xs text-gray-500 mt-1"></p>
+                <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Student Portal</h1>
+                <p id="stu-logged-welcome" class="text-xs text-gray-500 dark:text-gray-400 mt-1"></p>
             </div>
-            <button id="stu-logout-btn" class="px-3 py-1.5 bg-gray-200 hover:bg-gray-300 text-xs font-semibold rounded">Log Out</button>
+            <button id="stu-logout-btn" class="px-3 py-1.5 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-xs font-semibold rounded">Log Out</button>
         </div>
 
-        <!-- Student Navigation Tabs -->
-        <div class="flex border-b border-gray-200 gap-4">
+        <div class="flex border-b border-gray-200 dark:border-gray-700 gap-4">
             <button id="stu-tab-exams-btn" class="py-2 px-4 border-b-2 border-blue-600 text-blue-600 font-bold text-sm">Available Mock Tests</button>
-            <button id="stu-tab-perf-btn" class="py-2 px-4 border-b-2 border-transparent text-gray-500 hover:text-gray-700 font-bold text-sm">My Test Performance</button>
+            <button id="stu-tab-perf-btn" class="py-2 px-4 border-b-2 border-transparent text-gray-500 dark:text-gray-400 font-bold text-sm">My Test Performance</button>
         </div>
 
-        <!-- Student Tab 1: Exams List -->
         <div id="stu-tab-exams" class="space-y-4">
             <div id="student-tests-container" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
         </div>
 
-        <!-- Student Tab 2: Performance Dashboard -->
         <div id="stu-tab-perf" class="hidden space-y-4">
-            <div class="bg-white p-6 rounded-xl border shadow-sm space-y-4">
-                <h3 class="text-lg font-bold text-gray-900">Past Test History & Scorecards</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                <div class="bg-white dark:bg-gray-800 p-4 border dark:border-gray-700 rounded-xl shadow-sm text-center">
+                    <span class="text-xs text-gray-500 uppercase font-semibold">Total Attempted</span>
+                    <h3 id="stat-total-tests" class="text-2xl font-bold text-blue-600 dark:text-blue-400 mt-1">0</h3>
+                </div>
+                <div class="bg-white dark:bg-gray-800 p-4 border dark:border-gray-700 rounded-xl shadow-sm text-center">
+                    <span class="text-xs text-gray-500 uppercase font-semibold">Average Score</span>
+                    <h3 id="stat-avg-score" class="text-2xl font-bold text-green-600 dark:text-green-400 mt-1">0.00</h3>
+                </div>
+                <div class="bg-white dark:bg-gray-800 p-4 border dark:border-gray-700 rounded-xl shadow-sm text-center">
+                    <span class="text-xs text-gray-500 uppercase font-semibold">Highest Score</span>
+                    <h3 id="stat-high-score" class="text-2xl font-bold text-purple-600 dark:text-purple-400 mt-1">0.00</h3>
+                </div>
+            </div>
+
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-xl border dark:border-gray-700 shadow-sm space-y-4">
+                <h3 class="text-lg font-bold text-gray-900 dark:text-white">Past Test History</h3>
                 <div class="overflow-x-auto">
-                    <table class="w-full text-left text-sm text-gray-600">
-                        <thead class="bg-gray-100 uppercase text-xs font-semibold">
+                    <table class="w-full text-left text-sm text-gray-600 dark:text-gray-300">
+                        <thead class="bg-gray-100 dark:bg-gray-700 uppercase text-xs font-semibold">
                             <tr>
                                 <th class="p-3">Test Title</th>
                                 <th class="p-3">Score</th>
@@ -110,7 +140,7 @@
                                 <th class="p-3">Date Completed</th>
                             </tr>
                         </thead>
-                        <tbody id="student-performance-table" class="divide-y"></tbody>
+                        <tbody id="student-performance-table" class="divide-y dark:divide-gray-700"></tbody>
                     </table>
                 </div>
             </div>
@@ -119,22 +149,22 @@
 
     <!-- 4. TEACHER LOGIN SCREEN -->
     <div id="teacher-login-screen" class="hidden min-h-[calc(100vh-56px)] flex items-center justify-center p-4">
-        <div class="max-w-md w-full bg-white rounded-xl shadow-lg border border-gray-200 p-8">
+        <div class="max-w-md w-full bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 p-8">
             <div class="text-center mb-6">
-                <h2 class="text-2xl font-bold text-gray-900">Teacher Dashboard Login</h2>
-                <p class="text-gray-600 text-xs mt-1">Access restricted to Leo & Siddhi</p>
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Teacher Dashboard Login</h2>
+                <p class="text-gray-600 dark:text-gray-400 text-xs mt-1">Access restricted to Leo & Siddhi</p>
             </div>
 
             <form id="teacher-login-form" class="space-y-4">
                 <div>
-                    <label class="block text-xs font-semibold text-gray-700 mb-1">Teacher Username</label>
-                    <input type="text" id="teacher-user-input" required class="w-full px-4 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-purple-500 focus:outline-none">
+                    <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">Teacher Username</label>
+                    <input type="text" id="teacher-user-input" required class="w-full px-4 py-2 border rounded-lg text-sm dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-purple-500 focus:outline-none">
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-gray-700 mb-1">Password</label>
+                    <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">Password</label>
                     <div class="relative">
-                        <input type="password" id="teacher-pass-input" required class="w-full px-4 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-purple-500 focus:outline-none pr-16">
-                        <button type="button" id="toggle-teacher-pass" class="absolute right-2 top-1/2 -translate-y-1/2 px-2 py-1 text-xs font-semibold text-purple-600 hover:text-purple-800">Show</button>
+                        <input type="password" id="teacher-pass-input" required class="w-full px-4 py-2 border rounded-lg text-sm dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-purple-500 focus:outline-none pr-16">
+                        <button type="button" id="toggle-teacher-pass" class="absolute right-2 top-1/2 -translate-y-1/2 px-2 py-1 text-xs font-semibold text-purple-600 dark:text-purple-400">Show</button>
                     </div>
                 </div>
                 <p id="teacher-auth-err" class="text-xs text-red-600 font-semibold hidden">Invalid teacher credentials!</p>
@@ -145,43 +175,42 @@
         </div>
     </div>
 
-    <!-- 5. TEACHER DASHBOARD (TABBED: CREATE vs SCOREBOARD) -->
+    <!-- 5. TEACHER DASHBOARD -->
     <div id="teacher-screen" class="hidden p-8 max-w-6xl mx-auto space-y-6">
-        <div class="flex justify-between items-center bg-white p-6 rounded-xl border shadow-sm">
+        <div class="flex justify-between items-center bg-white dark:bg-gray-800 p-6 rounded-xl border dark:border-gray-700 shadow-sm">
             <div>
                 <h1 class="text-2xl font-bold">Teacher Control Panel</h1>
-                <p id="teacher-logged-user" class="text-xs text-purple-700 font-semibold mt-1">Instructor Logged In</p>
+                <p id="teacher-logged-user" class="text-xs text-purple-600 dark:text-purple-400 font-semibold mt-1">Instructor Logged In</p>
             </div>
-            <button id="teacher-logout-btn" class="px-3 py-1.5 bg-gray-200 hover:bg-gray-300 text-xs font-semibold rounded">Log Out</button>
+            <button id="teacher-logout-btn" class="px-3 py-1.5 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 text-xs font-semibold rounded">Log Out</button>
         </div>
 
-        <!-- Teacher Dashboard Navigation Tabs -->
-        <div class="flex border-b border-gray-200 gap-4">
+        <div class="flex border-b border-gray-200 dark:border-gray-700 gap-4">
             <button id="teacher-tab-create-btn" class="py-2.5 px-4 border-b-2 border-purple-600 text-purple-600 font-bold text-sm">Create & Schedule Test</button>
-            <button id="teacher-tab-score-btn" class="py-2.5 px-4 border-b-2 border-transparent text-gray-500 hover:text-gray-700 font-bold text-sm">Student Scoreboard & Session Reset</button>
+            <button id="teacher-tab-score-btn" class="py-2.5 px-4 border-b-2 border-transparent text-gray-500 dark:text-gray-400 font-bold text-sm">Scoreboard & Live Monitoring</button>
         </div>
 
-        <!-- TAB 1: CREATE & SCHEDULE TEST -->
-        <div id="teacher-tab-create" class="bg-white p-6 rounded-xl border shadow-sm space-y-4">
-            <h2 class="text-xl font-bold text-gray-900 border-b pb-3">Create & Schedule Mock Test</h2>
+        <!-- TAB 1: CREATE TEST -->
+        <div id="teacher-tab-create" class="bg-white dark:bg-gray-800 p-6 rounded-xl border dark:border-gray-700 shadow-sm space-y-4">
+            <h2 class="text-xl font-bold text-gray-900 dark:text-white border-b dark:border-gray-700 pb-3">Create & Schedule Mock Test</h2>
             <form id="json-import-form" class="space-y-4">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div>
-                        <label class="block text-xs font-semibold text-gray-700 mb-1">Test Title</label>
-                        <input type="text" id="json-test-title" required class="w-full px-3 py-2 border rounded text-sm" placeholder="e.g. CLAT Legal Reasoning Mock 02">
+                        <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">Test Title</label>
+                        <input type="text" id="json-test-title" required class="w-full px-3 py-2 border dark:border-gray-600 dark:bg-gray-700 rounded text-sm" placeholder="e.g. CLAT Legal Reasoning Mock 02">
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-gray-700 mb-1">Duration (Minutes)</label>
-                        <input type="number" id="json-test-duration" value="120" required class="w-full px-3 py-2 border rounded text-sm">
+                        <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">Duration (Minutes)</label>
+                        <input type="number" id="json-test-duration" value="120" required class="w-full px-3 py-2 border dark:border-gray-600 dark:bg-gray-700 rounded text-sm">
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-gray-700 mb-1">Schedule Start Date & Time (Optional)</label>
-                        <input type="datetime-local" id="json-test-schedule" class="w-full px-3 py-2 border rounded text-sm">
+                        <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">Schedule Start Date & Time (Optional)</label>
+                        <input type="datetime-local" id="json-test-schedule" class="w-full px-3 py-2 border dark:border-gray-600 dark:bg-gray-700 rounded text-sm">
                     </div>
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-gray-700 mb-1">Paste AI-Generated Test JSON Array</label>
-                    <textarea id="json-test-payload" rows="8" required class="w-full px-3 py-2 border rounded text-xs font-mono bg-gray-50" placeholder="Paste the JSON output here..."></textarea>
+                    <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">Paste AI-Generated Test JSON Array</label>
+                    <textarea id="json-test-payload" rows="8" required class="w-full px-3 py-2 border dark:border-gray-600 rounded text-xs font-mono bg-gray-50 dark:bg-gray-900" placeholder="Paste the JSON output here..."></textarea>
                 </div>
                 <button type="submit" class="px-6 py-2.5 bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs rounded shadow transition">
                     🚀 Publish Exam to Student Portal
@@ -189,34 +218,31 @@
             </form>
         </div>
 
-        <!-- TAB 2: SCOREBOARD & TARGETED RESET -->
+        <!-- TAB 2: SCOREBOARD & MONITORING -->
         <div id="teacher-tab-score" class="hidden space-y-6">
-            <!-- Reset Options Box -->
-            <div class="bg-amber-50 p-6 rounded-xl border border-amber-200 space-y-4">
-                <h3 class="text-base font-bold text-amber-900">Student Session Management</h3>
+            <div class="bg-amber-50 dark:bg-amber-950/40 p-6 rounded-xl border border-amber-200 dark:border-amber-800 space-y-4">
+                <h3 class="text-base font-bold text-amber-900 dark:text-amber-200">Student Session Management</h3>
                 <div class="flex flex-col md:flex-row gap-4 items-end">
                     <div class="flex-1">
-                        <label class="block text-xs font-semibold text-amber-800 mb-1">Reset Specific Student Attempt (Enter Student ID or Username)</label>
-                        <input type="text" id="reset-single-id" class="w-full px-3 py-2 border rounded text-sm bg-white" placeholder="e.g. student01 or STU-2026-01">
+                        <label class="block text-xs font-semibold text-amber-800 dark:text-amber-300 mb-1">Reset Specific Student Attempt (Username or Student ID)</label>
+                        <input type="text" id="reset-single-id" class="w-full px-3 py-2 border dark:border-gray-600 rounded text-sm bg-white dark:bg-gray-800" placeholder="e.g. student01 or STU-2026-01">
                     </div>
-                    <button id="reset-single-btn" class="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs rounded shadow transition">
-                        Reset Single Student
-                    </button>
-                    <button id="reset-student-sessions-btn" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-bold text-xs rounded shadow transition">
-                        ⚠️ Reset ALL Students
-                    </button>
+                    <button id="reset-single-btn" class="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs rounded shadow transition">Reset Single Student</button>
+                    <button id="reset-student-sessions-btn" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-bold text-xs rounded shadow transition">⚠️ Reset ALL Students</button>
                 </div>
             </div>
 
-            <!-- Scoreboard Table -->
-            <div class="bg-white rounded-xl shadow overflow-hidden border space-y-2">
-                <div class="flex justify-between items-center p-4 border-b">
-                    <h2 class="text-lg font-bold text-gray-900">Student Scoreboard</h2>
-                    <button id="clear-btn-teacher" class="px-3 py-1.5 bg-gray-200 hover:bg-gray-300 text-xs font-semibold rounded">Clear Scoreboard</button>
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow overflow-hidden border dark:border-gray-700 space-y-2">
+                <div class="flex justify-between items-center p-4 border-b dark:border-gray-700">
+                    <h2 class="text-lg font-bold text-gray-900 dark:text-white">Student Scoreboard</h2>
+                    <div class="flex gap-2">
+                        <button id="export-csv-btn" class="px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white font-bold text-xs rounded shadow">📥 Export CSV</button>
+                        <button id="clear-btn-teacher" class="px-3 py-1.5 bg-gray-200 dark:bg-gray-700 text-xs font-semibold rounded">Clear Scoreboard</button>
+                    </div>
                 </div>
                 <div class="overflow-x-auto">
-                    <table class="w-full text-left text-sm text-gray-600">
-                        <thead class="bg-gray-100 uppercase text-xs font-semibold">
+                    <table class="w-full text-left text-sm text-gray-600 dark:text-gray-300">
+                        <thead class="bg-gray-100 dark:bg-gray-700 uppercase text-xs font-semibold">
                             <tr>
                                 <th class="p-4">Student ID</th>
                                 <th class="p-4">Student Name</th>
@@ -226,15 +252,15 @@
                                 <th class="p-4">Timestamp</th>
                             </tr>
                         </thead>
-                        <tbody id="teacher-table" class="divide-y"></tbody>
+                        <tbody id="teacher-table" class="divide-y dark:divide-gray-700"></tbody>
                     </table>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- 6. EXAM ENGINE -->
-    <div id="test-screen" class="hidden h-[calc(100vh-56px)] flex flex-col bg-gray-100">
+    <!-- 6. EXAM ENGINE WITH RESIZABLE SPLIT & FULLSCREEN MANDATE -->
+    <div id="test-screen" class="hidden h-[calc(100vh-56px)] flex flex-col bg-gray-100 dark:bg-gray-900">
         <div class="bg-gray-800 text-white px-6 py-2 flex justify-between items-center text-xs">
             <span id="candidate-display" class="text-gray-300 font-semibold">Candidate: -</span>
             <div class="flex items-center gap-4">
@@ -248,60 +274,76 @@
             </div>
         </div>
 
-        <nav class="bg-white border-b px-6 py-2 flex gap-2 overflow-x-auto" id="section-tabs"></nav>
+        <nav class="bg-white dark:bg-gray-800 border-b dark:border-gray-700 px-6 py-2 flex gap-2 overflow-x-auto" id="section-tabs"></nav>
 
-        <div class="flex-1 flex overflow-hidden">
-            <div class="w-1/2 p-6 border-r overflow-y-auto bg-white custom-scrollbar">
-                <h3 class="text-xs font-bold text-blue-600 uppercase mb-2" id="section-badge">READING PASSAGE</h3>
-                <div id="passage-text" class="text-gray-800 leading-relaxed font-serif whitespace-pre-line text-sm"></div>
+        <div class="flex-1 flex overflow-hidden relative" id="workspace-container">
+            <div id="left-passage-pane" class="w-1/2 p-6 border-r dark:border-gray-700 overflow-y-auto bg-white dark:bg-gray-800 custom-scrollbar">
+                <h3 class="text-xs font-bold text-blue-600 dark:text-blue-400 uppercase mb-2" id="section-badge">READING PASSAGE</h3>
+                <div id="passage-text" class="text-gray-800 dark:text-gray-200 leading-relaxed font-serif whitespace-pre-line text-sm"></div>
             </div>
 
-            <div class="w-1/2 p-6 overflow-y-auto flex flex-col justify-between bg-gray-50 custom-scrollbar">
+            <div id="drag-resizer" class="resizer flex items-center justify-center"></div>
+
+            <div id="right-question-pane" class="flex-1 p-6 overflow-y-auto flex flex-col justify-between bg-gray-50 dark:bg-gray-900 custom-scrollbar">
                 <div>
                     <div class="flex justify-between items-center mb-4">
-                        <span id="q-badge" class="px-3 py-1 bg-blue-100 text-blue-800 font-semibold text-xs rounded-full">Question 1</span>
-                        <span class="text-xs text-gray-500">Marks: +1.0, -0.25</span>
+                        <span id="q-badge" class="px-3 py-1 bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 font-semibold text-xs rounded-full">Question 1</span>
+                        <span class="text-xs text-gray-500 dark:text-gray-400">Marks: +1.0, -0.25</span>
                     </div>
-                    <div id="q-text" class="text-gray-900 font-medium mb-6 text-base"></div>
+                    <div id="q-text" class="text-gray-900 dark:text-white font-medium mb-6 text-base"></div>
                     <div id="options-box" class="space-y-3"></div>
                 </div>
 
-                <div class="pt-4 border-t flex justify-between items-center">
-                    <button id="mark-review-btn" class="px-3 py-1.5 bg-purple-100 text-purple-700 text-xs font-semibold rounded hover:bg-purple-200">Mark for Review</button>
+                <div class="pt-4 border-t dark:border-gray-700 flex justify-between items-center">
+                    <button id="mark-review-btn" class="px-3 py-1.5 bg-purple-100 dark:bg-purple-900 text-purple-700 dark:text-purple-300 text-xs font-semibold rounded hover:bg-purple-200">Mark for Review</button>
                     <div class="flex gap-2 text-xs">
-                        <button id="clear-btn" class="px-3 py-1.5 border text-gray-600 rounded hover:bg-gray-100">Clear</button>
-                        <button id="prev-btn" class="px-3 py-1.5 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">Previous</button>
+                        <button id="clear-btn" class="px-3 py-1.5 border dark:border-gray-700 text-gray-600 dark:text-gray-300 rounded hover:bg-gray-100 dark:hover:bg-gray-800">Clear</button>
+                        <button id="prev-btn" class="px-3 py-1.5 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded">Previous</button>
                         <button id="next-btn" class="px-4 py-1.5 bg-blue-600 text-white font-semibold rounded hover:bg-blue-700">Save & Next</button>
                     </div>
                 </div>
             </div>
 
-            <div class="w-72 bg-white border-l p-4 flex flex-col justify-between">
+            <div class="w-72 bg-white dark:bg-gray-800 border-l dark:border-gray-700 p-4 flex flex-col justify-between">
                 <div>
-                    <h3 class="font-bold text-xs text-gray-700 mb-3 uppercase">Question Palette</h3>
-                    <div id="palette-grid" class="grid grid-cols-5 gap-2 max-h-[60vh] overflow-y-auto custom-scrollbar p-1"></div>
+                    <h3 class="font-bold text-xs text-gray-700 dark:text-gray-300 mb-2 uppercase">Question Palette</h3>
+                    <div class="flex gap-1 mb-3 text-[10px] border-b dark:border-gray-700 pb-2 overflow-x-auto">
+                        <button id="filter-all" class="px-2 py-0.5 bg-gray-200 dark:bg-gray-700 font-bold rounded">All</button>
+                        <button id="filter-ans" class="px-2 py-0.5 bg-emerald-100 text-emerald-800 font-bold rounded">Ans</button>
+                        <button id="filter-not-ans" class="px-2 py-0.5 bg-red-100 text-red-800 font-bold rounded">Unans</button>
+                        <button id="filter-marked" class="px-2 py-0.5 bg-purple-100 text-purple-800 font-bold rounded">Marked</button>
+                    </div>
+                    <div id="palette-grid" class="grid grid-cols-5 gap-2 max-h-[55vh] overflow-y-auto custom-scrollbar p-1"></div>
                 </div>
                 <button id="sidebar-submit-btn" class="w-full py-2 bg-green-600 text-white font-bold text-xs rounded hover:bg-green-700">Final Submit</button>
             </div>
         </div>
     </div>
 
-    <!-- 7. RESULT SCORECARD -->
+    <!-- 7. RESULT SCORECARD WITH FILTERABLE SOLUTIONS -->
     <div id="result-screen" class="hidden p-8 max-w-5xl mx-auto space-y-6">
-        <div class="bg-white p-6 rounded-xl shadow border flex justify-between items-center">
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow border dark:border-gray-700 flex justify-between items-center">
             <div>
                 <h1 class="text-2xl font-bold">Exam Result Scorecard</h1>
                 <p id="res-student" class="text-gray-500 text-sm"></p>
                 <p id="res-reason" class="text-xs text-red-600 mt-1 font-semibold"></p>
             </div>
             <div class="text-right">
-                <span class="text-3xl font-bold text-blue-600" id="res-score">0.00</span>
+                <span class="text-3xl font-bold text-blue-600 dark:text-blue-400" id="res-score">0.00</span>
                 <p class="text-xs text-gray-400">Total Score</p>
             </div>
         </div>
-        <div class="bg-white p-6 rounded-xl shadow border space-y-4">
-            <h3 class="font-bold text-lg">Question Performance & Rationale</h3>
-            <div id="solution-list" class="space-y-4 max-h-[60vh] overflow-y-auto"></div>
+
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow border dark:border-gray-700 space-y-4">
+            <div class="flex justify-between items-center border-b dark:border-gray-700 pb-3">
+                <h3 class="font-bold text-lg">Question Performance & Rationale</h3>
+                <div class="flex gap-2 text-xs">
+                    <button id="sol-filter-all" class="px-3 py-1 bg-blue-600 text-white rounded font-semibold">All</button>
+                    <button id="sol-filter-correct" class="px-3 py-1 bg-gray-200 dark:bg-gray-700 rounded font-semibold">Correct</button>
+                    <button id="sol-filter-incorrect" class="px-3 py-1 bg-gray-200 dark:bg-gray-700 rounded font-semibold">Incorrect</button>
+                </div>
+            </div>
+            <div id="solution-list" class="space-y-4 max-h-[60vh] overflow-y-auto custom-scrollbar"></div>
         </div>
     </div>
 
@@ -354,6 +396,8 @@
         var isExamActive = false;
         var mediaStream = null;
         var warningCount = 0;
+        var fontSizeLevel = 100;
+        var paletteFilter = 'all';
 
         function getStoredExams() {
             var custom = JSON.parse(localStorage.getItem('clat_custom_exams') || '[]');
@@ -363,6 +407,23 @@
         function initApp() {
             setupPasswordToggle('stu-pass-input', 'toggle-stu-pass');
             setupPasswordToggle('teacher-pass-input', 'toggle-teacher-pass');
+            setupResizablePanes();
+
+            // DARK MODE TOGGLE
+            document.getElementById('dark-mode-toggle').onclick = function() {
+                document.documentElement.classList.toggle('dark');
+            };
+
+            // FONT RESIZER
+            document.getElementById('font-inc-btn').onclick = function() {
+                if (fontSizeLevel < 140) { fontSizeLevel += 10; applyFontSize(); }
+            };
+            document.getElementById('font-dec-btn').onclick = function() {
+                if (fontSizeLevel > 80) { fontSizeLevel -= 10; applyFontSize(); }
+            };
+            document.getElementById('font-reset-btn').onclick = function() {
+                fontSizeLevel = 100; applyFontSize();
+            };
 
             document.getElementById('header-switch-role-btn').onclick = function() {
                 if (isExamActive && !confirm("Leaving this page will submit your exam attempt. Continue?")) return;
@@ -375,37 +436,43 @@
             document.getElementById('select-student-btn').onclick = function() { showScreen('student-login-screen'); };
             document.getElementById('select-teacher-btn').onclick = function() { showScreen('teacher-login-screen'); };
 
-            // STUDENT TABS NAVIGATION
+            // STUDENT TABS
             document.getElementById('stu-tab-exams-btn').onclick = function() {
                 this.className = "py-2 px-4 border-b-2 border-blue-600 text-blue-600 font-bold text-sm";
-                document.getElementById('stu-tab-perf-btn').className = "py-2 px-4 border-b-2 border-transparent text-gray-500 hover:text-gray-700 font-bold text-sm";
+                document.getElementById('stu-tab-perf-btn').className = "py-2 px-4 border-b-2 border-transparent text-gray-500 font-bold text-sm";
                 document.getElementById('stu-tab-exams').classList.remove('hidden');
                 document.getElementById('stu-tab-perf').classList.add('hidden');
             };
             document.getElementById('stu-tab-perf-btn').onclick = function() {
                 this.className = "py-2 px-4 border-b-2 border-blue-600 text-blue-600 font-bold text-sm";
-                document.getElementById('stu-tab-exams-btn').className = "py-2 px-4 border-b-2 border-transparent text-gray-500 hover:text-gray-700 font-bold text-sm";
+                document.getElementById('stu-tab-exams-btn').className = "py-2 px-4 border-b-2 border-transparent text-gray-500 font-bold text-sm";
                 document.getElementById('stu-tab-perf').classList.remove('hidden');
                 document.getElementById('stu-tab-exams').classList.add('hidden');
                 renderStudentPerformance();
             };
 
-            // TEACHER TABS NAVIGATION
+            // TEACHER TABS
             document.getElementById('teacher-tab-create-btn').onclick = function() {
                 this.className = "py-2.5 px-4 border-b-2 border-purple-600 text-purple-600 font-bold text-sm";
-                document.getElementById('teacher-tab-score-btn').className = "py-2.5 px-4 border-b-2 border-transparent text-gray-500 hover:text-gray-700 font-bold text-sm";
+                document.getElementById('teacher-tab-score-btn').className = "py-2.5 px-4 border-b-2 border-transparent text-gray-500 font-bold text-sm";
                 document.getElementById('teacher-tab-create').classList.remove('hidden');
                 document.getElementById('teacher-tab-score').classList.add('hidden');
             };
             document.getElementById('teacher-tab-score-btn').onclick = function() {
                 this.className = "py-2.5 px-4 border-b-2 border-purple-600 text-purple-600 font-bold text-sm";
-                document.getElementById('teacher-tab-create-btn').className = "py-2.5 px-4 border-b-2 border-transparent text-gray-500 hover:text-gray-700 font-bold text-sm";
+                document.getElementById('teacher-tab-create-btn').className = "py-2.5 px-4 border-b-2 border-transparent text-gray-500 font-bold text-sm";
                 document.getElementById('teacher-tab-score').classList.remove('hidden');
                 document.getElementById('teacher-tab-create').classList.add('hidden');
                 renderTeacherTable();
             };
 
-            // LOGIN HANDLERS
+            // PALETTE QUICK FILTERS
+            document.getElementById('filter-all').onclick = function() { paletteFilter = 'all'; renderPalette(); };
+            document.getElementById('filter-ans').onclick = function() { paletteFilter = 'answered'; renderPalette(); };
+            document.getElementById('filter-not-ans').onclick = function() { paletteFilter = 'visited'; renderPalette(); };
+            document.getElementById('filter-marked').onclick = function() { paletteFilter = 'marked'; renderPalette(); };
+
+            // LOGIN
             document.getElementById('student-login-form').onsubmit = function(e) {
                 e.preventDefault();
                 var u = document.getElementById('stu-user-input').value.trim().toLowerCase();
@@ -422,10 +489,7 @@
                 }
             };
 
-            document.getElementById('stu-logout-btn').onclick = function() {
-                activeUser = null;
-                showScreen('student-login-screen');
-            };
+            document.getElementById('stu-logout-btn').onclick = function() { activeUser = null; showScreen('student-login-screen'); };
 
             document.getElementById('teacher-login-form').onsubmit = function(e) {
                 e.preventDefault();
@@ -442,56 +506,39 @@
                 }
             };
 
-            document.getElementById('teacher-logout-btn').onclick = function() {
-                showScreen('teacher-login-screen');
-            };
+            document.getElementById('teacher-logout-btn').onclick = function() { showScreen('teacher-login-screen'); };
 
-            // RESET ALL STUDENTS
+            // EXPORT CSV
+            document.getElementById('export-csv-btn').onclick = exportTableToCSV;
+
+            // RESETS
             document.getElementById('reset-student-sessions-btn').onclick = function() {
-                if (confirm("Reset test attempts for ALL students? They will all be able to attempt tests again.")) {
+                if (confirm("Reset test attempts for ALL students?")) {
                     for (var key in localStorage) {
-                        if (key.indexOf('clat_session_') === 0) {
-                            localStorage.removeItem(key);
-                        }
+                        if (key.indexOf('clat_session_') === 0) localStorage.removeItem(key);
                     }
-                    alert("All student sessions cleared!");
+                    alert("All student sessions reset!");
                 }
             };
 
-            // RESET TARGETED SINGLE STUDENT
             document.getElementById('reset-single-btn').onclick = function() {
                 var query = document.getElementById('reset-single-id').value.trim().toLowerCase();
-                if (!query) {
-                    alert("Please enter a Student Username (e.g. student01) or Student ID (e.g. STU-2026-01).");
-                    return;
-                }
-
+                if (!query) return alert("Enter Student Username or ID.");
                 var targetUser = null;
                 for (var u in studentDatabase) {
                     if (u.toLowerCase() === query || studentDatabase[u].id.toLowerCase() === query) {
-                        targetUser = u;
-                        break;
+                        targetUser = u; break;
                     }
                 }
-
-                if (!targetUser) {
-                    alert("Student not found! Check username or ID.");
-                    return;
-                }
-
-                var count = 0;
+                if (!targetUser) return alert("Student not found!");
                 for (var key in localStorage) {
-                    if (key.indexOf('clat_session_' + targetUser + '_') === 0) {
-                        localStorage.removeItem(key);
-                        count++;
-                    }
+                    if (key.indexOf('clat_session_' + targetUser + '_') === 0) localStorage.removeItem(key);
                 }
-
-                alert("Successfully reset test sessions for " + studentDatabase[targetUser].name + " (" + studentDatabase[targetUser].id + ")!");
+                alert("Reset test sessions for " + studentDatabase[targetUser].name + "!");
                 document.getElementById('reset-single-id').value = '';
             };
 
-            // CREATE TEST FORM
+            // CREATE TEST
             document.getElementById('json-import-form').onsubmit = function(e) {
                 e.preventDefault();
                 try {
@@ -514,14 +561,49 @@
                     alert("Exam created and published successfully!");
                     document.getElementById('json-import-form').reset();
                 } catch(err) {
-                    alert("Invalid JSON format! Make sure you copied the complete array from AI output.");
+                    alert("Invalid JSON format!");
                 }
             };
 
+            // PROCTOR MONITORING
             window.addEventListener('blur', function() {
-                if (isExamActive) {
-                    handleProctorViolation("Tab Switch / Window Focus Lost");
+                if (isExamActive) handleProctorViolation("Tab Switch / Window Focus Lost");
+            });
+
+            document.addEventListener('fullscreenchange', function() {
+                if (isExamActive && !document.fullscreenElement) {
+                    handleProctorViolation("Exited Fullscreen Mode");
                 }
+            });
+        }
+
+        function applyFontSize() {
+            document.getElementById('passage-text').style.fontSize = fontSizeLevel + "%";
+            document.getElementById('q-text').style.fontSize = fontSizeLevel + "%";
+        }
+
+        function setupResizablePanes() {
+            var resizer = document.getElementById('drag-resizer');
+            var leftPane = document.getElementById('left-passage-pane');
+            var isDragging = false;
+
+            resizer.addEventListener('mousedown', function(e) {
+                isDragging = true;
+                document.body.style.cursor = 'col-resize';
+            });
+
+            document.addEventListener('mousemove', function(e) {
+                if (!isDragging) return;
+                var containerWidth = document.getElementById('workspace-container').offsetWidth;
+                var newLeftWidth = (e.clientX / containerWidth) * 100;
+                if (newLeftWidth > 20 && newLeftWidth < 80) {
+                    leftPane.style.width = newLeftWidth + '%';
+                }
+            });
+
+            document.addEventListener('mouseup', function() {
+                isDragging = false;
+                document.body.style.cursor = 'default';
             });
         }
 
@@ -540,20 +622,20 @@
                     var schedText = exam.scheduledTime ? new Date(exam.scheduledTime).toLocaleString() : 'Immediate Access';
 
                     var card = document.createElement('div');
-                    card.className = "bg-white p-5 rounded-xl border shadow-sm flex flex-col justify-between space-y-4";
+                    card.className = "bg-white dark:bg-gray-800 p-5 rounded-xl border dark:border-gray-700 shadow-sm flex flex-col justify-between space-y-4";
 
                     var btnHtml = '';
                     if (isSubmitted) {
-                        btnHtml = '<button disabled class="w-full py-2 bg-gray-300 text-gray-600 font-bold text-xs rounded">Already Submitted</button>';
+                        btnHtml = '<button disabled class="w-full py-2 bg-gray-300 dark:bg-gray-700 text-gray-600 dark:text-gray-400 font-bold text-xs rounded">Already Submitted</button>';
                     } else if (isLocked) {
-                        btnHtml = '<button disabled class="w-full py-2 bg-amber-200 text-amber-800 font-bold text-xs rounded">Scheduled for ' + schedText + '</button>';
+                        btnHtml = '<button disabled class="w-full py-2 bg-amber-200 dark:bg-amber-900 text-amber-800 dark:text-amber-200 font-bold text-xs rounded">Scheduled: ' + schedText + '</button>';
                     } else {
-                        btnHtml = '<button class="start-exam-btn w-full py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded shadow">Start / Resume Test</button>';
+                        btnHtml = '<button class="start-exam-btn w-full py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded shadow">Start Test (Fullscreen)</button>';
                     }
 
                     card.innerHTML = '<div>' +
-                        '<div class="flex justify-between items-center mb-1"><span class="px-2 py-0.5 bg-blue-100 text-blue-800 font-bold text-[10px] rounded uppercase">Interactive Mock</span><span class="text-xs text-gray-500 font-medium">' + exam.durationMins + ' Mins</span></div>' +
-                        '<h4 class="font-bold text-base text-gray-900">' + exam.title + '</h4>' +
+                        '<div class="flex justify-between items-center mb-1"><span class="px-2 py-0.5 bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 font-bold text-[10px] rounded uppercase">Interactive Mock</span><span class="text-xs text-gray-500 font-medium">' + exam.durationMins + ' Mins</span></div>' +
+                        '<h4 class="font-bold text-base text-gray-900 dark:text-white">' + exam.title + '</h4>' +
                         '<p class="text-xs text-gray-500 mt-1">Available: ' + schedText + '</p>' +
                         '</div>' + btnHtml;
 
@@ -571,18 +653,32 @@
             var records = JSON.parse(localStorage.getItem('clat_records') || '[]');
             var myRecords = records.filter(function(r) { return r.id === activeUser.id; });
 
+            var total = myRecords.length;
+            var sum = 0;
+            var max = 0;
+
+            for (var i = 0; i < myRecords.length; i++) {
+                var scoreNum = parseFloat(myRecords[i].score) || 0;
+                sum += scoreNum;
+                if (scoreNum > max) max = scoreNum;
+            }
+
+            document.getElementById('stat-total-tests').innerText = total;
+            document.getElementById('stat-avg-score').innerText = total > 0 ? (sum / total).toFixed(2) : '0.00';
+            document.getElementById('stat-high-score').innerText = max.toFixed(2);
+
             if (myRecords.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="4" class="p-4 text-center text-gray-400 text-xs">No completed tests found.</td></tr>';
                 return;
             }
 
-            for (var i = 0; i < myRecords.length; i++) {
-                var r = myRecords[i];
+            for (var j = 0; j < myRecords.length; j++) {
+                var r = myRecords[j];
                 tbody.innerHTML += '<tr>' +
-                    '<td class="p-3 font-semibold text-gray-800">' + r.examTitle + '</td>' +
-                    '<td class="p-3 font-bold text-blue-600">' + r.score + '</td>' +
-                    '<td class="p-3 text-xs"><span class="px-2 py-0.5 bg-green-100 text-green-800 rounded font-semibold">' + r.status + '</span></td>' +
-                    '<td class="p-3 text-xs text-gray-500">' + r.timestamp + '</td>' +
+                    '<td class="p-3 font-semibold text-gray-800 dark:text-gray-200">' + r.examTitle + '</td>' +
+                    '<td class="p-3 font-bold text-blue-600 dark:text-blue-400">' + r.score + '</td>' +
+                    '<td class="p-3 text-xs"><span class="px-2 py-0.5 bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 rounded font-semibold">' + r.status + '</span></td>' +
+                    '<td class="p-3 text-xs text-gray-500 dark:text-gray-400">' + r.timestamp + '</td>' +
                     '</tr>';
             }
         }
@@ -619,7 +715,15 @@
             var camSuccess = await startWebcam();
             if (!camSuccess) return;
 
+            // ENTER FULLSCREEN
+            try {
+                if (document.documentElement.requestFullscreen) {
+                    await document.documentElement.requestFullscreen();
+                }
+            } catch (e) {}
+
             document.getElementById('candidate-display').innerText = "Candidate: " + activeUser.name + " (" + activeUser.id + ")";
+            document.getElementById('text-size-controls').classList.remove('hidden');
             updateWarningUI();
             showScreen('test-screen');
             startExamEngine(sessionKey);
@@ -632,10 +736,10 @@
             updateWarningUI();
 
             if (warningCount === 1) {
-                alert("PROCTOR WARNING (1/1): " + reason + " detected. This is your final warning!");
+                alert("PROCTOR WARNING (1/1): " + reason + " detected. A second violation will auto-submit your exam.");
             } else if (warningCount >= 2) {
                 isExamActive = false;
-                alert("PROCTOR VIOLATION (2/2): Second violation detected (" + reason + "). Exam auto-submitted.");
+                alert("PROCTOR VIOLATION (2/2): " + reason + " detected. Exam auto-submitted.");
                 submitExam("AUTO-SUBMITTED (Proctor Violation)");
             }
         }
@@ -666,11 +770,11 @@
                 document.getElementById('cam-status').classList.add('hidden');
 
                 mediaStream.getVideoTracks()[0].onended = function() {
-                    if (isExamActive) { handleProctorViolation("Webcam Disconnected"); }
+                    if (isExamActive) handleProctorViolation("Webcam Disconnected");
                 };
                 return true;
             } catch (err) {
-                alert("PROCTOR MANDATE: Camera access is required to take this exam. Enable webcam permissions.");
+                alert("PROCTOR MANDATE: Camera access is required.");
                 return false;
             }
         }
@@ -682,6 +786,10 @@
             }
             var videoElem = document.getElementById('proctor-cam');
             if (videoElem) videoElem.srcObject = null;
+            if (document.fullscreenElement) {
+                document.exitFullscreen().catch(function() {});
+            }
+            document.getElementById('text-size-controls').classList.add('hidden');
         }
 
         function showScreen(id) {
@@ -710,7 +818,7 @@
                 if (timer <= 0) {
                     isExamActive = false;
                     clearInterval(timerInterval);
-                    alert("TIME EXPIRED: Submitting exam automatically.");
+                    alert("TIME EXPIRED: Auto-submitting exam.");
                     submitExam("AUTO-SUBMITTED (Time Expired)");
                 }
             }, 1000);
@@ -719,13 +827,13 @@
             document.getElementById('prev-btn').onclick = function() { navigate(-1); };
             document.getElementById('clear-btn').onclick = clearAns;
             document.getElementById('finish-btn').onclick = function() {
-                if (confirm("Are you sure you want to finalize and submit your exam?")) {
+                if (confirm("Finalize and submit exam?")) {
                     isExamActive = false;
                     submitExam("MANUAL SUBMISSION");
                 }
             };
             document.getElementById('sidebar-submit-btn').onclick = function() {
-                if (confirm("Are you sure you want to finalize and submit your exam?")) {
+                if (confirm("Finalize and submit exam?")) {
                     isExamActive = false;
                     submitExam("MANUAL SUBMISSION");
                 }
@@ -734,13 +842,7 @@
         }
 
         function saveSessionState(sessionKey, submitted) {
-            var state = {
-                user: activeUser,
-                timer: timer,
-                userAnswers: userAnswers,
-                warningCount: warningCount,
-                submitted: submitted
-            };
+            var state = { user: activeUser, timer: timer, userAnswers: userAnswers, warningCount: warningCount, submitted: submitted };
             localStorage.setItem(sessionKey, JSON.stringify(state));
         }
 
@@ -751,14 +853,11 @@
                 (function(sec) {
                     var btn = document.createElement('button');
                     var isCurrent = allQuestions[currentQIndex] && allQuestions[currentQIndex].section === sec.section;
-                    btn.className = "px-3 py-1 text-xs font-semibold rounded " + (isCurrent ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700');
+                    btn.className = "px-3 py-1 text-xs font-semibold rounded " + (isCurrent ? 'bg-blue-600 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300');
                     btn.innerText = sec.section;
                     btn.onclick = function() {
                         for (var k = 0; k < allQuestions.length; k++) {
-                            if (allQuestions[k].section === sec.section) {
-                                loadQuestion(k);
-                                break;
-                            }
+                            if (allQuestions[k].section === sec.section) { loadQuestion(k); break; }
                         }
                     };
                     tabs.appendChild(btn);
@@ -777,7 +876,7 @@
             }
 
             document.getElementById('section-badge').innerText = q.section || "General Section";
-            document.getElementById('passage-text').innerText = q.passage || "No passage provided for this section.";
+            document.getElementById('passage-text').innerText = q.passage || "No passage provided.";
             document.getElementById('q-badge').innerText = "Question " + (idx + 1) + " of " + allQuestions.length;
             document.getElementById('q-text').innerText = q.question || "Question text unavailable.";
 
@@ -790,7 +889,7 @@
                     var opt = opts[optIdx];
                     var isSel = userAnswers[idx] ? userAnswers[idx].selected === optIdx : false;
                     var div = document.createElement('div');
-                    div.className = "p-3 border rounded-lg cursor-pointer text-sm " + (isSel ? 'border-blue-600 bg-blue-50 font-semibold text-blue-900' : 'hover:bg-gray-100');
+                    div.className = "p-3 border dark:border-gray-700 rounded-lg cursor-pointer text-sm " + (isSel ? 'border-blue-600 bg-blue-50 dark:bg-blue-950 font-semibold text-blue-900 dark:text-blue-200' : 'hover:bg-gray-100 dark:hover:bg-gray-800');
                     div.innerText = opt;
                     div.onclick = function() {
                         if (userAnswers[idx]) {
@@ -833,7 +932,14 @@
             for (var i = 0; i < allQuestions.length; i++) {
                 (function(idx) {
                     var st = userAnswers[idx] ? userAnswers[idx].status : 'not-visited';
-                    var bg = 'bg-gray-200 text-gray-800';
+
+                    if (paletteFilter !== 'all') {
+                        if (paletteFilter === 'answered' && st !== 'answered') return;
+                        if (paletteFilter === 'visited' && st !== 'visited') return;
+                        if (paletteFilter === 'marked' && st !== 'marked') return;
+                    }
+
+                    var bg = 'bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200';
                     if (st === 'answered') bg = 'bg-emerald-500 text-white';
                     if (st === 'marked') bg = 'bg-purple-600 text-white';
                     if (st === 'visited') bg = 'bg-red-500 text-white';
@@ -854,43 +960,14 @@
             saveSessionState(sessionKey, true);
 
             showScreen('result-screen');
-            
-            var score = 0;
-            var solutionList = document.getElementById('solution-list');
-            solutionList.innerHTML = '';
+            renderSolutions('all');
 
-            for (var i = 0; i < allQuestions.length; i++) {
-                var q = allQuestions[i];
-                var sel = userAnswers[i] ? userAnswers[i].selected : null;
-                var statusText = "Unattempted";
-                var statusClass = "bg-gray-100 text-gray-700";
-
-                if (sel !== null) {
-                    if (sel === q.correct) {
-                        score += 1;
-                        statusText = "Correct (+1.0)";
-                        statusClass = "bg-green-100 text-green-800";
-                    } else {
-                        score -= 0.25;
-                        statusText = "Incorrect (-0.25)";
-                        statusClass = "bg-red-100 text-red-800";
-                    }
-                }
-
-                solutionList.innerHTML += '<div class="p-4 border rounded-lg bg-gray-50 text-xs space-y-2">' +
-                    '<div class="flex justify-between font-bold text-sm">' +
-                    '<span>Q' + (i + 1) + '. ' + q.question + '</span>' +
-                    '<span class="px-2 py-0.5 rounded ' + statusClass + '">' + statusText + '</span>' +
-                    '</div>' +
-                    '<div><strong>Your Selection:</strong> ' + (sel !== null ? q.options[sel] : 'None') + '</div>' +
-                    '<div><strong>Correct Answer:</strong> ' + q.options[q.correct] + '</div>' +
-                    '<div class="bg-white p-2 rounded border"><strong>Rationale:</strong> ' + q.rationale + '</div>' +
-                    '</div>';
-            }
+            document.getElementById('sol-filter-all').onclick = function() { renderSolutions('all'); };
+            document.getElementById('sol-filter-correct').onclick = function() { renderSolutions('correct'); };
+            document.getElementById('sol-filter-incorrect').onclick = function() { renderSolutions('incorrect'); };
 
             document.getElementById('res-student').innerText = activeUser.name + " (" + activeUser.id + ") - " + activeExam.title;
             document.getElementById('res-reason').innerText = "Status: " + reason;
-            document.getElementById('res-score').innerText = score.toFixed(2);
 
             var timestamp = new Date().toLocaleString();
             var records = JSON.parse(localStorage.getItem('clat_records') || '[]');
@@ -899,12 +976,53 @@
                 id: activeUser.id,
                 name: activeUser.name,
                 examTitle: activeExam.title,
-                score: score.toFixed(2),
+                score: document.getElementById('res-score').innerText,
                 status: reason,
                 timestamp: timestamp
             });
             
             localStorage.setItem('clat_records', JSON.stringify(records));
+        }
+
+        function renderSolutions(filter) {
+            var score = 0;
+            var solutionList = document.getElementById('solution-list');
+            solutionList.innerHTML = '';
+
+            for (var i = 0; i < allQuestions.length; i++) {
+                var q = allQuestions[i];
+                var sel = userAnswers[i] ? userAnswers[i].selected : null;
+                var isCorrect = sel === q.correct;
+                var statusText = "Unattempted";
+                var statusClass = "bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300";
+
+                if (sel !== null) {
+                    if (isCorrect) {
+                        score += 1;
+                        statusText = "Correct (+1.0)";
+                        statusClass = "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200";
+                    } else {
+                        score -= 0.25;
+                        statusText = "Incorrect (-0.25)";
+                        statusClass = "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200";
+                    }
+                }
+
+                if (filter === 'correct' && !isCorrect) continue;
+                if (filter === 'incorrect' && (isCorrect || sel === null)) continue;
+
+                solutionList.innerHTML += '<div class="p-4 border dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-900 text-xs space-y-2">' +
+                    '<div class="flex justify-between font-bold text-sm">' +
+                    '<span>Q' + (i + 1) + '. ' + q.question + '</span>' +
+                    '<span class="px-2 py-0.5 rounded ' + statusClass + '">' + statusText + '</span>' +
+                    '</div>' +
+                    '<div><strong>Your Selection:</strong> ' + (sel !== null ? q.options[sel] : 'None') + '</div>' +
+                    '<div><strong>Correct Answer:</strong> ' + q.options[q.correct] + '</div>' +
+                    '<div class="bg-white dark:bg-gray-800 p-2 rounded border dark:border-gray-700"><strong>Rationale:</strong> ' + q.rationale + '</div>' +
+                    '</div>';
+            }
+
+            document.getElementById('res-score').innerText = score.toFixed(2);
         }
 
         function renderTeacherTable() {
@@ -914,14 +1032,32 @@
             for (var i = 0; i < records.length; i++) {
                 var r = records[i];
                 var statusColor = r.status.includes('Proctor') ? 'text-red-600 font-bold' : 'text-green-600 font-medium';
-                tbody.innerHTML += '<tr><td class="p-4 font-mono">' + r.id + '</td><td class="p-4 font-medium">' + r.name + '</td><td class="p-4 font-semibold text-gray-700">' + (r.examTitle || 'CLAT Mock') + '</td><td class="p-4 font-bold text-blue-600">' + r.score + '</td><td class="p-4 ' + statusColor + '">' + r.status + '</td><td class="p-4 text-xs text-gray-500">' + r.timestamp + '</td></tr>';
+                tbody.innerHTML += '<tr><td class="p-4 font-mono">' + r.id + '</td><td class="p-4 font-medium">' + r.name + '</td><td class="p-4 font-semibold text-gray-700 dark:text-gray-300">' + (r.examTitle || 'CLAT Mock') + '</td><td class="p-4 font-bold text-blue-600 dark:text-blue-400">' + r.score + '</td><td class="p-4 ' + statusColor + '">' + r.status + '</td><td class="p-4 text-xs text-gray-500 dark:text-gray-400">' + r.timestamp + '</td></tr>';
             }
             document.getElementById('clear-btn-teacher').onclick = function() {
-                if (confirm("Clear all student score records from the teacher dashboard?")) {
+                if (confirm("Clear all student score records?")) {
                     localStorage.removeItem('clat_records');
                     renderTeacherTable();
                 }
             };
+        }
+
+        function exportTableToCSV() {
+            var records = JSON.parse(localStorage.getItem('clat_records') || '[]');
+            if (records.length === 0) return alert("No score records to export.");
+            
+            var csvContent = "data:text/csv;charset=utf-8,Student ID,Student Name,Exam Title,Score,Status,Timestamp\n";
+            records.forEach(function(r) {
+                csvContent += '"' + r.id + '","' + r.name + '","' + r.examTitle + '","' + r.score + '","' + r.status + '","' + r.timestamp + '"\n';
+            });
+
+            var encodedUri = encodeURI(csvContent);
+            var link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "CLAT_Scoreboard_Report.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
         }
 
         if (document.readyState === 'loading') {
