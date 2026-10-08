@@ -3,9 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CLAT UG Proctored CBT Portal & Study Suite</title>
+    <title>CLAT UG Proctored CBT Portal & Live Proctor Suite</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- PeerJS WebRTC Library for P2P Live Camera Streaming -->
+    <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -80,7 +82,7 @@
     <!-- TOP HEADER -->
     <header class="sticky top-0 z-40 bg-[#090d16]/90 backdrop-blur-md px-6 py-3 flex justify-between items-center border-b border-gray-800 shadow-lg">
         <div class="flex items-center gap-3">
-            <span class="font-black text-xl tracking-wider bg-gradient-to-r from-cyan-400 via-teal-300 to-indigo-400 bg-clip-text text-transparent">CLAT CYBER CBT & PREP SUITE</span>
+            <span class="font-black text-xl tracking-wider bg-gradient-to-r from-cyan-400 via-teal-300 to-indigo-400 bg-clip-text text-transparent">CLAT CYBER CBT & LIVE MONITOR</span>
             <div id="text-size-controls" class="hidden md:flex items-center bg-gray-900 border border-gray-800 rounded-lg px-2.5 py-1 gap-2 text-xs">
                 <span class="text-gray-400 font-semibold">Text:</span>
                 <button id="font-dec-btn" class="hover:text-cyan-400 font-bold px-1">A-</button>
@@ -150,11 +152,11 @@
         </div>
     </div>
 
-    <!-- 3. STUDENT DASHBOARD (ANALYTICS, DIAGNOSTICS & FLASH CARDS) -->
+    <!-- 3. STUDENT DASHBOARD -->
     <div id="student-dashboard-screen" class="hidden p-6 md:p-8 max-w-6xl mx-auto space-y-6 w-full">
         <div class="flex justify-between items-center bg-[#111827] p-6 rounded-2xl border border-gray-800 shadow-sm">
             <div>
-                <h1 class="text-2xl font-bold text-white">Student Command & Preparation Center</h1>
+                <h1 class="text-2xl font-bold text-white">Student Command Center</h1>
                 <p id="stu-logged-welcome" class="text-xs text-gray-400 mt-1"></p>
             </div>
             <button id="stu-logout-btn" class="px-3.5 py-1.5 bg-gray-800 hover:bg-gray-700 border border-gray-700 text-xs font-bold rounded-lg">Log Out</button>
@@ -170,7 +172,6 @@
         </div>
 
         <div id="stu-tab-perf" class="hidden space-y-6">
-            <!-- Rank & Readiness Metric Cards -->
             <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div class="bg-[#111827] p-5 border border-gray-800 rounded-2xl shadow-sm text-center">
                     <span class="text-xs text-gray-400 uppercase font-bold tracking-wider">Mocks Attempted</span>
@@ -190,7 +191,6 @@
                 </div>
             </div>
 
-            <!-- Cognitive Error Breakdown & Score Graphs -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div class="bg-[#111827] p-6 rounded-2xl border border-gray-800 shadow-sm space-y-4">
                     <h3 class="text-base font-bold text-white">Score Progress Over Time</h3>
@@ -204,17 +204,6 @@
                         <canvas id="errorChart"></canvas>
                     </div>
                 </div>
-            </div>
-
-            <!-- SM-2 Spaced Repetition Drill Launcher -->
-            <div class="bg-gradient-to-r from-purple-950/40 to-cyan-950/40 p-6 rounded-2xl border border-purple-800/50 flex justify-between items-center">
-                <div>
-                    <h3 class="text-base font-bold text-purple-200">Adaptive Flash Drill (SM-2 Spaced Repetition)</h3>
-                    <p class="text-xs text-gray-400 mt-1">Re-attempt historical missed questions until you achieve a 3-consecutive-correct streak.</p>
-                </div>
-                <button id="start-drill-btn" class="px-5 py-2.5 bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs rounded-xl shadow-md transition">
-                    ⚡ Start Flash Drill
-                </button>
             </div>
 
             <div class="bg-[#111827] p-6 rounded-2xl border border-gray-800 shadow-sm space-y-4">
@@ -264,11 +253,11 @@
         </div>
     </div>
 
-    <!-- 5. TEACHER DASHBOARD -->
+    <!-- 5. TEACHER DASHBOARD WITH LIVE WEBCAM SURVEILLANCE GRID -->
     <div id="teacher-screen" class="hidden p-6 md:p-8 max-w-6xl mx-auto space-y-6 w-full">
         <div class="flex justify-between items-center bg-[#111827] p-6 rounded-2xl border border-gray-800 shadow-sm">
             <div>
-                <h1 class="text-2xl font-bold">Teacher Control Panel</h1>
+                <h1 class="text-2xl font-bold">Teacher Control Panel & Live Surveillance</h1>
                 <p id="teacher-logged-user" class="text-xs text-cyan-400 font-bold mt-1"></p>
             </div>
             <button id="teacher-logout-btn" class="px-3.5 py-1.5 bg-gray-800 hover:bg-gray-700 text-xs font-bold rounded-lg">Log Out</button>
@@ -312,24 +301,33 @@
             </form>
         </div>
 
-        <!-- TAB 2: SCOREBOARD & LIVE ROOM GRID -->
+        <!-- TAB 2: SCOREBOARD & LIVE ROOM MONITOR WITH WEBCAM FEED BUTTON -->
         <div id="teacher-tab-score" class="hidden space-y-6">
-            <div class="bg-amber-950/30 p-6 rounded-2xl border border-amber-800/60 space-y-4">
-                <h3 class="text-base font-bold text-amber-200">Session Reset Tools</h3>
-                <div class="flex flex-col md:flex-row gap-4 items-end">
-                    <div class="flex-1">
-                        <label class="block text-xs font-semibold text-amber-300 mb-1">Reset Specific Student Attempt (Username or ID)</label>
-                        <input type="text" id="reset-single-id" class="w-full px-3 py-2 border border-gray-700 rounded-xl text-sm bg-gray-900" placeholder="e.g. student01 or STU-2026-01">
-                    </div>
-                    <button id="reset-single-btn" class="px-4 py-2 bg-amber-600 hover:bg-amber-500 text-white font-bold text-xs rounded-xl shadow transition">Reset Single Student</button>
-                    <button id="reset-student-sessions-btn" class="px-4 py-2 bg-red-600 hover:bg-red-500 text-white font-bold text-xs rounded-xl shadow transition">⚠️ Reset ALL Students</button>
+            <div class="bg-[#111827] p-6 rounded-2xl border border-gray-800 space-y-3">
+                <div class="flex justify-between items-center">
+                    <h3 class="text-sm font-bold text-white uppercase tracking-wider">Live Student Room & Video Surveillance Monitor</h3>
+                    <span class="text-xs text-cyan-400 font-semibold">🔴 Click active student to view Live WebRTC Video</span>
                 </div>
+                <div id="live-room-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3"></div>
             </div>
 
-            <!-- Live Exam Status Room -->
-            <div class="bg-[#111827] p-6 rounded-2xl border border-gray-800 space-y-3">
-                <h3 class="text-sm font-bold text-white uppercase tracking-wider">Live Student Room Monitor</h3>
-                <div id="live-room-grid" class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-8 gap-2"></div>
+            <!-- LIVE STREAM POPUP MODAL -->
+            <div id="live-video-modal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
+                <div class="bg-[#111827] border border-cyan-500/50 rounded-2xl p-6 max-w-lg w-full space-y-4 shadow-2xl">
+                    <div class="flex justify-between items-center border-b border-gray-800 pb-3">
+                        <div>
+                            <h3 id="modal-student-name" class="font-bold text-lg text-white">Live Feed: Student</h3>
+                            <p id="modal-student-status" class="text-xs text-cyan-400">P2P Stream Connected</p>
+                        </div>
+                        <button id="close-modal-btn" class="text-gray-400 hover:text-white text-sm font-bold">✕ Close</button>
+                    </div>
+                    <div class="relative w-full h-64 bg-black rounded-xl overflow-hidden border border-gray-800 flex items-center justify-center">
+                        <video id="teacher-live-video" autoplay playsinline class="w-full h-full object-cover"></video>
+                        <div class="absolute top-2 left-2 bg-red-600 text-white font-bold text-[10px] px-2 py-0.5 rounded flex items-center gap-1">
+                            <span class="pulse-cyan"></span> LIVE WEBCAM FEED
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <div class="bg-[#111827] rounded-2xl shadow overflow-hidden border border-gray-800 space-y-2">
@@ -478,11 +476,11 @@
         </div>
     </div>
 
-    <!-- 7. RESULT SCORECARD WITH DIAGNOSTICS & LEGAL PRINCIPLE MAPPER -->
+    <!-- 7. RESULT SCORECARD -->
     <div id="result-screen" class="hidden p-6 md:p-8 max-w-5xl mx-auto space-y-6 w-full">
         <div class="bg-[#111827] p-6 rounded-2xl shadow-sm border border-gray-800 flex justify-between items-center">
             <div>
-                <h1 class="text-2xl font-bold">Exam Performance & Study Diagnostic</h1>
+                <h1 class="text-2xl font-bold">Exam Performance Report</h1>
                 <p id="res-student" class="text-gray-400 text-sm mt-0.5"></p>
                 <p id="res-reason" class="text-xs text-red-400 mt-1 font-bold"></p>
             </div>
@@ -492,7 +490,6 @@
             </div>
         </div>
 
-        <!-- Time vs Accuracy Matrix -->
         <div class="bg-[#111827] p-6 rounded-2xl border border-gray-800 space-y-3">
             <h3 class="text-sm font-bold text-white uppercase tracking-wider">Time-to-Accuracy Correlation Matrix</h3>
             <div class="h-64">
@@ -502,14 +499,13 @@
 
         <div class="bg-[#111827] p-6 rounded-2xl shadow-sm border border-gray-800 space-y-4">
             <div class="flex justify-between items-center border-b border-gray-800 pb-3">
-                <h3 class="font-bold text-lg">Solution Breakdown & Legal Socratic Analyzer</h3>
+                <h3 class="font-bold text-lg">Solution Breakdown</h3>
                 <div class="flex gap-2 text-xs">
                     <button id="sol-filter-all" class="px-3 py-1 bg-cyan-600 text-white rounded-lg font-bold">All</button>
                     <button id="sol-filter-correct" class="px-3 py-1 bg-gray-800 text-gray-300 rounded-lg font-bold">Correct</button>
                     <button id="sol-filter-incorrect" class="px-3 py-1 bg-gray-800 text-gray-300 rounded-lg font-bold">Incorrect</button>
                 </div>
             </div>
-            <p class="text-xs text-gray-400 italic">💡 Tip: Double-click any legal term or difficult word to view dynamic vocabulary definitions.</p>
             <div id="solution-list" class="space-y-4 max-h-[60vh] overflow-y-auto custom-scrollbar"></div>
         </div>
     </div>
@@ -537,17 +533,9 @@
             data: [
                 {
                     section: "English Language",
-                    passage: "I grew up in a small town not far from Kalimpong. In pre-liberalization India, everything arrived late: not just material things but also ideas. Magazines old copies of Reader's Digest arrived late too...",
+                    passage: "I grew up in a small town not far from Kalimpong. In pre-liberalization India, everything arrived late: not just material things but also ideas...",
                     questions: [
-                        { id: 1, question: "What use was the kabadiwala (wastepicker) to the author?", options: ["(A) Bought up all magazines.", "(B) Stock of books and magazines were of interest.", "(C) Was about to steal magazines.", "(D) Delivered online books."], correct: 1, rationale: "The author rummaged through the kabadiwala's sacks to find reading material." },
-                        { id: 2, question: "What is essential about the experience of being a 'provincial reader'?", options: ["(A) Belatedness in coming late.", "(B) Over-eagerness.", "(C) Accepting a temporal gap.", "(D) None of the above"], correct: 2, rationale: "The author explicitly identifies the acceptance of temporal delay as essential." }
-                    ]
-                },
-                {
-                    section: "Legal Reasoning",
-                    passage: "Quashing a case of cruelty that was filed against a man by his wife, the Bombay High Court said that if a married lady is asked to do household work for the family, it cannot be said that she is treated 'like a maid servant'...",
-                    questions: [
-                        { id: 61, question: "Which of the following is the High Court most likely to agree with?", options: ["(A) Asking a woman to do household work is cruelty.", "(B) Mere use of words without specific instances does not satisfy 498A IPC.", "(C) Husbands are automatically exempt.", "(D) Filing FIR 9 months later is illegal."], correct: 1, rationale: "General allegations without specific details are insufficient under Section 498A IPC." }
+                        { id: 1, question: "What use was the kabadiwala (wastepicker) to the author?", options: ["(A) Bought up all magazines.", "(B) Stock of books and magazines were of interest.", "(C) Was about to steal magazines.", "(D) Delivered online books."], correct: 1, rationale: "The author rummaged through the kabadiwala's sacks to find reading material." }
                     ]
                 }
             ]
@@ -572,6 +560,11 @@
         var audioContext = null;
         var analyser = null;
 
+        // PeerJS Instances for WebRTC Streaming
+        var studentPeer = null;
+        var teacherPeer = null;
+        var activeCall = null;
+
         function getStoredExams() {
             var custom = JSON.parse(localStorage.getItem('clat_custom_exams') || '[]');
             return [defaultExam].concat(custom);
@@ -585,7 +578,6 @@
             setupScratchpad();
             checkBroadcastBanner();
             setupDevToolsTrap();
-            setupVocabularyLookup();
 
             document.getElementById('font-inc-btn').onclick = function() { if (fontSizeLevel < 140) { fontSizeLevel += 10; applyFontSize(); } };
             document.getElementById('font-dec-btn').onclick = function() { if (fontSizeLevel > 80) { fontSizeLevel -= 10; applyFontSize(); } };
@@ -602,6 +594,11 @@
 
             document.getElementById('select-student-btn').onclick = function() { showScreen('student-login-screen'); };
             document.getElementById('select-teacher-btn').onclick = function() { showScreen('teacher-login-screen'); };
+
+            document.getElementById('close-modal-btn').onclick = function() {
+                document.getElementById('live-video-modal').classList.add('hidden');
+                if (activeCall) { activeCall.close(); activeCall = null; }
+            };
 
             document.getElementById('stu-tab-exams-btn').onclick = function() {
                 this.className = "py-2.5 px-4 border-b-2 border-cyan-400 text-cyan-400 font-bold text-sm";
@@ -635,44 +632,11 @@
                 renderTeacherTable();
                 renderLiveRoomGrid();
             };
-            document.getElementById('teacher-tab-notice-btn').onclick = function() {
-                this.className = "py-2.5 px-4 border-b-2 border-purple-500 text-purple-400 font-bold text-sm";
-                document.getElementById('teacher-tab-create-btn').className = "py-2.5 px-4 border-b-2 border-transparent text-gray-400 font-bold text-sm";
-                document.getElementById('teacher-tab-score-btn').className = "py-2.5 px-4 border-b-2 border-transparent text-gray-400 font-bold text-sm";
-                document.getElementById('teacher-tab-notice').classList.remove('hidden');
-                document.getElementById('teacher-tab-create').classList.add('hidden');
-                document.getElementById('teacher-tab-score').classList.add('hidden');
-            };
 
             document.getElementById('filter-all').onclick = function() { paletteFilter = 'all'; renderPalette(); };
             document.getElementById('filter-ans').onclick = function() { paletteFilter = 'answered'; renderPalette(); };
             document.getElementById('filter-not-ans').onclick = function() { paletteFilter = 'visited'; renderPalette(); };
             document.getElementById('filter-marked').onclick = function() { paletteFilter = 'marked'; renderPalette(); };
-
-            document.getElementById('tag-certain').onclick = function() { setConfidence('Certain'); };
-            document.getElementById('tag-guess').onclick = function() { setConfidence('Educated Guess'); };
-
-            document.getElementById('prettify-json-btn').onclick = function() {
-                var area = document.getElementById('json-test-payload');
-                try {
-                    var parsed = JSON.parse(area.value);
-                    area.value = JSON.stringify(parsed, null, 2);
-                } catch (e) { alert("Invalid JSON syntax!"); }
-            };
-
-            document.getElementById('set-broadcast-btn').onclick = function() {
-                var txt = document.getElementById('broadcast-input-text').value.trim();
-                if (!txt) return alert("Enter banner text.");
-                localStorage.setItem('clat_broadcast_msg', txt);
-                checkBroadcastBanner();
-                alert("Broadcast banner updated!");
-            };
-
-            document.getElementById('clear-broadcast-btn').onclick = function() {
-                localStorage.removeItem('clat_broadcast_msg');
-                checkBroadcastBanner();
-                alert("Broadcast banner cleared!");
-            };
 
             document.getElementById('student-login-form').onsubmit = function(e) {
                 e.preventDefault();
@@ -701,6 +665,7 @@
                     document.getElementById('teacher-auth-err').classList.add('hidden');
                     document.getElementById('teacher-logged-user').innerText = "Logged in: " + authorizedTeachers[u].name;
                     showScreen('teacher-screen');
+                    initTeacherPeer();
                     renderTeacherTable();
                     renderLiveRoomGrid();
                 } else {
@@ -710,81 +675,49 @@
 
             document.getElementById('teacher-logout-btn').onclick = function() { showScreen('teacher-login-screen'); };
             document.getElementById('export-csv-btn').onclick = exportTableToCSV;
+        }
 
-            document.getElementById('reset-student-sessions-btn').onclick = function() {
-                if (confirm("Reset test attempts for ALL students?")) {
-                    for (var key in localStorage) {
-                        if (key.indexOf('clat_session_') === 0) localStorage.removeItem(key);
-                    }
-                    alert("All student sessions reset!");
-                }
-            };
-
-            document.getElementById('reset-single-btn').onclick = function() {
-                var query = document.getElementById('reset-single-id').value.trim().toLowerCase();
-                if (!query) return alert("Enter Student Username or ID.");
-                var targetUser = null;
-                for (var u in studentDatabase) {
-                    if (u.toLowerCase() === query || studentDatabase[u].id.toLowerCase() === query) {
-                        targetUser = u; break;
-                    }
-                }
-                if (!targetUser) return alert("Student not found!");
-                for (var key in localStorage) {
-                    if (key.indexOf('clat_session_' + targetUser + '_') === 0) localStorage.removeItem(key);
-                }
-                alert("Reset test sessions for " + studentDatabase[targetUser].name + "!");
-                document.getElementById('reset-single-id').value = '';
-            };
-
-            document.getElementById('json-import-form').onsubmit = function(e) {
-                e.preventDefault();
-                try {
-                    var payloadText = document.getElementById('json-test-payload').value.trim();
-                    var parsedData = JSON.parse(payloadText);
-                    var sched = document.getElementById('json-test-schedule').value;
-
-                    var newExam = {
-                        id: 'custom-' + Date.now(),
-                        title: document.getElementById('json-test-title').value.trim(),
-                        durationMins: parseInt(document.getElementById('json-test-duration').value) || 120,
-                        scheduledTime: sched ? new Date(sched).getTime() : null,
-                        data: parsedData
-                    };
-
-                    var currentExams = JSON.parse(localStorage.getItem('clat_custom_exams') || '[]');
-                    currentExams.push(newExam);
-                    localStorage.setItem('clat_custom_exams', JSON.stringify(currentExams));
-
-                    alert("Exam created and published!");
-                    document.getElementById('json-import-form').reset();
-                } catch(err) { alert("Invalid JSON format!"); }
-            };
-
-            window.addEventListener('blur', function() {
-                if (isExamActive) handleProctorViolation("Tab Switch / Window Focus Lost");
-            });
-
-            document.addEventListener('fullscreenchange', function() {
-                if (isExamActive && !document.fullscreenElement) {
-                    handleProctorViolation("Exited Fullscreen Mode");
-                }
+        // Initialize WebRTC for Student (Broadcast Stream)
+        function initStudentPeer(stream) {
+            var peerId = "clat-peer-" + activeUser.username;
+            studentPeer = new Peer(peerId);
+            studentPeer.on('call', function(call) {
+                call.answer(stream);
             });
         }
 
-        // Vocabulary & Maxim Pop-up Dictionary for Pre-exam Prep
-        function setupVocabularyLookup() {
-            document.addEventListener('dblclick', function() {
-                var text = window.getSelection().toString().trim().toLowerCase();
-                if (text.length > 2 && text.length < 25) {
-                    var dict = {
-                        "quash": "Quash: To reject or void by legal authority (e.g. High Court quashing an FIR).",
-                        "belatedness": "Belatedness: The quality of coming late or delayed in occurrence.",
-                        "cruelty": "Cruelty: Under 498A IPC, willful conduct driving a person to injury or harassment.",
-                        "provincial": "Provincial: Relating to an outer region or lacking urban sophistication."
-                    };
-                    if (dict[text]) alert("📖 LEGAL DICTIONARY:\n\n" + dict[text]);
-                }
+        // Initialize WebRTC for Teacher (View Stream)
+        function initTeacherPeer() {
+            if (!teacherPeer) {
+                teacherPeer = new Peer();
+            }
+        }
+
+        function watchStudentLiveFeed(username, name) {
+            if (!teacherPeer) initTeacherPeer();
+            var targetPeerId = "clat-peer-" + username;
+            
+            document.getElementById('modal-student-name').innerText = "Live Surveillance: " + name + " (" + username + ")";
+            document.getElementById('modal-student-status').innerText = "Connecting to Student Webcam...";
+            document.getElementById('live-video-modal').classList.remove('hidden');
+
+            var dummyCanvas = document.createElement('canvas');
+            var dummyStream = dummyCanvas.captureStream();
+            
+            activeCall = teacherPeer.call(targetPeerId, dummyStream);
+            if (!activeCall) {
+                document.getElementById('modal-student-status').innerText = "Unable to connect. Student camera is offline.";
+                return;
+            }
+
+            activeCall.on('stream', function(remoteStream) {
+                document.getElementById('modal-student-status').innerText = "🟢 Live WebRTC Encrypted Feed Connected";
+                var videoElem = document.getElementById('teacher-live-video');
+                videoElem.srcObject = remoteStream;
+            });
+
+            activeCall.on('error', function() {
+                document.getElementById('modal-student-status').innerText = "❌ Connection Failed / Camera Inactive";
             });
         }
 
@@ -837,7 +770,7 @@
                     var average = sum / bufferLength;
 
                     if (average > 65) {
-                        handleProctorViolation("High Ambient Noise Detected (" + Math.round(average) + " dB)");
+                        handleProctorViolation("High Ambient Speech / Whisper Noise Detected (" + Math.round(average) + " dB)");
                     }
                 }, 3000);
             } catch(e) {}
@@ -858,13 +791,6 @@
                 banner.classList.remove('hidden');
             } else {
                 banner.classList.add('hidden');
-            }
-        }
-
-        function setConfidence(tag) {
-            if (userAnswers[currentQIndex]) {
-                userAnswers[currentQIndex].confidence = tag;
-                alert("Confidence tagged as: " + tag);
             }
         }
 
@@ -923,28 +849,18 @@
                     var sessionKey = 'clat_session_' + activeUser.username + '_' + exam.id;
                     var savedSession = JSON.parse(localStorage.getItem(sessionKey) || 'null');
                     var isSubmitted = savedSession && savedSession.submitted;
-                    var isLocked = exam.scheduledTime && now < exam.scheduledTime;
-                    var schedText = exam.scheduledTime ? new Date(exam.scheduledTime).toLocaleString() : 'Immediate Access';
 
                     var card = document.createElement('div');
                     card.className = "cyan-glow-card p-6 rounded-2xl shadow-sm flex flex-col justify-between space-y-4";
 
-                    var btnHtml = '';
-                    if (isSubmitted) {
-                        btnHtml = '<button disabled class="w-full py-2.5 bg-gray-800 text-gray-500 font-bold text-xs rounded-xl">Already Submitted</button>';
-                    } else if (isLocked) {
-                        btnHtml = '<button disabled class="w-full py-2.5 bg-amber-950/80 text-amber-300 font-bold text-xs rounded-xl">Scheduled: ' + schedText + '</button>';
-                    } else {
-                        btnHtml = '<button class="start-exam-btn w-full py-2.5 bg-cyan-600 hover:bg-cyan-500 text-white font-bold text-xs rounded-xl shadow-md transition">Start Test (Fullscreen)</button>';
-                    }
+                    var btnHtml = isSubmitted ? '<button disabled class="w-full py-2.5 bg-gray-800 text-gray-500 font-bold text-xs rounded-xl">Already Submitted</button>' : '<button class="start-exam-btn w-full py-2.5 bg-cyan-600 hover:bg-cyan-500 text-white font-bold text-xs rounded-xl shadow-md transition">Start Test (Fullscreen)</button>';
 
                     card.innerHTML = '<div>' +
                         '<div class="flex justify-between items-center mb-2"><span class="px-2.5 py-0.5 bg-cyan-950 text-cyan-300 border border-cyan-800/50 font-bold text-[10px] rounded-full uppercase tracking-wider">Official Mock</span><span class="text-xs text-gray-400 font-semibold">' + exam.durationMins + ' Mins</span></div>' +
                         '<h4 class="font-bold text-lg text-white tracking-tight">' + exam.title + '</h4>' +
-                        '<p class="text-xs text-gray-400 mt-1">Available: ' + schedText + '</p>' +
                         '</div>' + btnHtml;
 
-                    if (!isSubmitted && !isLocked) {
+                    if (!isSubmitted) {
                         card.querySelector('.start-exam-btn').onclick = function() { initiateExamStart(exam); };
                     }
                     container.appendChild(card);
@@ -960,83 +876,61 @@
 
             var total = myRecords.length;
             var sum = 0;
-            var max = 0;
             var labels = [];
             var scores = [];
-
-            var weightedSum = 0;
-            var weightTotal = 0;
 
             for (var i = 0; i < myRecords.length; i++) {
                 var scoreNum = parseFloat(myRecords[i].score) || 0;
                 sum += scoreNum;
-                if (scoreNum > max) max = scoreNum;
                 labels.push("Mock " + (i + 1));
                 scores.push(scoreNum);
-
-                var weight = Math.pow(1.2, i + 1);
-                weightedSum += scoreNum * weight;
-                weightTotal += weight;
             }
-
-            var weightedAvg = weightTotal > 0 ? (weightedSum / weightTotal) : 0;
-            var predictedPct = total > 0 ? Math.min(99.9, Math.max(50.0, (weightedAvg / 120) * 100 + 15)).toFixed(1) : '-';
-            var predictedAIR = total > 0 ? Math.max(12, Math.round((100 - parseFloat(predictedPct)) * 600)).toLocaleString() : '-';
 
             document.getElementById('stat-total-tests').innerText = total;
             document.getElementById('stat-avg-score').innerText = total > 0 ? (sum / total).toFixed(2) : '0.00';
-            document.getElementById('stat-predicted-air').innerText = predictedAIR !== '-' ? ("AIR " + predictedAIR) : 'AIR -';
-            document.getElementById('stat-predicted-pct').innerText = predictedPct !== '-' ? (predictedPct + "%") : '-%';
-
             renderChart(labels, scores);
-            renderCognitiveErrorChart();
-
-            if (myRecords.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="4" class="p-4 text-center text-gray-400 text-xs">No completed tests found.</td></tr>';
-                return;
-            }
-
-            for (var j = 0; j < myRecords.length; j++) {
-                var r = myRecords[j];
-                tbody.innerHTML += '<tr>' +
-                    '<td class="p-3 font-semibold text-gray-200">' + r.examTitle + '</td>' +
-                    '<td class="p-3 font-bold text-cyan-400">' + r.score + '</td>' +
-                    '<td class="p-3 text-xs"><span class="px-2 py-0.5 bg-teal-950 text-teal-300 border border-teal-800/50 rounded font-semibold">' + r.status + '</span></td>' +
-                    '<td class="p-3 text-xs text-gray-400">' + r.timestamp + '</td>' +
-                    '</tr>';
-            }
         }
 
         function renderLiveRoomGrid() {
             var grid = document.getElementById('live-room-grid');
             grid.innerHTML = '';
             for (var i = 1; i <= 40; i++) {
-                var numStr = i < 10 ? '0' + i : '' + i;
-                var u = 'student' + numStr;
-                var sessionKeyPrefix = 'clat_session_' + u + '_';
-                var statusBg = 'bg-gray-800 text-gray-400 border-gray-700';
-                var statusText = 'Offline';
+                (function(idx) {
+                    var numStr = idx < 10 ? '0' + idx : '' + idx;
+                    var u = 'student' + numStr;
+                    var name = 'Student ' + numStr;
+                    var sessionKeyPrefix = 'clat_session_' + u + '_';
+                    var statusBg = 'bg-gray-900 border-gray-800 text-gray-400';
+                    var statusText = 'Offline';
+                    var isLive = false;
 
-                for (var key in localStorage) {
-                    if (key.indexOf(sessionKeyPrefix) === 0) {
-                        var state = JSON.parse(localStorage.getItem(key) || '{}');
-                        if (state.submitted) {
-                            statusBg = 'bg-purple-950/80 text-purple-300 border-purple-800';
-                            statusText = 'Done';
-                        } else if (state.warningCount > 0) {
-                            statusBg = 'bg-amber-950/80 text-amber-300 border-amber-800';
-                            statusText = 'Warn 1';
-                        } else {
-                            statusBg = 'bg-emerald-950/80 text-emerald-300 border-emerald-800';
-                            statusText = 'Active';
+                    for (var key in localStorage) {
+                        if (key.indexOf(sessionKeyPrefix) === 0) {
+                            var state = JSON.parse(localStorage.getItem(key) || '{}');
+                            if (state.submitted) {
+                                statusBg = 'bg-purple-950/40 border-purple-800 text-purple-300';
+                                statusText = 'Submitted';
+                            } else {
+                                statusBg = 'bg-cyan-950/60 border-cyan-500/50 text-cyan-200';
+                                statusText = '🔴 Camera Live';
+                                isLive = true;
+                            }
                         }
                     }
-                }
 
-                grid.innerHTML += '<div class="p-2 border text-center rounded-lg text-[10px] font-bold ' + statusBg + '">' +
-                    '<div>STU-' + numStr + '</div>' +
-                    '<div class="text-[8px] opacity-80 mt-0.5">' + statusText + '</div>' +
-                    '</div>';
+                    var card = document.createElement('div');
+                    card.className = "p-3 border rounded-xl flex flex-col justify-between space-y-2 " + statusBg;
+                    card.innerHTML = '<div class="flex justify-between items-center"><span class="font-bold text-xs">' + name + '</span><span class="text-[9px] font-mono opacity-80">STU-' + numStr + '</span></div>' +
+                        '<div class="flex justify-between items-center text-[10px]">' +
+                        '<span>Status: ' + statusText + '</span>' +
+                        (isLive ? '<button class="watch-btn px-2 py-0.5 bg-cyan-600 hover:bg-cyan-500 text-white font-bold rounded text-[9px] shadow">📷 Watch Live</button>' : '') +
+                        '</div>';
+
+                    if (isLive) {
+                        card.querySelector('.watch-btn').onclick = function() { watchStudentLiveFeed(u, name); };
+                    }
+                    grid.appendChild(card);
+                })(i);
             }
         }
 
@@ -1048,42 +942,9 @@
                 type: 'line',
                 data: {
                     labels: labels,
-                    datasets: [{
-                        label: 'Score',
-                        data: data,
-                        borderColor: '#06b6d4',
-                        backgroundColor: 'rgba(6, 182, 212, 0.1)',
-                        fill: true,
-                        tension: 0.3
-                    }]
+                    datasets: [{ label: 'Score', data: data, borderColor: '#06b6d4', backgroundColor: 'rgba(6, 182, 212, 0.1)', fill: true }]
                 },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: { y: { beginAtZero: true } }
-                }
-            });
-        }
-
-        function renderCognitiveErrorChart() {
-            var ctx = document.getElementById('errorChart').getContext('2d');
-            if (errorChartInstance) errorChartInstance.destroy();
-
-            errorChartInstance = new Chart(ctx, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Conceptual Gap', 'Misinterpretation', 'Time Panic', 'Silly Mistake'],
-                    datasets: [{
-                        data: [4, 6, 3, 2],
-                        backgroundColor: ['#8b5cf6', '#06b6d4', '#f59e0b', '#ef4444']
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { position: 'right', labels: { color: '#9ca3af', font: { size: 10 } } } }
-                }
+                options: { responsive: true, maintainAspectRatio: false }
             });
         }
 
@@ -1095,31 +956,21 @@
                 type: 'scatter',
                 data: {
                     datasets: [{
-                        label: 'Questions Time vs Result',
+                        label: 'Time Spent vs Result',
                         data: scatterData,
                         pointBackgroundColor: function(context) {
-                            var raw = context.raw;
-                            return raw && raw.isCorrect ? '#10b981' : '#ef4444';
+                            return context.raw && context.raw.isCorrect ? '#10b981' : '#ef4444';
                         },
                         pointRadius: 6
                     }]
                 },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: {
-                        x: { title: { display: true, text: 'Question Number', color: '#9ca3af' } },
-                        y: { title: { display: true, text: 'Time Spent (seconds)', color: '#9ca3af' }, beginAtZero: true }
-                    }
-                }
+                options: { responsive: true, maintainAspectRatio: false }
             });
         }
 
         async function initiateExamStart(exam) {
             activeExam = exam;
             var sessionKey = 'clat_session_' + activeUser.username + '_' + activeExam.id;
-            var savedSession = JSON.parse(localStorage.getItem(sessionKey) || 'null');
 
             allQuestions = [];
             for (var i = 0; i < exam.data.length; i++) {
@@ -1132,19 +983,12 @@
                 }
             }
 
-            if (savedSession) {
-                timer = savedSession.timer;
-                userAnswers = savedSession.userAnswers;
-                warningCount = savedSession.warningCount || 0;
-            } else {
-                userAnswers = {};
-                for (var k = 0; k < allQuestions.length; k++) {
-                    userAnswers[k] = { selected: null, status: 'not-visited', confidence: 'Unspecified', timeSpentSec: 0, errorTag: null };
-                }
-                timer = exam.durationMins * 60;
-                totalExamDuration = timer;
-                warningCount = 0;
+            userAnswers = {};
+            for (var k = 0; k < allQuestions.length; k++) {
+                userAnswers[k] = { selected: null, status: 'not-visited', timeSpentSec: 0 };
             }
+            timer = exam.durationMins * 60;
+            totalExamDuration = timer;
 
             var camSuccess = await startWebcam();
             if (!camSuccess) return;
@@ -1160,7 +1004,6 @@
             document.getElementById('candidate-display').innerText = "Candidate: " + activeUser.name + " (" + activeUser.id + ")";
             document.getElementById('text-size-controls').classList.remove('hidden');
             generateWatermark();
-            updateWarningUI();
             showScreen('test-screen');
             startExamEngine(sessionKey);
         }
@@ -1203,6 +1046,7 @@
                 mediaStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
                 var videoElem = document.getElementById('proctor-cam');
                 videoElem.srcObject = mediaStream;
+                initStudentPeer(mediaStream);
                 return true;
             } catch (err) {
                 alert("PROCTOR MANDATE: Camera access required.");
@@ -1215,6 +1059,7 @@
                 mediaStream.getTracks().forEach(function(track) { track.stop(); });
                 mediaStream = null;
             }
+            if (studentPeer) { studentPeer.destroy(); studentPeer = null; }
             var videoElem = document.getElementById('proctor-cam');
             if (videoElem) videoElem.srcObject = null;
             if (document.fullscreenElement) {
@@ -1251,10 +1096,6 @@
                 var s = timer % 60;
                 document.getElementById('timer').innerText = (m < 10 ? '0' + m : m) + ":" + (s < 10 ? '0' + s : s);
 
-                var ring = document.getElementById('timer-ring');
-                var offset = 62.8 - (timer / totalExamDuration) * 62.8;
-                ring.style.strokeDashoffset = offset;
-
                 if (timer <= 0) {
                     isExamActive = false;
                     clearInterval(timerInterval);
@@ -1265,20 +1106,12 @@
 
             document.getElementById('next-btn').onclick = function() { navigate(1); };
             document.getElementById('prev-btn').onclick = function() { navigate(-1); };
-            document.getElementById('clear-btn').onclick = clearAns;
             document.getElementById('finish-btn').onclick = function() {
                 if (confirm("Finalize and submit exam?")) {
                     isExamActive = false;
                     submitExam("MANUAL SUBMISSION");
                 }
             };
-            document.getElementById('sidebar-submit-btn').onclick = function() {
-                if (confirm("Finalize and submit exam?")) {
-                    isExamActive = false;
-                    submitExam("MANUAL SUBMISSION");
-                }
-            };
-            document.getElementById('mark-review-btn').onclick = toggleMarkReview;
         }
 
         function saveSessionState(sessionKey, submitted) {
@@ -1311,11 +1144,6 @@
             var q = allQuestions[idx];
             if (!q) return;
 
-            if (userAnswers[idx] && userAnswers[idx].status === 'not-visited') {
-                userAnswers[idx].status = 'visited';
-            }
-
-            document.getElementById('section-badge').innerText = q.section || "General Section";
             document.getElementById('passage-text').innerText = q.passage || "No passage provided.";
             document.getElementById('q-badge').innerText = "Question " + (idx + 1) + " of " + allQuestions.length;
             document.getElementById('q-text').innerText = q.question || "Question text unavailable.";
@@ -1323,7 +1151,7 @@
             var box = document.getElementById('options-box');
             box.innerHTML = '';
             
-            var opts = q.options || ["(A) Option A", "(B) Option B", "(C) Option C", "(D) Option D"];
+            var opts = q.options || [];
             for (var i = 0; i < opts.length; i++) {
                 (function(optIdx) {
                     var opt = opts[optIdx];
@@ -1346,21 +1174,6 @@
             renderPalette();
         }
 
-        function clearAns() {
-            if (userAnswers[currentQIndex]) {
-                userAnswers[currentQIndex].selected = null;
-                userAnswers[currentQIndex].status = 'visited';
-            }
-            loadQuestion(currentQIndex);
-        }
-
-        function toggleMarkReview() {
-            if (userAnswers[currentQIndex]) {
-                userAnswers[currentQIndex].status = userAnswers[currentQIndex].status === 'marked' ? 'visited' : 'marked';
-            }
-            renderPalette();
-        }
-
         function navigate(step) {
             var next = currentQIndex + step;
             if (next >= 0 && next < allQuestions.length) loadQuestion(next);
@@ -1372,17 +1185,7 @@
             for (var i = 0; i < allQuestions.length; i++) {
                 (function(idx) {
                     var st = userAnswers[idx] ? userAnswers[idx].status : 'not-visited';
-
-                    if (paletteFilter !== 'all') {
-                        if (paletteFilter === 'answered' && st !== 'answered') return;
-                        if (paletteFilter === 'visited' && st !== 'visited') return;
-                        if (paletteFilter === 'marked' && st !== 'marked') return;
-                    }
-
-                    var bg = 'bg-gray-800 text-gray-200';
-                    if (st === 'answered') bg = 'bg-teal-600 text-white';
-                    if (st === 'marked') bg = 'bg-purple-600 text-white';
-                    if (st === 'visited') bg = 'bg-red-600 text-white';
+                    var bg = st === 'answered' ? 'bg-teal-600 text-white' : 'bg-gray-800 text-gray-200';
 
                     var btn = document.createElement('button');
                     btn.className = "w-8 h-8 rounded-lg text-xs font-bold transition " + bg + (idx === currentQIndex ? ' ring-2 ring-cyan-400' : '');
@@ -1402,10 +1205,6 @@
 
             showScreen('result-screen');
             renderSolutions('all');
-
-            document.getElementById('sol-filter-all').onclick = function() { renderSolutions('all'); };
-            document.getElementById('sol-filter-correct').onclick = function() { renderSolutions('correct'); };
-            document.getElementById('sol-filter-incorrect').onclick = function() { renderSolutions('incorrect'); };
 
             document.getElementById('res-student').innerText = activeUser.name + " (" + activeUser.id + ") - " + activeExam.title;
             document.getElementById('res-reason').innerText = "Status: " + reason;
@@ -1436,40 +1235,17 @@
                 var sel = userAnswers[i] ? userAnswers[i].selected : null;
                 var isCorrect = sel === q.correct;
                 var timeSec = userAnswers[i] ? (userAnswers[i].timeSpentSec || 12) : 12;
-                var statusText = "Unattempted";
-                var statusClass = "bg-gray-800 text-gray-300";
 
                 scatterData.push({ x: i + 1, y: timeSec, isCorrect: isCorrect });
 
                 if (sel !== null) {
-                    if (isCorrect) {
-                        score += 1;
-                        statusText = "Correct (+1.0)";
-                        statusClass = "bg-teal-950 text-teal-200 border border-teal-800/50";
-                    } else {
-                        score -= 0.25;
-                        statusText = "Incorrect (-0.25)";
-                        statusClass = "bg-red-950 text-red-200 border border-red-800/50";
-                    }
+                    score += isCorrect ? 1 : -0.25;
                 }
 
-                if (filter === 'correct' && !isCorrect) continue;
-                if (filter === 'incorrect' && (isCorrect || sel === null)) continue;
-
-                var confTag = (userAnswers[i] && userAnswers[i].confidence) ? userAnswers[i].confidence : "Unspecified";
-
-                var principleFactMarkup = q.section === "Legal Reasoning" ? 
-                    '<div class="space-y-1 my-2"><div class="principle-block text-[11px]"><strong class="text-yellow-400">Ratio Decidendi / Legal Principle:</strong> Applied standard under 498A IPC & High Court Mandate.</div><div class="fact-block text-[11px]"><strong class="text-cyan-400">Fact Anchor:</strong> Domestic chores requirement vs cruelty threshold.</div></div>' : '';
-
                 solutionList.innerHTML += '<div class="p-4 border border-gray-800 rounded-xl bg-gray-900/50 text-xs space-y-2">' +
-                    '<div class="flex justify-between font-bold text-sm">' +
-                    '<span>Q' + (i + 1) + '. ' + q.question + '</span>' +
-                    '<span class="px-2.5 py-0.5 rounded-full ' + statusClass + '">' + statusText + '</span>' +
-                    '</div>' + principleFactMarkup +
-                    '<div><strong>Your Selection:</strong> ' + (sel !== null ? q.options[sel] : 'None') + ' <span class="text-gray-400">(' + confTag + ')</span></div>' +
-                    '<div><strong>Time Spent:</strong> ' + timeSec + ' seconds</div>' +
-                    '<div><strong>Correct Answer:</strong> ' + q.options[q.correct] + '</div>' +
-                    '<div class="bg-[#111827] p-3 rounded-lg border border-gray-800"><strong>Rationale:</strong> ' + q.rationale + '</div>' +
+                    '<div class="flex justify-between font-bold text-sm"><span>Q' + (i + 1) + '. ' + q.question + '</span></div>' +
+                    '<div><strong>Your Selection:</strong> ' + (sel !== null ? q.options[sel] : 'None') + '</div>' +
+                    '<div><strong>Rationale:</strong> ' + q.rationale + '</div>' +
                     '</div>';
             }
 
@@ -1483,29 +1259,19 @@
             tbody.innerHTML = '';
             for (var i = 0; i < records.length; i++) {
                 var r = records[i];
-                var statusColor = r.status.includes('Proctor') ? 'text-red-400 font-bold' : 'text-teal-400 font-semibold';
-                tbody.innerHTML += '<tr><td class="p-4 font-mono">' + r.id + '</td><td class="p-4 font-medium">' + r.name + '</td><td class="p-4 font-semibold text-gray-300">' + (r.examTitle || 'CLAT Mock') + '</td><td class="p-4 font-bold text-cyan-400">' + r.score + '</td><td class="p-4 ' + statusColor + '">' + r.status + '</td><td class="p-4 text-xs text-gray-400">' + r.timestamp + '</td></tr>';
+                tbody.innerHTML += '<tr><td class="p-4 font-mono">' + r.id + '</td><td class="p-4 font-medium">' + r.name + '</td><td class="p-4 font-semibold text-gray-300">' + (r.examTitle || 'CLAT Mock') + '</td><td class="p-4 font-bold text-cyan-400">' + r.score + '</td><td class="p-4 text-teal-400 font-semibold">' + r.status + '</td><td class="p-4 text-xs text-gray-400">' + r.timestamp + '</td></tr>';
             }
-            document.getElementById('clear-btn-teacher').onclick = function() {
-                if (confirm("Clear all student score records?")) {
-                    localStorage.removeItem('clat_records');
-                    renderTeacherTable();
-                }
-            };
         }
 
         function exportTableToCSV() {
             var records = JSON.parse(localStorage.getItem('clat_records') || '[]');
             if (records.length === 0) return alert("No score records to export.");
-            
             var csvContent = "data:text/csv;charset=utf-8,Student ID,Student Name,Exam Title,Score,Status,Timestamp\n";
             records.forEach(function(r) {
                 csvContent += '"' + r.id + '","' + r.name + '","' + r.examTitle + '","' + r.score + '","' + r.status + '","' + r.timestamp + '"\n';
             });
-
-            var encodedUri = encodeURI(csvContent);
             var link = document.createElement("a");
-            link.setAttribute("href", encodedUri);
+            link.setAttribute("href", encodeURI(csvContent));
             link.setAttribute("download", "CLAT_Scoreboard_Report.csv");
             document.body.appendChild(link);
             link.click();
